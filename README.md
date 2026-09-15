@@ -25,3 +25,5 @@ The sync script reads the public Nervos Talk Discourse JSON endpoints and combin
 ## Deployment
 
 The project exports a static build to `dist/client` and includes `vercel.json`. Set `NEXT_PUBLIC_SITE_URL` to the final trusted origin so canonical metadata, Open Graph fields, sitemap, and robots use the correct URL.
+
+The `main` branch is connected to the production Vercel project. Pushing to `main` deploys the live site, while pull requests and other branches receive Vercel preview deployments.
