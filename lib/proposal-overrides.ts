@@ -42,6 +42,50 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '10712': {
+    budgetLabel: '8,263,000 CKB',
+    milestoneStructureZh: '4 个里程碑',
+    milestoneStructureEn: '4 Milestones',
+    overview: {
+      objective: 'FNN Safeguard is an open-source, self-hosted operator tool for checking whether a Fiber Network Node backup can be recovered and whether a target FNN release can process a clone of an operator’s state before the operator modifies the live node. FNN already provides native backup, restore, and migration capabilities. FNN Safeguard does not replace those capabilities. It provides an independent operator-controlled verification layer around them.',
+      objectiveZh: 'FNN Safeguard 是一款开源、自托管的运营工具，用于在运营者修改生产节点之前，检查 Fiber Network Node 备份能否恢复，以及目标 FNN 版本能否处理运营者节点状态的副本。FNN 已原生提供备份、恢复和迁移能力；FNN Safeguard 并不取代这些能力，而是在其外围提供一个由运营者独立控制的验证层。',
+      objectiveEn: 'FNN Safeguard is an open-source, self-hosted operator tool for checking whether a Fiber Network Node backup can be recovered and whether a target FNN release can process a clone of an operator’s state before the operator modifies the live node. FNN already provides native backup, restore, and migration capabilities. FNN Safeguard does not replace those capabilities. It provides an independent operator-controlled verification layer around them.',
+      milestones: [
+        {
+          title: 'Milestone 1 — Production isolation and recovery semantics',
+          titleZh: '里程碑 1 — 生产级隔离与恢复语义',
+          titleEn: 'Milestone 1 — Production isolation and recovery semantics',
+          description: 'Deliverables: evidence-grade isolation backend; locally queryable recovered node with public egress blocked; tested failed-egress probe; separate official-restore and fallback-recovery reports; revised result taxonomy; known-secret comparison tests; sanitized upstream report for the observed restore-path failure; updated threat model and security documentation.',
+          descriptionZh: '交付物：证据级隔离后端；可在本地查询、同时阻断公共网络出口的恢复节点；经过测试的出口失败探针；分别生成的官方恢复与回退恢复报告；修订后的结果分类体系；已知密钥对比测试；针对已发现恢复路径故障的脱敏上游报告；更新后的威胁模型与安全文档。',
+          descriptionEn: 'Deliverables: evidence-grade isolation backend; locally queryable recovered node with public egress blocked; tested failed-egress probe; separate official-restore and fallback-recovery reports; revised result taxonomy; known-secret comparison tests; sanitized upstream report for the observed restore-path failure; updated threat model and security documentation.',
+        },
+        {
+          title: 'Milestone 2 — Pre-upgrade qualification',
+          titleZh: '里程碑 2 — 升级前资格验证',
+          titleEn: 'Milestone 2 — Pre-upgrade qualification',
+          description: 'Deliverables: fnn-safeguard qualify --target <binary-or-image>; qualification against a cloned recovery point; pinned binary and image digests; migration and startup capture; pre/post identity comparison; pre/post channel comparison; pre/post payment comparison; PASS, WARN, and BLOCK decisions; negative and destructive tests; supported-version compatibility matrix; upgrade-planning report.',
+          descriptionZh: '交付物：fnn-safeguard qualify --target <binary-or-image>；基于克隆恢复点进行资格验证；固定二进制文件与镜像摘要；捕获迁移与启动过程；迁移前后的身份比较；迁移前后的通道比较；迁移前后的支付比较；PASS、WARN 和 BLOCK 判定；负向与破坏性测试；受支持版本兼容性矩阵；升级规划报告。',
+          descriptionEn: 'Deliverables: fnn-safeguard qualify --target <binary-or-image>; qualification against a cloned recovery point; pinned binary and image digests; migration and startup capture; pre/post identity comparison; pre/post channel comparison; pre/post payment comparison; PASS, WARN, and BLOCK decisions; negative and destructive tests; supported-version compatibility matrix; upgrade-planning report.',
+        },
+        {
+          title: 'Milestone 3 — Encrypted off-host recovery',
+          titleZh: '里程碑 3 — 加密的异机恢复',
+          titleEn: 'Milestone 3 — Encrypted off-host recovery',
+          description: 'Deliverables: encrypted Restic-based replication; local repository support; SFTP repository support; S3-compatible repository support; retention policy support; remote snapshot verification; download and checksum verification; recovery drill from a downloaded snapshot.',
+          descriptionZh: '交付物：基于 Restic 的加密复制；支持本地存储库；支持 SFTP 存储库；支持兼容 S3 的存储库；支持保留策略；远程快照验证；下载与校验和验证；使用下载快照进行恢复演练。',
+          descriptionEn: 'Deliverables: encrypted Restic-based replication; local repository support; SFTP repository support; S3-compatible repository support; retention policy support; remote snapshot verification; download and checksum verification; recovery drill from a downloaded snapshot.',
+        },
+        {
+          title: 'Milestone 4 — Packaging, public validation, and documentation',
+          titleZh: '里程碑 4 — 打包、公开验证与文档',
+          titleEn: 'Milestone 4 — Packaging, public validation, and documentation',
+          description: 'Deliverables: versioned Linux release; versioned Docker release; systemd service and timer examples; public Fiber testnet report; validation on at least two separate hosts; recovery runbook; upgrade-qualification runbook; final demonstration video; completion report; 90-day compatibility-fix commitment.',
+          descriptionZh: '交付物：带版本号的 Linux 发行版；带版本号的 Docker 发行版；systemd 服务与定时器示例；公开的 Fiber 测试网报告；在至少两台独立主机上完成验证；恢复操作手册；升级资格验证操作手册；最终演示视频；完结报告；90 天兼容性修复承诺。',
+          descriptionEn: 'Deliverables: versioned Linux release; versioned Docker release; systemd service and timer examples; public Fiber testnet report; validation on at least two separate hosts; recovery runbook; upgrade-qualification runbook; final demonstration video; completion report; 90-day compatibility-fix commitment.',
+        },
+      ],
+    },
+  },
   '10462': {
     budgetLabel: '$5,000 USD',
     milestoneStructureZh: '2 个里程碑',
