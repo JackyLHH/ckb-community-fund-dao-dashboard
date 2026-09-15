@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --font-sans: var(--font-sans-stack);
+  --font-mono: var(--font-mono-stack);
+  --font-heading: var(--font-heading-stack);
+  --radius-sm: calc(var(--radius) * 0.65);
+  --radius-md: calc(var(--radius) * 0.85);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.35);
+  --radius-2xl: calc(var(--radius) * 1.75);
+}
+
+:root {
+  --background: #f5f7f2;
+  --foreground: #0b0f0e;
+  --card: #ffffff;
+  --card-foreground: #0b0f0e;
+  --popover: #ffffff;
+  --popover-foreground: #0b0f0e;
+  --primary: #096c4c;
+  --primary-foreground: #ffffff;
+  --secondary: #e5eee9;
+  --secondary-foreground: #14392c;
+  --muted: #e8ece8;
+  --muted-foreground: #5f6a65;
+  --accent: #c8ff67;
+  --accent-foreground: #102119;
+  --destructive: #c83d4b;
+  --border: #d6ded8;
+  --input: #c9d3cc;
+  --ring: #00a873;
+  --chart-1: #00a873;
+  --chart-2: #c8ff67;
+  --chart-3: #3979e5;
+  --chart-4: #e6a23c;
+  --chart-5: #d95b65;
+  --radius: 0.8rem;
+  --font-sans-stack: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-heading-stack: "Arial Narrow", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono-stack: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.dark {
+  --background: #080c0b;
+  --foreground: #edf6f1;
+  --card: #101614;
+  --card-foreground: #edf6f1;
+  --popover: #101614;
+  --popover-foreground: #edf6f1;
+  --primary: #1fe09c;
+  --primary-foreground: #07120e;
+  --secondary: #17221e;
+  --secondary-foreground: #d9eee4;
+  --muted: #17201d;
+  --muted-foreground: #98aaa2;
+  --accent: #c8ff67;
+  --accent-foreground: #102119;
+  --destructive: #ff7380;
+  --border: #26322d;
+  --input: #34423c;
+  --ring: #1fe09c;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans-stack);
+  }
+
+  ::selection {
+    background: #c8ff67;
+    color: #0b0f0e;
+  }
+}
+
+@layer utilities {
+  .ledger-grid {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 7%) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 7%) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+
+  .label-caps {
+    font-family: var(--font-mono-stack);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .i18n-en {
+    display: none;
+  }
+
+  html[data-locale='en'] .i18n-zh {
+    display: none;
+  }
+
+  html[data-locale='en'] .i18n-en {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
