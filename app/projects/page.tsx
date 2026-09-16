@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { I18nText } from '@/components/i18n-text';
-import { LiveDirectoryFacts, LiveProjectStats } from '@/components/live-project-directory-meta';
+import { LiveProjectStats } from '@/components/live-project-directory-meta';
 import { ProjectsExplorer } from '@/components/projects-explorer';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
@@ -35,7 +35,6 @@ export default function ProjectsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-14">
-        <LiveDirectoryFacts />
         <ProjectsExplorer />
       </section>
       <SiteFooter />
