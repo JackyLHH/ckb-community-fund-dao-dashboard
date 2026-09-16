@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Check, Search, SlidersHorizontal, X } from 'lucide-react';
+import { ArrowUpRight, Check, Search, SlidersHorizontal, X } from 'lucide-react';
 import { I18nText } from '@/components/i18n-text';
 import { LiveSyncBadge } from '@/components/live-sync-badge';
 import { ProjectCard } from '@/components/project-card';
-import { getProposalOverview, getProposalStatusTags, projectTypeLabels, statusMeta, type ProposalStatusTag } from '@/lib/proposals';
+import { getProposalOverview, getProposalStatusTags, projectTypeLabels, statusDescriptions, statusMeta, type ProposalStatusTag } from '@/lib/proposals';
 import { useLiveDataset } from '@/lib/use-live-data';
 import { useLocale } from '@/lib/use-locale';
 
@@ -213,6 +213,38 @@ export function ProjectsExplorer() {
           )}
         </div>
       </div>
+
+      <section aria-labelledby="status-guide-title" className="mt-5 rounded-[22px] border border-black/10 bg-white p-5 shadow-[0_12px_35px_rgb(11_15_14/4%)] sm:p-6">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="label-caps text-[#087958]"><I18nText zh="状态图例" en="Status guide" /></p>
+            <h2 id="status-guide-title" className="mt-2 text-xl font-black tracking-[-.025em] sm:text-2xl">
+              <I18nText zh="每个提案状态代表什么" en="What each proposal status means" />
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-black/50">
+              <I18nText zh="状态根据讨论、投票、拨款和公开交付证据判断；同一提案可能同时拥有两个状态。" en="Statuses are based on discussion, voting, funding, and public delivery evidence. A proposal may carry two statuses at the same time." />
+            </p>
+          </div>
+          <a href="/methodology" className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-[#087958] transition hover:text-[#00a873]">
+            <I18nText zh="查看完整数据方法" en="View full methodology" /> <ArrowUpRight className="size-4" />
+          </a>
+        </div>
+
+        <div className="mt-5 grid gap-x-8 gap-y-4 border-t border-black/8 pt-5 sm:grid-cols-2 xl:grid-cols-3">
+          {statusOptions.map((key) => {
+            const item = statusMeta[key];
+            const description = statusDescriptions[key];
+            return (
+              <div key={key} className="grid grid-cols-[auto_1fr] items-start gap-3">
+                <span className={`w-fit rounded-full border px-2.5 py-1 text-[11px] font-bold ${item.className}`}>
+                  {locale === 'en' ? item.en : item.zh}
+                </span>
+                <p className="text-sm leading-6 text-black/52">{locale === 'en' ? description.en : description.zh}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       <div className="mt-8 flex items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">

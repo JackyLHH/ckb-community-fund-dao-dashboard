@@ -4,7 +4,7 @@ import { I18nText } from '@/components/i18n-text';
 import { LiveMethodologyStatus } from '@/components/live-methodology-status';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { dataset, statusMeta } from '@/lib/proposals';
+import { dataset, statusDescriptions, statusMeta } from '@/lib/proposals';
 
 export const metadata: Metadata = {
   title: 'Methodology',
@@ -56,16 +56,7 @@ export default function MethodologyPage() {
           <div className="divide-y divide-black/8 rounded-[22px] border border-black/10 bg-white px-6">
             {(Object.keys(statusMeta) as Array<keyof typeof statusMeta>).map((key) => {
               const item = statusMeta[key];
-              const descriptions = {
-                discussion: { zh: '提案仍在 7 天讨论期内，且尚未进入投票。', en: 'The proposal is still within its seven-day discussion window and has not entered voting.' },
-                voting: { zh: 'Metaforo 投票仍在进行，关闭前结果仍可能变化。', en: 'Metaforo voting is open and the result can still change before closing.' },
-                'vote-passed': { zh: '当前或最终票数同时满足法定票数与通过比例。', en: 'The current or final tally meets both quorum and approval thresholds.' },
-                executing: { zh: '提案已获资助，且仍有工作或里程碑处于执行阶段。', en: 'The proposal was funded and still has work or milestones in progress.' },
-                'vote-failed': { zh: '最终投票未达到通过比例或法定票数要求。', en: 'The final vote did not meet its approval or quorum requirement.' },
-                completed: { zh: '公开的状态更新或交付证据表明全部提案工作已经完成。', en: 'Public updates or delivery evidence show that all proposed work was completed.' },
-                ended: { zh: '首帖未在 7 天内达到 30 个赞，或提案已终止、退款、投票失败或完成。', en: 'The first post missed 30 likes in seven days, or the proposal ended through rejection, termination, refund, or completion.' },
-              };
-              return <div key={key} className="grid gap-2 py-5 sm:grid-cols-[150px_1fr]"><span className={`w-fit rounded-full border px-2.5 py-1 text-[11px] font-bold ${item.className}`}><I18nText zh={item.zh} en={item.en} /></span><p className="text-sm leading-6 text-black/52"><I18nText zh={descriptions[key].zh} en={descriptions[key].en} /></p></div>;
+              return <div key={key} className="grid gap-2 py-5 sm:grid-cols-[150px_1fr]"><span className={`w-fit rounded-full border px-2.5 py-1 text-[11px] font-bold ${item.className}`}><I18nText zh={item.zh} en={item.en} /></span><p className="text-sm leading-6 text-black/52"><I18nText zh={statusDescriptions[key].zh} en={statusDescriptions[key].en} /></p></div>;
             })}
           </div>
         </div>
