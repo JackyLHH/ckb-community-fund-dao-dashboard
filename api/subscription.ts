@@ -84,8 +84,8 @@ function confirmationMessage(locale: Locale, url: string) {
   const en = locale === 'en';
   const heading = en ? 'One click to confirm' : '还差一步：确认订阅';
   const body = en
-    ? 'After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
-    : '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 08:00 收到一封汇总邮件；没有变化时不会发送。';
+    ? 'After confirmation, you will receive one daily digest at 16:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
+    : '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 16:00 收到一封汇总邮件；没有变化时不会发送。';
   const button = en ? 'Confirm subscription' : '确认订阅';
   const footer = en ? 'Ignore this email if you did not request it.' : '如果不是你操作，请忽略此邮件。';
   return {
