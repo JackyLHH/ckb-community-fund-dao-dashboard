@@ -4,6 +4,17 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/client",
   "installCommand": "npm install",
+  "functions": {
+    "api/cron/digest.ts": {
+      "maxDuration": 60
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/digest",
+      "schedule": "0 0 * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/live/nervos/category",

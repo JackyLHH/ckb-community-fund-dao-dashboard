@@ -1,11 +1,13 @@
 import { StaticLink as Link } from '@/components/static-link';
 import { ArrowUpRight } from 'lucide-react';
 import { I18nText } from '@/components/i18n-text';
+import { NewsletterSubscription } from '@/components/newsletter-subscription';
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#0b0f0e] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 lg:grid-cols-[1fr_auto] lg:px-8">
+    <footer className="bg-[#0b0f0e] text-white">
+      <NewsletterSubscription />
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-10 lg:grid-cols-[1fr_auto] lg:px-8">
         <div>
           <div className="flex items-center gap-3">
             <span className="grid size-8 place-items-center rounded-[10px] bg-[#c8ff67] text-xs font-black text-[#0b0f0e]">CKB</span>
