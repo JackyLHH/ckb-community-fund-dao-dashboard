@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { proposals } from '@/lib/proposals';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ckb-community-fund-dao-dashboard.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ckbcommunityfunddao.xyz';
   return [
     { url: baseUrl, changeFrequency: 'weekly', priority: 1 },
     { url: `${baseUrl}/projects`, changeFrequency: 'daily', priority: 0.9 },
