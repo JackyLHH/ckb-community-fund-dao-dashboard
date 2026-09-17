@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowUpRight, Check, Search, SlidersHorizontal, X } from 'lucide-react';
+import { ArrowUpRight, Check, Info, Search, SlidersHorizontal, X } from 'lucide-react';
 import { I18nText } from '@/components/i18n-text';
 import { LiveSyncBadge } from '@/components/live-sync-badge';
 import { ProjectCard } from '@/components/project-card';
@@ -12,6 +12,7 @@ import { useLocale } from '@/lib/use-locale';
 type SortKey = 'updated' | 'newest' | 'likes';
 
 const statusOptions = Object.keys(statusMeta) as ProposalStatusTag[];
+const statusGuidePreferenceKey = 'ckb-dao-status-guide-hidden';
 
 export function ProjectsExplorer() {
   const { data, state: liveState } = useLiveDataset();
@@ -23,6 +24,15 @@ export function ProjectsExplorer() {
   const [projectType, setProjectType] = useState('all');
   const [fundedOnly, setFundedOnly] = useState(false);
   const [sort, setSort] = useState<SortKey>('updated');
+  const [showStatusGuide, setShowStatusGuide] = useState(true);
+
+  useEffect(() => {
+    try {
+      setShowStatusGuide(window.localStorage.getItem(statusGuidePreferenceKey) !== '1');
+    } catch {
+      setShowStatusGuide(true);
+    }
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -143,11 +153,39 @@ export function ProjectsExplorer() {
     setSort('updated');
   }
 
+  function hideStatusGuide() {
+    setShowStatusGuide(false);
+    try {
+      window.localStorage.setItem(statusGuidePreferenceKey, '1');
+    } catch {
+      // Keep the current-page preference even when browser storage is unavailable.
+    }
+  }
+
+  function revealStatusGuide() {
+    setShowStatusGuide(true);
+    try {
+      window.localStorage.removeItem(statusGuidePreferenceKey);
+    } catch {
+      // Keep the current-page preference even when browser storage is unavailable.
+    }
+  }
+
   return (
     <div>
-      <section aria-labelledby="status-guide-title" className="rounded-[22px] border border-black/10 bg-white p-5 shadow-[0_12px_35px_rgb(11_15_14/4%)] sm:p-6">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
+      {showStatusGuide ? (
+        <section aria-labelledby="status-guide-title" className="relative rounded-[22px] border border-black/10 bg-white p-5 shadow-[0_12px_35px_rgb(11_15_14/4%)] sm:p-6">
+          <button
+            type="button"
+            onClick={hideStatusGuide}
+            aria-label={t('隐藏提案状态说明', 'Hide proposal status guide')}
+            title={t('隐藏提案状态说明', 'Hide proposal status guide')}
+            className="absolute right-4 top-4 grid size-9 place-items-center rounded-full border border-black/10 bg-[#f5f7f2] text-black/45 transition hover:border-[#00a873]/40 hover:bg-[#e3f8ef] hover:text-[#087958] focus:outline-none focus:ring-2 focus:ring-[#00a873]/30 sm:right-5 sm:top-5"
+          >
+            <X className="size-4" />
+          </button>
+
+          <div className="pr-11">
             <p className="label-caps text-[#087958]"><I18nText zh="状态图例" en="Status guide" /></p>
             <h2 id="status-guide-title" className="mt-2 text-xl font-black tracking-[-.025em] sm:text-2xl">
               <I18nText zh="每个提案状态代表什么" en="What each proposal status means" />
@@ -155,27 +193,38 @@ export function ProjectsExplorer() {
             <p className="mt-2 max-w-2xl text-sm leading-6 text-black/50">
               <I18nText zh="状态根据讨论、投票、拨款和公开交付证据判断；同一提案可能同时拥有两个状态。" en="Statuses are based on discussion, voting, funding, and public delivery evidence. A proposal may carry two statuses at the same time." />
             </p>
+            <a href="/methodology" className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-[#087958] transition hover:text-[#00a873]">
+              <I18nText zh="查看完整数据方法" en="View full methodology" /> <ArrowUpRight className="size-4" />
+            </a>
           </div>
-          <a href="/methodology" className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-[#087958] transition hover:text-[#00a873]">
-            <I18nText zh="查看完整数据方法" en="View full methodology" /> <ArrowUpRight className="size-4" />
-          </a>
-        </div>
 
-        <div className="mt-5 grid gap-x-8 gap-y-4 border-t border-black/8 pt-5 sm:grid-cols-2 xl:grid-cols-3">
-          {statusOptions.map((key) => {
-            const item = statusMeta[key];
-            const description = statusDescriptions[key];
-            return (
-              <div key={key} className="grid grid-cols-[auto_1fr] items-start gap-3">
-                <span className={`w-fit rounded-full border px-2.5 py-1 text-[11px] font-bold ${item.className}`}>
-                  {locale === 'en' ? item.en : item.zh}
-                </span>
-                <p className="text-sm leading-6 text-black/52">{locale === 'en' ? description.en : description.zh}</p>
-              </div>
-            );
-          })}
+          <div className="mt-5 grid gap-x-8 gap-y-4 border-t border-black/8 pt-5 sm:grid-cols-2 xl:grid-cols-3">
+            {statusOptions.map((key) => {
+              const item = statusMeta[key];
+              const description = statusDescriptions[key];
+              return (
+                <div key={key} className="grid grid-cols-[auto_1fr] items-start gap-3">
+                  <span className={`w-fit rounded-full border px-2.5 py-1 text-[11px] font-bold ${item.className}`}>
+                    {locale === 'en' ? item.en : item.zh}
+                  </span>
+                  <p className="text-sm leading-6 text-black/52">{locale === 'en' ? description.en : description.zh}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={revealStatusGuide}
+            className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3.5 py-2 text-xs font-bold text-black/55 shadow-[0_8px_24px_rgb(11_15_14/4%)] transition hover:border-[#00a873]/40 hover:bg-[#e3f8ef] hover:text-[#087958] focus:outline-none focus:ring-2 focus:ring-[#00a873]/30"
+          >
+            <Info className="size-4" />
+            <I18nText zh="显示提案状态说明" en="Show proposal status guide" />
+          </button>
         </div>
-      </section>
+      )}
 
       <div className="mt-5 rounded-[22px] border border-black/10 bg-white p-4 shadow-[0_12px_35px_rgb(11_15_14/5%)] sm:p-5">
         <div className="grid gap-3 lg:grid-cols-[minmax(260px,1fr)_180px_190px_170px]">
