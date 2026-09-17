@@ -53,7 +53,7 @@ function NewsletterSubscription() {
         <div>
           <span className="grid size-11 place-items-center rounded-xl bg-[#c8ff67] text-[#0b0f0e]"><Mail className="size-5" /></span>
           <h2 id="proposal-updates-title" className="mt-5 text-3xl font-black tracking-[-.035em]">{t('订阅每日提案更新', 'Subscribe to daily proposal updates')}</h2>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-white/55">{t('每天北京时间 08:00 汇总新提案与进展更新；没有变化时不发送邮件。', 'Get one digest at 08:00 China Standard Time when new proposals or updates appear. No changes means no email.')}</p>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-white/55">{t('每天北京时间 16:00 汇总新提案与进展更新；没有变化时不发送邮件。', 'Get one digest at 16:00 China Standard Time when new proposals or updates appear. No changes means no email.')}</p>
         </div>
         <div>
           <form onSubmit={subscribe} className="flex flex-col gap-3 sm:flex-row">
