@@ -82,14 +82,14 @@ function shell(content: string, footer: string) {
 
 function confirmationMessage(locale: Locale, url: string) {
   const en = locale === 'en';
-  const heading = en ? '还差一步：确认订阅 / One click to confirm' : '还差一步：确认订阅 / One click to confirm';
+  const heading = en ? 'One click to confirm' : '还差一步：确认订阅';
   const body = en
-    ? '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 08:00 收到一封汇总邮件；没有变化时不会发送。 After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
-    : '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 08:00 收到一封汇总邮件；没有变化时不会发送。 After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.';
-  const button = en ? '确认订阅 / Confirm subscription' : '确认订阅 / Confirm subscription';
-  const footer = en ? '如果不是你操作，请忽略此邮件。<br>If you did not request this subscription, please ignore this email.' : '如果不是你操作，请忽略此邮件。<br>If you did not request this subscription, please ignore this email.';
+    ? 'After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
+    : '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 08:00 收到一封汇总邮件；没有变化时不会发送。';
+  const button = en ? 'Confirm subscription' : '确认订阅';
+  const footer = en ? 'Ignore this email if you did not request it.' : '如果不是你操作，请忽略此邮件。';
   return {
-    subject: '确认订阅 / Confirm your CKB Community Fund DAO subscription',
+    subject: en ? 'Confirm your CKB Community Fund DAO subscription' : '确认订阅 CKB Community Fund DAO 提案更新',
     html: shell(`<h1 style="margin:0 0 14px">${heading}</h1><p style="color:#4d5953;line-height:1.75">${body}</p><a href="${esc(url)}" style="display:inline-block;margin-top:16px;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:13px 20px;font-weight:bold">${button}</a><p style="margin-top:24px;color:#7a847f;font-size:12px;word-break:break-all">${esc(url)}</p>`, footer),
     text: `${heading}\n\n${body}\n\n${button}: ${url}\n\n${footer}`,
   };
