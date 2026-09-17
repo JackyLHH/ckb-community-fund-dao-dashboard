@@ -82,14 +82,14 @@ function shell(content: string, footer: string) {
 
 function confirmationMessage(locale: Locale, url: string) {
   const en = locale === 'en';
-  const heading = en ? '还差一步：确认订阅 / One click to confirm' : '还差一步：确认订阅 / One click to confirm';
+  const heading = en ? 'One click to confirm' : 'è¿å·®ä¸æ­¥ï¼ç¡®è®¤è®¢é';
   const body = en
-    ? '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 08:00 收到一封汇总邮件；没有变化时不会发送。 After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
-    : '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 08:00 收到一封汇总邮件；没有变化时不会发送。 After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.';
-  const button = en ? '确认订阅 / Confirm subscription' : '确认订阅 / Confirm subscription';
-  const footer = en ? '如果不是你操作，请忽略此邮件。<br>If you did not request this subscription, please ignore this email.' : '如果不是你操作，请忽略此邮件。<br>If you did not request this subscription, please ignore this email.';
+    ? 'After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
+    : 'ç¡®è®¤åï¼å½ç½ç«åç°æ°ææ¡æææ¡æ´æ°æ¶ï¼ä½ ä¼å¨æ¯å¤©åäº¬æ¶é´ 08:00 æ¶å°ä¸å°æ±æ»é®ä»¶ï¼æ²¡æååæ¶ä¸ä¼åéã';
+  const button = en ? 'Confirm subscription' : 'ç¡®è®¤è®¢é';
+  const footer = en ? 'Ignore this email if you did not request it.' : 'å¦æä¸æ¯ä½ æä½ï¼è¯·å¿½ç¥æ­¤é®ä»¶ã';
   return {
-    subject: '确认订阅 / Confirm your CKB Community Fund DAO subscription',
+    subject: en ? 'Confirm your CKB Community Fund DAO subscription' : 'ç¡®è®¤è®¢é CKB Community Fund DAO ææ¡æ´æ°',
     html: shell(`<h1 style="margin:0 0 14px">${heading}</h1><p style="color:#4d5953;line-height:1.75">${body}</p><a href="${esc(url)}" style="display:inline-block;margin-top:16px;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:13px 20px;font-weight:bold">${button}</a><p style="margin-top:24px;color:#7a847f;font-size:12px;word-break:break-all">${esc(url)}</p>`, footer),
     text: `${heading}\n\n${body}\n\n${button}: ${url}\n\n${footer}`,
   };
@@ -101,26 +101,26 @@ function digestMessage(locale: Locale, newTopics: Topic[], updatedTopics: Topic[
   const en = locale === 'en';
   const total = newTopics.length + updatedTopics.length;
   const section = (title: string, topics: Topic[]) => topics.length
-    ? `<h2 style="margin:28px 0 12px;font-size:18px">${title}</h2><ul style="padding:0;margin:0">${topics.map((topic) => `<li style="margin:0 0 12px;padding:15px;border:1px solid #dce3de;border-radius:14px;list-style:none"><a href="${topicUrl(topic)}" style="color:#087958;text-decoration:none;font-weight:bold">${esc(topic.title)}</a><div style="margin-top:7px;color:#7a847f;font-size:12px">${topic.posts_count} ${en ? 'posts' : '篇帖子'}</div></li>`).join('')}</ul>`
+    ? `<h2 style="margin:28px 0 12px;font-size:18px">${title}</h2><ul style="padding:0;margin:0">${topics.map((topic) => `<li style="margin:0 0 12px;padding:15px;border:1px solid #dce3de;border-radius:14px;list-style:none"><a href="${topicUrl(topic)}" style="color:#087958;text-decoration:none;font-weight:bold">${esc(topic.title)}</a><div style="margin-top:7px;color:#7a847f;font-size:12px">${topic.posts_count} ${en ? 'posts' : 'ç¯å¸å­'}</div></li>`).join('')}</ul>`
     : '';
   const intro = en
     ? `${newTopics.length} new proposal(s) and ${updatedTopics.length} updated proposal(s) were detected.`
-    : `检测到 ${newTopics.length} 份新提案和 ${updatedTopics.length} 份有更新的提案。`;
+    : `æ£æµå° ${newTopics.length} ä»½æ°ææ¡å ${updatedTopics.length} ä»½ææ´æ°çææ¡ã`;
   const footer = en
     ? `You subscribed to daily proposal updates. <a href="${esc(unsubscribeUrl)}">Unsubscribe</a>.`
-    : `你订阅了每日提案更新。<a href="${esc(unsubscribeUrl)}">取消订阅</a>。`;
+    : `ä½ è®¢éäºæ¯æ¥ææ¡æ´æ°ã<a href="${esc(unsubscribeUrl)}">åæ¶è®¢é</a>ã`;
   const textItems = [...newTopics, ...updatedTopics].map((topic) => `- ${topic.title}: ${topicUrl(topic)}`).join('\n');
   return {
-    subject: en ? `CKB Community Fund DAO: ${total} proposal update${total === 1 ? '' : 's'}` : `CKB Community Fund DAO：${total} 条提案动态`,
-    html: shell(`<h1 style="margin:0 0 14px">${en ? 'Today’s proposal digest' : '今日提案更新汇总'}</h1><p style="color:#4d5953;line-height:1.75">${intro}</p>${section(en ? 'New proposals' : '新提案', newTopics)}${section(en ? 'Proposal updates' : '提案更新', updatedTopics)}<a href="${siteUrl()}/projects" style="color:#087958;font-weight:bold;text-decoration:none">${en ? 'Open proposal directory →' : '查看提案目录 →'}</a>`, footer),
-    text: `${intro}\n\n${textItems}\n\n${en ? 'Unsubscribe' : '取消订阅'}: ${unsubscribeUrl}`,
+    subject: en ? `CKB Community Fund DAO: ${total} proposal update${total === 1 ? '' : 's'}` : `CKB Community Fund DAOï¼${total} æ¡ææ¡å¨æ`,
+    html: shell(`<h1 style="margin:0 0 14px">${en ? 'Todayâs proposal digest' : 'ä»æ¥ææ¡æ´æ°æ±æ»'}</h1><p style="color:#4d5953;line-height:1.75">${intro}</p>${section(en ? 'New proposals' : 'æ°ææ¡', newTopics)}${section(en ? 'Proposal updates' : 'ææ¡æ´æ°', updatedTopics)}<a href="${siteUrl()}/projects" style="color:#087958;font-weight:bold;text-decoration:none>${en ? 'Open proposal directory â' : 'æ¥çææ¡ç®å½ 8¡'}</a>`, footer),
+    text: `${intro}\n\n${textItems}\n\n${en ? 'Unsubscribe' : 'åæ¶è®¢é'}: ${unsubscribeUrl}`,
   };
 }
 
 function isProposal(title: string) {
   const value = title.trim();
   if (/^\s*(?:\[|\()\s*(?:status\s+update|ann|issue)\s*(?:\]|\))/i.test(value)) return false;
-  return /^\s*(?:\[|\()\s*DIS\s*(?:\]|\))/i.test(value) || /(grant|funding|sponsorship)\s+proposal|资助提案|赞助提案/i.test(value);
+  return /^\s*(?:\[|\()\s*DIS\s*(?:\]|\))/i.test(value) || /(grant|funding|sponsorship)\s+proposal|èµå©ææ¡|èµå©ææ¡/i.test(value);
 }
 
 async function forumTopics() {
