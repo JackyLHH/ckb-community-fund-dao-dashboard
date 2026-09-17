@@ -84,8 +84,8 @@ function confirmationMessage(locale: Locale, url: string) {
   const en = locale === 'en';
   const heading = en ? 'One click to confirm' : 'è¿å·®ä¸æ­¥ï¼ç¡®è®¤è®¢é';
   const body = en
-    ? 'After confirmation, you will receive one daily digest at 08:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
-    : 'ç¡®è®¤åï¼å½ç½ç«åç°æ°ææ¡æææ¡æ´æ°æ¶ï¼ä½ ä¼å¨æ¯å¤©åäº¬æ¶é´ 08:00 æ¶å°ä¸å°æ±æ»é®ä»¶ï¼æ²¡æååæ¶ä¸ä¼åéã';
+    ? 'After confirmation, you will receive one daily digest at 16:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
+    : 'ç¡®è®¤åï¼å½ç½ç«åç°æ°ææ¡æææ¡æ´æ°æ¶ï¼ä½ ä¼å¨æ¯å¤©åäº¬æ¶é´ 16:00 æ¶å°ä¸å°æ±æ»é®ä»¶ï¼æ²¡æååæ¶ä¸ä¼åéã';
   const button = en ? 'Confirm subscription' : 'ç¡®è®¤è®¢é';
   const footer = en ? 'Ignore this email if you did not request it.' : 'å¦æä¸æ¯ä½ æä½ï¼è¯·å¿½ç¥æ­¤é®ä»¶ã';
   return {
