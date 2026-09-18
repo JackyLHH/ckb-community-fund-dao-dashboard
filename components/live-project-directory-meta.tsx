@@ -10,12 +10,14 @@ export function LiveProjectStats() {
   const { data } = useLiveDataset();
   const fundedCount = data.proposals.filter((proposal) => proposal.funded).length;
   const governanceCount = data.proposals.filter((proposal) => proposal.projectType === 'Governance').length;
+  const discussionCount = data.proposals.filter((proposal) => getProposalStatusTags(proposal).includes('discussion')).length;
   const votingCount = data.proposals.filter((proposal) => getProposalStatusTags(proposal).includes('voting')).length;
   return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/10 pt-6 sm:grid-cols-4 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+    <div className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/10 pt-6 sm:grid-cols-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
       <div><p className="font-mono text-2xl font-semibold text-[#c8ff67]">{data.meta.proposalCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="提案" en="Proposals" /></p></div>
       <div><p className="font-mono text-2xl font-semibold">{fundedCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="已资助" en="Funded" /></p></div>
       <div><p className="font-mono text-2xl font-semibold">{governanceCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="治理提案" en="Governance Proposals" /></p></div>
+      <div><p className="font-mono text-2xl font-semibold">{discussionCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="讨论中" en="Discussion" /></p></div>
       <div><p className="font-mono text-2xl font-semibold">{votingCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="正在投票" en="Voting now" /></p></div>
     </div>
   );
