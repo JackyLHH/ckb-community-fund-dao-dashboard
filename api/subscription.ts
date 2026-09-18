@@ -1,3 +1,13 @@
+import {
+  cleanSummary,
+  getProposalStatusTags,
+  getProposalTitle,
+  projectTypeLabels,
+  proposals,
+  statusMeta,
+  type Proposal,
+} from '../lib/proposals';
+
 const forumBaseUrl = 'https://talk.nervos.org';
 const categoryPath = '/c/daos-funding/ckb-community-fund-dao/65.json';
 
@@ -25,6 +35,31 @@ type TopicState = {
   posts_count: number;
   last_posted_at: string;
 };
+type ForumPost = {
+  post_number: number;
+  username: string;
+  name?: string | null;
+  created_at?: string;
+  cooked?: string;
+};
+type TopicDetail = {
+  highest_post_number?: number;
+  post_stream?: { posts?: ForumPost[] };
+};
+type DigestTopic = {
+  topic: Topic;
+  proposal?: Proposal;
+  proposer: string;
+  budget: string | null;
+  firstPostExcerpt: string;
+  latestPostAuthor: string;
+  latestPostCreatedAt?: string;
+  latestPostExcerpt: string;
+  latestPostNumber?: number;
+  newPostCount: number;
+};
+
+const proposalById = new Map(proposals.map((proposal) => [proposal.id, proposal]));
 
 const json = (data: unknown, status = 200) => Response.json(data, { status });
 const siteUrl = () => (process.env.SITE_URL ?? 'https://ckb-community-fund-dao-dashboard.vercel.app').replace(/\/$/, '');
@@ -76,8 +111,8 @@ function esc(value: string) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
 }
 
-function shell(content: string, footer: string) {
-  return `<!doctype html><html><body style="margin:0;background:#f5f7f2;color:#0b0f0e;font-family:Arial,sans-serif"><div style="max-width:640px;margin:auto;padding:28px 16px"><div style="background:#0b0f0e;border-radius:20px 20px 0 0;padding:24px;color:white"><b style="background:#c8ff67;color:#0b0f0e;border-radius:8px;padding:7px 9px">CKB</b><b style="margin-left:10px">Community Fund DAO</b></div><div style="background:white;border:1px solid #d6ded8;border-top:0;border-radius:0 0 20px 20px;padding:30px">${content}</div><p style="margin:18px 4px;color:#65706a;font-size:12px;line-height:1.6">${footer}</p></div></body></html>`;
+function shell(content: string, footer: string, preheader = '') {
+  return `<!doctype html><html><body style="margin:0;background:#f5f7f2;color:#0b0f0e;font-family:Arial,sans-serif">${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${esc(preheader)}</div>` : ''}<div style="max-width:640px;margin:auto;padding:28px 16px"><div style="background:#0b0f0e;border-radius:20px 20px 0 0;padding:24px;color:white"><b style="background:#c8ff67;color:#0b0f0e;border-radius:8px;padding:7px 9px">CKB</b><b style="margin-left:10px">Community Fund DAO</b></div><div style="background:white;border:1px solid #d6ded8;border-top:0;border-radius:0 0 20px 20px;padding:30px">${content}</div><p style="margin:18px 4px;color:#65706a;font-size:12px;line-height:1.6">${footer}</p></div></body></html>`;
 }
 
 function confirmationMessage(locale: Locale, url: string) {
@@ -90,30 +125,190 @@ function confirmationMessage(locale: Locale, url: string) {
   const footer = en ? 'Ignore this email if you did not request it.' : '如果不是你操作，请忽略此邮件。';
   return {
     subject: en ? 'Confirm your CKB Community Fund DAO subscription' : '确认订阅 CKB Community Fund DAO 提案更新',
-    html: shell(`<h1 style="margin:0 0 14px">${heading}</h1><p style="color:#4d5953;line-height:1.75">${body}</p><a href="${esc(url)}" style="display:inline-block;margin-top:16px;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:13px 20px;font-weight:bold">${button}</a><p style="margin-top:24px;color:#7a847f;font-size:12px;word-break:break-all">${esc(url)}</p>`, footer),
+    html: shell(`<h1 style="margin:0 0 14px">${heading}</h1><p style="color:#4d5953;line-height:1.75">${body}</p><a href="${esc(url)}" style="display:inline-block;margin-top:16px;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:13px 20px;font-weight:bold">${button}</a><p style="margin-top:24px;color:#7a847f;font-size:12px;word-break:break-all">${esc(url)}</p>`, footer, heading),
     text: `${heading}\n\n${body}\n\n${button}: ${url}\n\n${footer}`,
   };
 }
 
-const topicUrl = (topic: Topic) => `${forumBaseUrl}/t/${topic.slug}/${topic.id}`;
+const topicUrl = (topic: Topic, postNumber?: number) => `${forumBaseUrl}/t/${topic.slug}/${topic.id}${postNumber ? `/${postNumber}` : ''}`;
+const proposalUrl = (topic: Topic) => `${siteUrl()}/project?id=${topic.id}`;
 
-function digestMessage(locale: Locale, newTopics: Topic[], updatedTopics: Topic[], unsubscribeUrl: string) {
+function stripForumHtml(value = '') {
+  return value
+    .replace(/<aside[^>]*class=["'][^"']*quote[^"']*["'][^>]*>[\s\S]*?<\/aside>/gi, ' ')
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(?:p|li|h[1-6]|blockquote|div)>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#0*39;|&apos;/gi, "'")
+    .replace(/&#(\d+);/g, (_match, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function clipped(value: string, length = 320) {
+  return value.length > length ? `${value.slice(0, length).trim()}…` : value;
+}
+
+function extractDigestBudget(text: string) {
+  const value = String.raw`((?:USD\s*)?\$?\s*[\d,.]+\s*(?:USD|USDT|CKB(?:s)?)?)`;
+  const match = text.match(new RegExp(String.raw`(?:funding requested|requested budget|requested amount|total budget|grant amount|申请总额|总申请金额|申请金额|申请预算|总预算)\s*[:：\-–—]?\s*${value}`, 'i'));
+  return match?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+}
+
+async function fetchTopicDetail(topic: Topic) {
+  const load = async (suffix = '') => {
+    const response = await fetch(`${forumBaseUrl}/t/${topic.id}.json${suffix}`, {
+      headers: { Accept: 'application/json', 'User-Agent': 'CKB-Community-Fund-Dashboard/1.0' },
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) throw new Error(`Topic ${topic.id}: ${response.status}`);
+    return await response.json() as TopicDetail;
+  };
+  const detail = await load();
+  const posts = detail.post_stream?.posts ?? [];
+  const highest = detail.highest_post_number ?? posts.at(-1)?.post_number ?? topic.posts_count ?? 1;
+  if (!posts.some((post) => post.post_number === highest) && highest > 1) {
+    const latestWindow = await load(`?post_number=${highest}`);
+    posts.push(...(latestWindow.post_stream?.posts ?? []));
+  }
+  return [...new Map(posts.map((post) => [post.post_number, post])).values()]
+    .sort((a, b) => a.post_number - b.post_number);
+}
+
+async function buildDigestTopic(topic: Topic, previous?: TopicState): Promise<DigestTopic> {
+  const proposal = proposalById.get(String(topic.id));
+  const fallback = {
+    topic,
+    proposal,
+    proposer: proposal?.author ?? 'Unknown',
+    budget: proposal?.budgetLabel ?? null,
+    firstPostExcerpt: proposal?.summary ?? '',
+    latestPostAuthor: proposal?.author ?? 'Unknown',
+    latestPostCreatedAt: topic.last_posted_at ?? topic.bumped_at ?? topic.created_at,
+    latestPostExcerpt: '',
+    latestPostNumber: undefined,
+    newPostCount: Math.max(0, topic.posts_count - (previous?.posts_count ?? topic.posts_count)),
+  } satisfies DigestTopic;
+  try {
+    const posts = await fetchTopicDetail(topic);
+    const firstPost = posts.find((post) => post.post_number === 1) ?? posts[0];
+    const latestPost = posts.at(-1) ?? firstPost;
+    const firstText = stripForumHtml(firstPost?.cooked);
+    return {
+      ...fallback,
+      proposer: firstPost?.username ?? fallback.proposer,
+      budget: proposal?.budgetLabel ?? extractDigestBudget(firstText),
+      firstPostExcerpt: clipped(firstText || fallback.firstPostExcerpt),
+      latestPostAuthor: latestPost?.username ?? fallback.latestPostAuthor,
+      latestPostCreatedAt: latestPost?.created_at ?? fallback.latestPostCreatedAt,
+      latestPostExcerpt: clipped(stripForumHtml(latestPost?.cooked)),
+      latestPostNumber: latestPost?.post_number,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+function digestDate(locale: Locale, value = new Date()) {
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'zh-CN', {
+    year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Shanghai',
+  }).format(value);
+}
+
+function digestTime(locale: Locale, value?: string | Date) {
+  if (!value) return '';
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'zh-CN', {
+    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Shanghai',
+  }).format(date);
+}
+
+function localizedTitle(item: DigestTopic, locale: Locale) {
+  return item.proposal ? getProposalTitle(item.proposal, locale) : item.topic.title.replace(/^\s*[[(]\s*DIS\s*[\])]?\s*/i, '').trim();
+}
+
+function localizedOverview(item: DigestTopic, locale: Locale) {
+  return item.proposal ? cleanSummary(item.proposal, 320, locale) : clipped(item.firstPostExcerpt || (locale === 'en' ? 'Open the source discussion to read the full proposal.' : '请打开原始讨论阅读完整提案。'));
+}
+
+function localizedStatus(item: DigestTopic, locale: Locale) {
+  const tags = item.proposal ? getProposalStatusTags(item.proposal) : ['discussion'] as const;
+  return tags.map((tag) => statusMeta[tag][locale]).join(' · ');
+}
+
+function localizedType(item: DigestTopic, locale: Locale) {
+  if (!item.proposal) return locale === 'en' ? 'Proposal' : '提案';
+  return locale === 'en' ? item.proposal.projectType : projectTypeLabels[item.proposal.projectType] ?? item.proposal.projectType;
+}
+
+function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: DigestTopic[], unsubscribeUrl: string) {
   const en = locale === 'en';
-  const total = newTopics.length + updatedTopics.length;
-  const section = (title: string, topics: Topic[]) => topics.length
-    ? `<h2 style="margin:28px 0 12px;font-size:18px">${title}</h2><ul style="padding:0;margin:0">${topics.map((topic) => `<li style="margin:0 0 12px;padding:15px;border:1px solid #dce3de;border-radius:14px;list-style:none"><a href="${topicUrl(topic)}" style="color:#087958;text-decoration:none;font-weight:bold">${esc(topic.title)}</a><div style="margin-top:7px;color:#7a847f;font-size:12px">${topic.posts_count} ${en ? 'posts' : '篇帖子'}</div></li>`).join('')}</ul>`
-    : '';
+  const newCount = newTopics.length;
+  const updatedCount = updatedTopics.length;
+  const plural = (count: number, singular: string, pluralValue = `${singular}s`) => count === 1 ? singular : pluralValue;
+  const subject = en
+    ? `CKB Community Fund DAO: ${newCount} new ${plural(newCount, 'proposal')}, ${updatedCount} ${plural(updatedCount, 'proposal update')}`
+    : `CKB Community Fund DAO：${newCount} 份新提案，${updatedCount} 条进展更新`;
+  const generatedAt = digestTime(locale, new Date());
+  const dateLabel = digestDate(locale);
+  const greeting = en ? 'Hello, CKB community 👋' : '你好，CKB 社区的朋友 👋';
   const intro = en
-    ? `${newTopics.length} new proposal(s) and ${updatedTopics.length} updated proposal(s) were detected.`
-    : `检测到 ${newTopics.length} 份新提案和 ${updatedTopics.length} 份有更新的提案。`;
+    ? `Here is today’s Community Fund DAO digest. Thank you for following how community funds are discussed, voted on, and put to work.`
+    : '这是今天的 Community Fund DAO 提案动态。感谢你持续关注社区资金如何被讨论、投票与执行。';
+  const summary = en
+    ? `${newCount} new ${plural(newCount, 'proposal')} and ${updatedCount} ${plural(updatedCount, 'proposal update')} were detected.`
+    : `今天检测到 ${newCount} 份新提案和 ${updatedCount} 条提案进展更新。`;
+  const stats = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:22px 0;border-collapse:separate;border-spacing:8px 0"><tr><td width="50%" style="background:#f1f5ef;border-radius:14px;padding:16px"><div style="font-size:24px;font-weight:bold;color:#087958">${newCount}</div><div style="margin-top:4px;color:#65706a;font-size:12px">${en ? plural(newCount, 'new proposal') : '新提案'}</div></td><td width="50%" style="background:#f1f5ef;border-radius:14px;padding:16px"><div style="font-size:24px;font-weight:bold;color:#087958">${updatedCount}</div><div style="margin-top:4px;color:#65706a;font-size:12px">${en ? plural(updatedCount, 'proposal update') : '进展更新'}</div></td></tr></table>`;
+  const proposalCard = (item: DigestTopic) => {
+    const title = localizedTitle(item, locale);
+    const overview = localizedOverview(item, locale);
+    const status = localizedStatus(item, locale);
+    const type = localizedType(item, locale);
+    const budget = item.budget ?? (en ? 'Not stated' : '未标明');
+    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'New proposal' : '新提案'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:10px 0 14px;color:#4d5953;font-size:14px;line-height:1.7">${esc(overview)}</p><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="font-size:12px;color:#65706a"><tr><td style="padding:4px 8px 4px 0"><b style="color:#0b0f0e">${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}</td><td style="padding:4px 0"><b style="color:#0b0f0e">${en ? 'Budget' : '预算'}:</b> ${esc(budget)}</td></tr><tr><td style="padding:4px 8px 4px 0"><b style="color:#0b0f0e">${en ? 'Type' : '类型'}:</b> ${esc(type)}</td><td style="padding:4px 0"><b style="color:#0b0f0e">${en ? 'Status' : '状态'}:</b> ${esc(status)}</td></tr></table><p style="margin:16px 0 0"><a href="${proposalUrl(item.topic)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View proposal' : '查看提案'}</a> <a href="${topicUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Source discussion →' : '原始讨论 →'}</a></p></li>`;
+  };
+  const updateCard = (item: DigestTopic) => {
+    const title = localizedTitle(item, locale);
+    const status = localizedStatus(item, locale);
+    const postCount = item.newPostCount > 0
+      ? en ? `${item.newPostCount} new ${plural(item.newPostCount, 'post')}` : `新增 ${item.newPostCount} 篇帖子`
+      : en ? 'New activity detected' : '检测到新动态';
+    const postedAt = digestTime(locale, item.latestPostCreatedAt);
+    const metadata = en
+      ? `Posted by ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''} · ${postCount}`
+      : `由 ${item.latestPostAuthor} 发布${postedAt ? ` · ${postedAt}` : ''} · ${postCount}`;
+    const excerpt = item.latestPostExcerpt || (en ? 'A new reply or proposal update was posted. Open the discussion to read it.' : '该提案出现了新的回复或进展，请打开讨论查看详情。');
+    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'Proposal update' : '提案进展'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:8px 0;color:#7a847f;font-size:12px">${esc(metadata)}</p><p style="margin:12px 0 0;color:#4d5953;font-size:14px;line-height:1.7">${esc(excerpt)}</p><p style="margin:16px 0 0"><a href="${topicUrl(item.topic, item.latestPostNumber)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View this update' : '查看本次更新'}</a> <a href="${proposalUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Proposal record →' : '提案记录 →'}</a></p></li>`;
+  };
+  const section = (title: string, items: DigestTopic[], render: (item: DigestTopic) => string) => items.length
+    ? `<h2 style="margin:30px 0 12px;font-size:19px">${title}</h2><ul style="padding:0;margin:0">${items.map(render).join('')}</ul>`
+    : '';
   const footer = en
-    ? `You subscribed to daily proposal updates. <a href="${esc(unsubscribeUrl)}">Unsubscribe</a>.`
-    : `你订阅了每日提案更新。<a href="${esc(unsubscribeUrl)}">取消订阅</a>。`;
-  const textItems = [...newTopics, ...updatedTopics].map((topic) => `- ${topic.title}: ${topicUrl(topic)}`).join('\n');
+    ? `You receive this email because you subscribed to daily proposal updates. Generated at ${esc(generatedAt)} China Standard Time. <a href="${esc(unsubscribeUrl)}">Unsubscribe</a>.`
+    : `你收到此邮件是因为订阅了每日提案更新。本期汇总生成于北京时间 ${esc(generatedAt)}。<a href="${esc(unsubscribeUrl)}">取消订阅</a>。`;
+  const preheader = en
+    ? `${newCount} new ${plural(newCount, 'proposal')} and ${updatedCount} ${plural(updatedCount, 'proposal update')} in today’s digest.`
+    : `今日汇总：${newCount} 份新提案，${updatedCount} 条进展更新。`;
+  const textItem = (item: DigestTopic, updated: boolean) => {
+    const title = localizedTitle(item, locale);
+    if (updated) return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}\n${item.latestPostExcerpt}\n${topicUrl(item.topic, item.latestPostNumber)}`;
+    return `${title}\n${en ? 'Proposer' : '提案人'}: ${item.proposer}\n${en ? 'Budget' : '预算'}: ${item.budget ?? (en ? 'Not stated' : '未标明')}\n${localizedOverview(item, locale)}\n${proposalUrl(item.topic)}`;
+  };
+  const textSections = [
+    newTopics.length ? `${en ? 'NEW PROPOSALS' : '新提案'}\n\n${newTopics.map((item) => textItem(item, false)).join('\n\n')}` : '',
+    updatedTopics.length ? `${en ? 'PROPOSAL UPDATES' : '提案进展'}\n\n${updatedTopics.map((item) => textItem(item, true)).join('\n\n')}` : '',
+  ].filter(Boolean).join('\n\n');
+  const content = `<p style="margin:0 0 8px;color:#087958;font-size:12px;font-weight:bold;letter-spacing:.05em;text-transform:uppercase">${esc(dateLabel)} · ${en ? 'Daily proposal digest' : '每日提案动态'}</p><h1 style="margin:0 0 14px;font-size:28px;line-height:1.25">${greeting}</h1><p style="margin:0;color:#4d5953;line-height:1.75">${intro}</p><p style="margin:12px 0 0;color:#0b0f0e;font-weight:bold;line-height:1.6">${summary}</p>${stats}${section(en ? 'New proposals' : '新提案', newTopics, proposalCard)}${section(en ? 'Proposal updates' : '提案进展更新', updatedTopics, updateCard)}<p style="margin:28px 0 0"><a href="${siteUrl()}/projects" style="color:#087958;font-weight:bold;text-decoration:none">${en ? 'Open the full proposal directory →' : '查看完整提案目录 →'}</a></p>`;
   return {
-    subject: en ? `CKB Community Fund DAO: ${total} proposal update${total === 1 ? '' : 's'}` : `CKB Community Fund DAO：${total} 条提案动态`,
-    html: shell(`<h1 style="margin:0 0 14px">${en ? 'Today’s proposal digest' : '今日提案更新汇总'}</h1><p style="color:#4d5953;line-height:1.75">${intro}</p>${section(en ? 'New proposals' : '新提案', newTopics)}${section(en ? 'Proposal updates' : '提案更新', updatedTopics)}<a href="${siteUrl()}/projects" style="color:#087958;font-weight:bold;text-decoration:none">${en ? 'Open proposal directory →' : '查看提案目录 →'}</a>`, footer),
-    text: `${intro}\n\n${textItems}\n\n${en ? 'Unsubscribe' : '取消订阅'}: ${unsubscribeUrl}`,
+    subject,
+    html: shell(content, footer, preheader),
+    text: `${greeting}\n${dateLabel}\n\n${intro}\n${summary}\n\n${textSections}\n\n${en ? 'Open the proposal directory' : '查看提案目录'}: ${siteUrl()}/projects\n${en ? 'Unsubscribe' : '取消订阅'}: ${unsubscribeUrl}`,
   };
 }
 
@@ -228,6 +423,10 @@ async function digest(request: Request) {
       if (runId) await db<void>('digest_runs', `id=eq.${runId}`, { method: 'PATCH', body: { status: 'no_changes', completed_at: new Date().toISOString() } });
       return json({ ok: true, changes: 0, sent: 0 });
     }
+    const [freshDigestTopics, updatedDigestTopics] = await Promise.all([
+      Promise.all(fresh.map((topic) => buildDigestTopic(topic))),
+      Promise.all(updated.map((topic) => buildDigestTopic(topic, byId.get(topic.id)))),
+    ]);
     const subscribers = await db<Subscriber[]>('email_subscribers', 'select=*&status=eq.confirmed');
     let sent = 0;
     let failed = 0;
@@ -235,7 +434,7 @@ async function digest(request: Request) {
       const chunk = subscribers.slice(offset, offset + 10);
       const results = await Promise.allSettled(chunk.map(async (subscriber) => {
         const unsubscribeUrl = `${siteUrl()}/api/unsubscribe?token=${subscriber.unsubscribe_token}`;
-        await sendEmail(subscriber.email, digestMessage(subscriber.locale, fresh, updated, unsubscribeUrl));
+        await sendEmail(subscriber.email, digestMessage(subscriber.locale, freshDigestTopics, updatedDigestTopics, unsubscribeUrl));
         await db<void>('email_subscribers', `id=eq.${subscriber.id}`, { method: 'PATCH', body: { last_sent_at: new Date().toISOString() } });
       }));
       results.forEach((result) => result.status === 'fulfilled' ? sent += 1 : failed += 1);
