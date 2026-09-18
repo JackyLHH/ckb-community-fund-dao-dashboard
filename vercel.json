@@ -29,6 +29,10 @@
       "destination": "/api/subscription?action=unsubscribe"
     },
     {
+      "source": "/api/telegram",
+      "destination": "/api/subscription?action=telegram"
+    },
+    {
       "source": "/api/webhooks/resend",
       "destination": "/api/subscription?action=resend-webhook"
     },

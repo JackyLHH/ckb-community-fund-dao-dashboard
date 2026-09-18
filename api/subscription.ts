@@ -72,6 +72,18 @@ type ResendWebhookEvent = {
     to?: string[];
   };
 };
+type TelegramApiResponse = {
+  ok?: boolean;
+  description?: string;
+  result?: { message_id?: number };
+  parameters?: { retry_after?: number };
+};
+type TelegramDelivery = {
+  configured: boolean;
+  locale: Locale;
+  messagesSent: number;
+  messageIds: number[];
+};
 
 const proposalById = new Map(proposals.map((proposal) => [proposal.id, proposal]));
 
@@ -116,6 +128,39 @@ async function sendEmail(to: string, message: EmailMessage) {
     }),
   });
   if (!response.ok) throw new Error(`Email ${response.status}: ${(await response.text()).slice(0, 400)}`);
+}
+
+const telegramChannel = (locale: Locale) => process.env[locale === 'en' ? 'TELEGRAM_CHANNEL_EN' : 'TELEGRAM_CHANNEL_ZH']?.trim();
+
+function telegramChannelUrl(locale: Locale) {
+  const explicit = process.env[locale === 'en' ? 'TELEGRAM_CHANNEL_URL_EN' : 'TELEGRAM_CHANNEL_URL_ZH']?.trim();
+  if (explicit) return explicit;
+  const channel = telegramChannel(locale);
+  if (channel?.startsWith('@')) return `https://t.me/${channel.slice(1)}`;
+  throw new Error(`Missing public Telegram channel URL for ${locale}`);
+}
+
+const wait = (milliseconds: number) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function sendTelegramMessage(chatId: string, text: string, retry = true): Promise<number | undefined> {
+  const response = await fetch(`https://api.telegram.org/bot${requiredEnv('TELEGRAM_BOT_TOKEN')}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+      link_preview_options: { is_disabled: true },
+    }),
+    signal: AbortSignal.timeout(20_000),
+  });
+  const payload = await response.json().catch(() => ({})) as TelegramApiResponse;
+  if ((!response.ok || !payload.ok) && response.status === 429 && retry && payload.parameters?.retry_after) {
+    await wait((payload.parameters.retry_after + 1) * 1_000);
+    return await sendTelegramMessage(chatId, text, false);
+  }
+  if (!response.ok || !payload.ok) throw new Error(`Telegram ${response.status}: ${(payload.description ?? 'Unknown error').slice(0, 300)}`);
+  return payload.result?.message_id;
 }
 
 function token() {
@@ -334,6 +379,67 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
   };
 }
 
+function telegramDigestMessages(locale: Locale, newTopics: DigestTopic[], updatedTopics: DigestTopic[]) {
+  const en = locale === 'en';
+  const newCount = newTopics.length;
+  const updatedCount = updatedTopics.length;
+  const dateLabel = digestDate(locale);
+  const plural = (count: number, singular: string, pluralValue = `${singular}s`) => count === 1 ? singular : pluralValue;
+  const header = en
+    ? `<b>Hello, CKB community 👋</b>\n\n${esc(dateLabel)} · Daily proposal digest\n${newCount} new ${plural(newCount, 'proposal')} · ${updatedCount} ${plural(updatedCount, 'proposal update')}`
+    : `<b>你好，CKB 社区的朋友 👋</b>\n\n${esc(dateLabel)} · 每日提案动态\n${newCount} 份新提案 · ${updatedCount} 条进展更新`;
+  const newProposalBlock = (item: DigestTopic) => {
+    const title = localizedTitle(item, locale);
+    const overview = clipped(localizedOverview(item, locale), 520);
+    const status = localizedStatus(item, locale);
+    const type = localizedType(item, locale);
+    const budget = item.budget ?? (en ? 'Not stated' : '未标明');
+    return `${en ? '<b>🆕 New proposal</b>' : '<b>🆕 新提案</b>'}\n<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n${esc(overview)}\n\n<b>${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}\n<b>${en ? 'Budget' : '预算'}:</b> ${esc(budget)}\n<b>${en ? 'Type' : '类型'}:</b> ${esc(type)}\n<b>${en ? 'Status' : '状态'}:</b> ${esc(status)}\n<a href="${esc(proposalUrl(item.topic))}">${en ? 'View proposal' : '查看提案'}</a> · <a href="${esc(topicUrl(item.topic))}">${en ? 'Source discussion' : '原始讨论'}</a>`;
+  };
+  const updateBlock = (item: DigestTopic) => {
+    const title = localizedTitle(item, locale);
+    const status = localizedStatus(item, locale);
+    const excerpt = clipped(item.latestPostExcerpt || (en ? 'A new reply or proposal update was posted.' : '该提案出现了新的回复或进展。'), 620);
+    const postedAt = digestTime(locale, item.latestPostCreatedAt);
+    const postCount = item.newPostCount > 0
+      ? en ? `${item.newPostCount} new ${plural(item.newPostCount, 'post')}` : `新增 ${item.newPostCount} 篇帖子`
+      : en ? 'New activity detected' : '检测到新动态';
+    return `${en ? '<b>🔄 Proposal update</b>' : '<b>🔄 提案进展更新</b>'}\n<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n${esc(excerpt)}\n\n<b>${en ? 'Updated by' : '更新者'}:</b> ${esc(item.latestPostAuthor)}${postedAt ? ` · ${esc(postedAt)}` : ''}\n<b>${en ? 'Activity' : '动态'}:</b> ${esc(postCount)}\n<b>${en ? 'Status' : '状态'}:</b> ${esc(status)}\n<a href="${esc(topicUrl(item.topic, item.latestPostNumber))}">${en ? 'View this update' : '查看本次更新'}</a> · <a href="${esc(proposalUrl(item.topic))}">${en ? 'Proposal record' : '提案记录'}</a>`;
+  };
+  const blocks = [
+    ...newTopics.map(newProposalBlock),
+    ...updatedTopics.map(updateBlock),
+    `<a href="${siteUrl()}/projects">${en ? 'Open the full proposal directory →' : '查看完整提案目录 →'}</a>`,
+  ];
+  const messages: string[] = [];
+  let current = header;
+  for (const block of blocks) {
+    const candidate = `${current}\n\n────────\n\n${block}`;
+    if (candidate.length > 3_800) {
+      messages.push(current);
+      current = block;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) messages.push(current);
+  return messages;
+}
+
+async function sendTelegramDigest(locale: Locale, newTopics: DigestTopic[], updatedTopics: DigestTopic[]): Promise<TelegramDelivery> {
+  const channel = telegramChannel(locale);
+  if (!channel) return { configured: false, locale, messagesSent: 0, messageIds: [] };
+  requiredEnv('TELEGRAM_BOT_TOKEN');
+  const messages = telegramDigestMessages(locale, newTopics, updatedTopics);
+  const messageIds: number[] = [];
+  for (let index = 0; index < messages.length; index += 1) {
+    const messageId = await sendTelegramMessage(channel, messages[index]);
+    if (messageId !== undefined) messageIds.push(messageId);
+    if (index < messages.length - 1) await wait(1_100);
+  }
+  return { configured: true, locale, messagesSent: messages.length, messageIds };
+}
+
 function isProposal(title: string) {
   const value = title.trim();
   if (/^\s*(?:\[|\()\s*(?:status\s+update|ann|issue)\s*(?:\]|\))/i.test(value)) return false;
@@ -530,12 +636,39 @@ async function digest(request: Request) {
       }));
       results.forEach((result) => result.status === 'fulfilled' ? sent += 1 : failed += 1);
     }
+    const telegramResults = await Promise.allSettled([
+      sendTelegramDigest('zh', freshDigestTopics, updatedDigestTopics),
+      sendTelegramDigest('en', freshDigestTopics, updatedDigestTopics),
+    ]);
+    const telegramDeliveries = telegramResults
+      .filter((result): result is PromiseFulfilledResult<TelegramDelivery> => result.status === 'fulfilled')
+      .map((result) => result.value);
+    const telegramFailed = telegramResults.filter((result) => result.status === 'rejected').length;
+    const telegramMessages = telegramDeliveries.reduce((total, delivery) => total + delivery.messagesSent, 0);
+    const telegramConfigured = telegramDeliveries.filter((delivery) => delivery.configured).map((delivery) => delivery.locale);
+    const deliveryErrors = telegramResults
+      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .map((result) => result.reason instanceof Error ? result.reason.message : 'Unknown Telegram error');
     await saveStates(topics);
     if (runId) await db<void>('digest_runs', `id=eq.${runId}`, {
       method: 'PATCH',
-      body: { status: failed ? 'partial' : 'completed', completed_at: new Date().toISOString(), new_proposals: fresh.length, updated_proposals: updated.length, recipients: sent, error_message: failed ? `${failed} delivery failure(s)` : null },
+      body: {
+        status: failed || telegramFailed ? 'partial' : 'completed',
+        completed_at: new Date().toISOString(),
+        new_proposals: fresh.length,
+        updated_proposals: updated.length,
+        recipients: sent,
+        error_message: [failed ? `${failed} email delivery failure(s)` : '', ...deliveryErrors].filter(Boolean).join('; ').slice(0, 500) || null,
+      },
     });
-    return json({ ok: !failed, newProposals: fresh.length, updatedProposals: updated.length, sent, failed }, failed ? 207 : 200);
+    const partial = failed > 0 || telegramFailed > 0;
+    return json({
+      ok: !partial,
+      newProposals: fresh.length,
+      updatedProposals: updated.length,
+      email: { sent, failed },
+      telegram: { configuredLocales: telegramConfigured, messagesSent: telegramMessages, failed: telegramFailed },
+    }, partial ? 207 : 200);
   } catch (error) {
     console.error('Daily digest failed', error);
     if (runId) await db<void>('digest_runs', `id=eq.${runId}`, { method: 'PATCH', body: { status: 'failed', completed_at: new Date().toISOString(), error_message: error instanceof Error ? error.message.slice(0, 500) : 'Unknown error' } }).catch(() => undefined);
@@ -561,6 +694,10 @@ export async function GET(request: Request) {
   try {
     if (action === 'confirm') return await updateSubscription(request, 'confirm');
     if (action === 'unsubscribe') return await updateSubscription(request, 'unsubscribe');
+    if (action === 'telegram') {
+      const locale = new URL(request.url).searchParams.get('locale') === 'en' ? 'en' : 'zh';
+      return Response.redirect(telegramChannelUrl(locale), 302);
+    }
     if (action === 'digest') return await digest(request);
     return json({ ok: false }, 404);
   } catch (error) {

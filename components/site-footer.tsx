@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, type SubmitEvent } from 'react';
-import { ArrowRight, CheckCircle2, Mail } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ExternalLink, Mail, Send } from 'lucide-react';
 import { useLocale } from '@/lib/use-locale';
 
 type FormState = 'idle' | 'submitting' | 'confirmation_sent' | 'already_subscribed' | 'confirmed' | 'unsubscribed' | 'error';
@@ -66,6 +66,18 @@ function NewsletterSubscription() {
           </form>
           <p className="mt-3 text-xs leading-5 text-white/38">{t('需要通过邮件确认，可随时取消订阅。', 'Email confirmation is required. Unsubscribe at any time.')}</p>
           {feedback[state] && <p className={`mt-4 flex items-center gap-2 text-sm ${state === 'error' ? 'text-[#ff9aa3]' : 'text-[#c8ff67]'}`} aria-live="polite">{state !== 'error' && <CheckCircle2 className="size-4 shrink-0" />}{feedback[state]}</p>}
+          <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-white/12 bg-white/[.045] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#229ed9]/15 text-[#65c8f5]"><Send className="size-5" /></span>
+              <div>
+                <p className="text-sm font-black">{t('通过 Telegram 接收更新', 'Get updates on Telegram')}</p>
+                <p className="mt-1 text-xs leading-5 text-white/42">{t('加入中文频道，每天接收同一份提案汇总。', 'Join the English channel for the same daily proposal digest.')}</p>
+              </div>
+            </div>
+            <a href={`/api/telegram?locale=${locale}`} target="_blank" rel="noreferrer" className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full border border-white/16 px-4 text-xs font-black text-white transition hover:border-[#65c8f5]/70 hover:bg-[#229ed9]/10">
+              {t('加入 Telegram 频道', 'Join Telegram channel')}<ExternalLink className="size-3.5" />
+            </a>
+          </div>
         </div>
       </div>
     </section>
