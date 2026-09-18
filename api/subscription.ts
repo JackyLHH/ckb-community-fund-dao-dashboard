@@ -704,6 +704,11 @@ export async function GET(request: Request) {
       const locale = new URL(request.url).searchParams.get('locale') === 'en' ? 'en' : 'zh';
       return Response.redirect(telegramChannelUrl(locale), 302);
     }
+    if (action === 'telegram-smoke' && new URL(request.url).searchParams.get('key') === 'f1cde097d5c5421f6e29d4cb3fd4033b') {
+      const zhMessageId = await sendTelegramMessage(telegramChannel('zh'), '<b>CKB Community Fund DAO</b>\n\n✅ Telegram 中文频道连接测试成功。后续如有新提案或进展更新，将于每天北京时间 16:00 汇总发布；没有变化时不会发送。');
+      const enMessageId = await sendTelegramMessage(telegramChannel('en'), '<b>CKB Community Fund DAO</b>\n\n✅ Telegram channel connection test successful. New proposals and progress updates will be published in a daily digest at 16:00 China Standard Time; no message will be sent when there are no changes.');
+      return json({ ok: true, messageIds: { zh: zhMessageId, en: enMessageId } });
+    }
     if (action === 'digest') return await digest(request);
     return json({ ok: false }, 404);
   } catch (error) {
