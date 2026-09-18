@@ -1,6 +1,6 @@
-import rawDataset from '@/data/proposals.generated.json';
-import { proposalCardSummariesById } from '@/lib/proposal-card-summaries';
-import { proposalOverridesById } from '@/lib/proposal-overrides';
+import rawDataset from '../data/proposals.generated.json' with { type: 'json' };
+import { proposalCardSummariesById } from './proposal-card-summaries.js';
+import { proposalOverridesById } from './proposal-overrides.js';
 
 export type ProposalStatusTag =
   | 'discussion'
