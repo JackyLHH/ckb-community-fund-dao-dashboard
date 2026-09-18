@@ -32,15 +32,13 @@ The `main` branch is connected to the production Vercel project. Pushing to `mai
 
 The production cron calls `/api/cron/digest` at `08:00 UTC` (`16:00` China Standard Time). The same detected proposal changes are delivered to confirmed email subscribers and, when configured, to separate Chinese and English Telegram channels.
 
-Telegram delivery uses one Bot API token and the following Vercel environment variables:
+Telegram delivery uses one Bot API token in Vercel:
 
 ```text
 TELEGRAM_BOT_TOKEN
-TELEGRAM_CHANNEL_ZH
-TELEGRAM_CHANNEL_EN
 ```
 
-For public channels, set the channel targets to usernames such as `@CKBCommunityFundDAO_CN`; the website derives the corresponding `https://t.me/...` subscription links automatically. For private channels or custom invite links, also set:
+The production defaults are `@CKBCommunityFundDAO_CN` for Chinese and `@CKBCommunityFundDAO` for English. They can be overridden with `TELEGRAM_CHANNEL_ZH` and `TELEGRAM_CHANNEL_EN`. The website derives public `https://t.me/...` subscription links automatically. For private channels or custom invite links, also set:
 
 ```text
 TELEGRAM_CHANNEL_URL_ZH

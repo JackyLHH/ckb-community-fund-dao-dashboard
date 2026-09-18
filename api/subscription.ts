@@ -130,7 +130,13 @@ async function sendEmail(to: string, message: EmailMessage) {
   if (!response.ok) throw new Error(`Email ${response.status}: ${(await response.text()).slice(0, 400)}`);
 }
 
-const telegramChannel = (locale: Locale) => process.env[locale === 'en' ? 'TELEGRAM_CHANNEL_EN' : 'TELEGRAM_CHANNEL_ZH']?.trim();
+const TELEGRAM_CHANNELS: Record<Locale, string> = {
+  zh: '@CKBCommunityFundDAO_CN',
+  en: '@CKBCommunityFundDAO',
+};
+
+const telegramChannel = (locale: Locale) =>
+  process.env[locale === 'en' ? 'TELEGRAM_CHANNEL_EN' : 'TELEGRAM_CHANNEL_ZH']?.trim() || TELEGRAM_CHANNELS[locale];
 
 function telegramChannelUrl(locale: Locale) {
   const explicit = process.env[locale === 'en' ? 'TELEGRAM_CHANNEL_URL_EN' : 'TELEGRAM_CHANNEL_URL_ZH']?.trim();
