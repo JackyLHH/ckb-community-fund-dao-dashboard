@@ -29,6 +29,10 @@
       "destination": "/api/subscription?action=unsubscribe"
     },
     {
+      "source": "/api/webhooks/resend",
+      "destination": "/api/subscription?action=resend-webhook"
+    },
+    {
       "source": "/api/cron/digest",
       "destination": "/api/subscription?action=digest"
     },

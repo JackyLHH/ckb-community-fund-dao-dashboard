@@ -10,6 +10,8 @@ import {
 
 const forumBaseUrl = 'https://talk.nervos.org';
 const categoryPath = '/c/daos-funding/ckb-community-fund-dao/65.json';
+const publicSiteUrl = 'https://ckbcommunityfunddao.xyz';
+const replyTo = 'jacky@ckba.build';
 
 type Locale = 'zh' | 'en';
 type Subscriber = {
@@ -58,11 +60,23 @@ type DigestTopic = {
   latestPostNumber?: number;
   newPostCount: number;
 };
+type EmailMessage = {
+  subject: string;
+  html: string;
+  text: string;
+  headers?: Record<string, string>;
+};
+type ResendWebhookEvent = {
+  type?: string;
+  data?: {
+    to?: string[];
+  };
+};
 
 const proposalById = new Map(proposals.map((proposal) => [proposal.id, proposal]));
 
 const json = (data: unknown, status = 200) => Response.json(data, { status });
-const siteUrl = () => (process.env.SITE_URL ?? 'https://ckb-community-fund-dao-dashboard.vercel.app').replace(/\/$/, '');
+const siteUrl = () => publicSiteUrl;
 const requiredEnv = (name: string) => {
   const value = process.env[name];
   if (!value) throw new Error(`Missing ${name}`);
@@ -90,13 +104,14 @@ async function db<T>(
   return (text ? JSON.parse(text) : undefined) as T;
 }
 
-async function sendEmail(to: string, message: { subject: string; html: string; text: string }) {
+async function sendEmail(to: string, message: EmailMessage) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${requiredEnv('RESEND_API_KEY')}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       from: process.env.EMAIL_FROM ?? 'CKB Community Fund DAO <updates@mail.ckbcommunityfunddao.xyz>',
       to: [to],
+      reply_to: replyTo,
       ...message,
     }),
   });
@@ -117,16 +132,19 @@ function shell(content: string, footer: string, preheader = '') {
 
 function confirmationMessage(locale: Locale, url: string) {
   const en = locale === 'en';
-  const heading = en ? 'One click to confirm' : '还差一步：确认订阅';
+  const greeting = en ? 'Hello, and welcome to the CKB community 👋' : '你好，欢迎加入 CKB 社区 👋';
+  const heading = en ? 'Please confirm your subscription' : '请确认你的订阅';
   const body = en
-    ? 'After confirmation, you will receive one daily digest at 16:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
-    : '确认后，当网站发现新提案或提案更新时，你会在每天北京时间 16:00 收到一封汇总邮件；没有变化时不会发送。';
+    ? 'Thank you for subscribing to CKB Community Fund DAO proposal updates. Please use the button below to confirm that this email address belongs to you. After confirmation, you will receive one daily digest at 16:00 China Standard Time when new proposals or proposal updates are detected. No changes means no email.'
+    : '感谢你订阅 CKB Community Fund DAO 提案动态。请点击下方按钮，确认这个邮箱地址属于你。确认后，当网站发现新提案或提案更新时，你会在每天北京时间 16:00 收到一封汇总邮件；没有变化时不会发送。';
   const button = en ? 'Confirm subscription' : '确认订阅';
-  const footer = en ? 'Ignore this email if you did not request it.' : '如果不是你操作，请忽略此邮件。';
+  const footer = en
+    ? `Questions or feedback? Simply reply to this email. If you did not request this subscription, you can safely ignore it.`
+    : '如果你有任何问题或建议，直接回复这封邮件即可。如果不是你发起的订阅，可以放心忽略此邮件。';
   return {
     subject: en ? 'Confirm your CKB Community Fund DAO subscription' : '确认订阅 CKB Community Fund DAO 提案更新',
-    html: shell(`<h1 style="margin:0 0 14px">${heading}</h1><p style="color:#4d5953;line-height:1.75">${body}</p><a href="${esc(url)}" style="display:inline-block;margin-top:16px;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:13px 20px;font-weight:bold">${button}</a><p style="margin-top:24px;color:#7a847f;font-size:12px;word-break:break-all">${esc(url)}</p>`, footer, heading),
-    text: `${heading}\n\n${body}\n\n${button}: ${url}\n\n${footer}`,
+    html: shell(`<p style="margin:0 0 10px;color:#087958;font-weight:bold">${greeting}</p><h1 style="margin:0 0 14px">${heading}</h1><p style="color:#4d5953;line-height:1.75">${body}</p><a href="${esc(url)}" style="display:inline-block;margin-top:16px;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:13px 20px;font-weight:bold">${button}</a>`, footer, heading),
+    text: `${greeting}\n\n${heading}\n\n${body}\n\n${button}: ${url}\n\n${footer}`,
   };
 }
 
@@ -309,6 +327,10 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
     subject,
     html: shell(content, footer, preheader),
     text: `${greeting}\n${dateLabel}\n\n${intro}\n${summary}\n\n${textSections}\n\n${en ? 'Open the proposal directory' : '查看提案目录'}: ${siteUrl()}/projects\n${en ? 'Unsubscribe' : '取消订阅'}: ${unsubscribeUrl}`,
+    headers: {
+      'List-Unsubscribe': `<${unsubscribeUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
   };
 }
 
@@ -360,6 +382,9 @@ async function subscribe(request: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) return json({ ok: false, code: 'invalid_email' }, 400);
   const existing = await db<Subscriber[]>('email_subscribers', `select=*&email=eq.${encodeURIComponent(email)}&limit=1`);
   if (existing[0]?.status === 'confirmed') return json({ ok: true, code: 'already_subscribed' });
+  if (['bounced', 'complained', 'suppressed'].includes(existing[0]?.status ?? '')) {
+    return json({ ok: false, code: 'delivery_blocked' }, 409);
+  }
   const confirmationToken = token();
   const record = {
     email,
@@ -378,12 +403,16 @@ async function subscribe(request: Request) {
   return json({ ok: true, code: 'confirmation_sent' });
 }
 
-async function updateSubscription(request: Request, action: 'confirm' | 'unsubscribe') {
+async function updateSubscription(request: Request, action: 'confirm' | 'unsubscribe', redirect = true) {
   const value = new URL(request.url).searchParams.get('token') ?? '';
-  if (!/^[a-f0-9]{64}$/.test(value)) return Response.redirect(`${siteUrl()}/?subscription=invalid`, 302);
+  if (!/^[a-f0-9]{64}$/.test(value)) {
+    return redirect ? Response.redirect(`${siteUrl()}/?subscription=invalid`, 302) : json({ ok: false }, 400);
+  }
   const column = action === 'confirm' ? 'confirmation_token' : 'unsubscribe_token';
   const matches = await db<Subscriber[]>('email_subscribers', `select=*&${column}=eq.${value}&limit=1`);
-  if (!matches[0]) return Response.redirect(`${siteUrl()}/?subscription=invalid`, 302);
+  if (!matches[0]) {
+    return redirect ? Response.redirect(`${siteUrl()}/?subscription=invalid`, 302) : json({ ok: true });
+  }
   const now = new Date().toISOString();
   await db<void>('email_subscribers', `id=eq.${matches[0].id}`, {
     method: 'PATCH',
@@ -391,7 +420,69 @@ async function updateSubscription(request: Request, action: 'confirm' | 'unsubsc
       ? { status: 'confirmed', confirmed_at: now, unsubscribed_at: null }
       : { status: 'unsubscribed', unsubscribed_at: now },
   });
-  return Response.redirect(`${siteUrl()}/?subscription=${action === 'confirm' ? 'confirmed' : 'unsubscribed'}`, 302);
+  return redirect
+    ? Response.redirect(`${siteUrl()}/?subscription=${action === 'confirm' ? 'confirmed' : 'unsubscribed'}`, 302)
+    : json({ ok: true });
+}
+
+function decodeBase64(value: string) {
+  const decoded = atob(value);
+  return Uint8Array.from(decoded, (character) => character.charCodeAt(0));
+}
+
+function constantTimeEqual(left: string, right: string) {
+  if (left.length !== right.length) return false;
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  }
+  return difference === 0;
+}
+
+async function verifyResendWebhook(request: Request, payload: string) {
+  const webhookId = request.headers.get('svix-id') ?? '';
+  const timestamp = request.headers.get('svix-timestamp') ?? '';
+  const signatureHeader = request.headers.get('svix-signature') ?? '';
+  const timestampNumber = Number(timestamp);
+  if (!webhookId || !Number.isFinite(timestampNumber) || Math.abs(Date.now() / 1000 - timestampNumber) > 300) return false;
+
+  const encodedSecret = requiredEnv('RESEND_WEBHOOK_SECRET').replace(/^whsec_/, '');
+  const key = await crypto.subtle.importKey(
+    'raw',
+    decodeBase64(encodedSecret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const signedPayload = new TextEncoder().encode(`${webhookId}.${timestamp}.${payload}`);
+  const signature = new Uint8Array(await crypto.subtle.sign('HMAC', key, signedPayload));
+  const expected = btoa(String.fromCharCode(...signature));
+  return signatureHeader.split(/\s+/).some((candidate) => {
+    const [version, value] = candidate.split(',');
+    if (version !== 'v1' || !value) return false;
+    return constantTimeEqual(value, expected);
+  });
+}
+
+async function handleResendWebhook(request: Request) {
+  const payload = await request.text();
+  if (!await verifyResendWebhook(request, payload)) return json({ ok: false }, 401);
+
+  let event: ResendWebhookEvent;
+  try {
+    event = JSON.parse(payload) as ResendWebhookEvent;
+  } catch {
+    return json({ ok: false }, 400);
+  }
+  if (!['email.bounced', 'email.complained', 'email.suppressed'].includes(event.type ?? '')) return json({ ok: true });
+
+  const email = event.data?.to?.[0]?.trim().toLowerCase() ?? '';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ ok: true });
+  await db<void>('email_subscribers', `email=eq.${encodeURIComponent(email)}`, {
+    method: 'PATCH',
+    body: { status: event.type?.replace('email.', '') ?? 'unsubscribed', unsubscribed_at: new Date().toISOString() },
+  });
+  return json({ ok: true });
 }
 
 async function digest(request: Request) {
@@ -453,11 +544,14 @@ async function digest(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const action = new URL(request.url).searchParams.get('action');
   try {
-    if (new URL(request.url).searchParams.get('action') !== 'subscribe') return json({ ok: false }, 404);
-    return await subscribe(request);
+    if (action === 'subscribe') return await subscribe(request);
+    if (action === 'unsubscribe') return await updateSubscription(request, 'unsubscribe', false);
+    if (action === 'resend-webhook') return await handleResendWebhook(request);
+    return json({ ok: false }, 404);
   } catch (error) {
-    console.error('Subscription failed', error);
+    console.error('Subscription request failed', error);
     return json({ ok: false, code: 'service_unavailable' }, 503);
   }
 }
