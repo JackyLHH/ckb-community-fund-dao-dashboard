@@ -389,44 +389,48 @@ function telegramDigestMessages(locale: Locale, newTopics: DigestTopic[], update
   const en = locale === 'en';
   const newCount = newTopics.length;
   const updatedCount = updatedTopics.length;
-  const dateLabel = digestDate(locale);
   const plural = (count: number, singular: string, pluralValue = `${singular}s`) => count === 1 ? singular : pluralValue;
   const header = en
-    ? `<b>Hello, CKB community 👋</b>\n\n${esc(dateLabel)} · Daily proposal digest\n${newCount} new ${plural(newCount, 'proposal')} · ${updatedCount} ${plural(updatedCount, 'proposal update')}`
-    : `<b>你好，CKB 社区的朋友 👋</b>\n\n${esc(dateLabel)} · 每日提案动态\n${newCount} 份新提案 · ${updatedCount} 条进展更新`;
+    ? `<b>Hello, CKB community 👋</b>\n\nToday: ${newCount} new ${plural(newCount, 'proposal')} and ${updatedCount} ${plural(updatedCount, 'progress update')}:`
+    : `<b>你好，CKB 社区的朋友 👋</b>\n\n今天有 ${newCount} 份新提案和 ${updatedCount} 条进展更新：`;
   const newProposalBlock = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
-    const overview = clipped(localizedOverview(item, locale), 520);
-    const status = localizedStatus(item, locale);
-    const type = localizedType(item, locale);
+    const overview = clipped(localizedOverview(item, locale), 360);
     const budget = item.budget ?? (en ? 'Not stated' : '未标明');
-    return `${en ? '<b>🆕 New proposal</b>' : '<b>🆕 新提案</b>'}\n<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n${esc(overview)}\n\n<b>${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}\n<b>${en ? 'Budget' : '预算'}:</b> ${esc(budget)}\n<b>${en ? 'Type' : '类型'}:</b> ${esc(type)}\n<b>${en ? 'Status' : '状态'}:</b> ${esc(status)}\n<a href="${esc(proposalUrl(item.topic))}">${en ? 'View proposal' : '查看提案'}</a> · <a href="${esc(topicUrl(item.topic))}">${en ? 'Source discussion' : '原始讨论'}</a>`;
+    return `<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- <b>${en ? 'Overview' : '简介'}:</b> ${esc(overview)}\n\n- <b>${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}\n\n- <b>${en ? 'Budget' : '预算'}:</b> ${esc(budget)}\n\n<a href="${esc(topicUrl(item.topic))}">${en ? 'View source proposal →' : '查看原始提案 →'}</a>`;
   };
   const updateBlock = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
-    const status = localizedStatus(item, locale);
-    const excerpt = clipped(item.latestPostExcerpt || (en ? 'A new reply or proposal update was posted.' : '该提案出现了新的回复或进展。'), 620);
-    const postedAt = digestTime(locale, item.latestPostCreatedAt);
-    const postCount = item.newPostCount > 0
-      ? en ? `${item.newPostCount} new ${plural(item.newPostCount, 'post')}` : `新增 ${item.newPostCount} 篇帖子`
-      : en ? 'New activity detected' : '检测到新动态';
-    return `${en ? '<b>🔄 Proposal update</b>' : '<b>🔄 提案进展更新</b>'}\n<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n${esc(excerpt)}\n\n<b>${en ? 'Updated by' : '更新者'}:</b> ${esc(item.latestPostAuthor)}${postedAt ? ` · ${esc(postedAt)}` : ''}\n<b>${en ? 'Activity' : '动态'}:</b> ${esc(postCount)}\n<b>${en ? 'Status' : '状态'}:</b> ${esc(status)}\n<a href="${esc(topicUrl(item.topic, item.latestPostNumber))}">${en ? 'View this update' : '查看本次更新'}</a> · <a href="${esc(proposalUrl(item.topic))}">${en ? 'Proposal record' : '提案记录'}</a>`;
+    const excerpt = clipped(item.latestPostExcerpt || (en ? 'A new proposal update was posted.' : '该提案发布了新的进展。'), 360);
+    return `<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- ${esc(excerpt)}\n\n<a href="${esc(topicUrl(item.topic, item.latestPostNumber))}">${en ? 'Read this update →' : '阅读本次更新 →'}</a>`;
   };
-  const blocks = [
-    ...newTopics.map(newProposalBlock),
-    ...updatedTopics.map(updateBlock),
-    `<a href="${siteUrl()}/projects">${en ? 'Open the full proposal directory →' : '查看完整提案目录 →'}</a>`,
-  ];
   const messages: string[] = [];
   let current = header;
-  for (const block of blocks) {
-    const candidate = `${current}\n\n────────\n\n${block}`;
-    if (candidate.length > 3_800) {
-      messages.push(current);
-      current = block;
-    } else {
-      current = candidate;
-    }
+  let hasSection = false;
+  const appendSection = (title: string, entries: string[]) => {
+    entries.forEach((entry, index) => {
+      const firstInSection = index === 0;
+      const block = firstInSection ? `${title}\n\n${entry}` : entry;
+      const joiner = firstInSection && hasSection ? '\n\n────────\n\n' : '\n\n';
+      const candidate = `${current}${joiner}${block}`;
+      if (candidate.length > 3_800) {
+        messages.push(current);
+        const continued = index > 0 ? (en ? ' <i>(continued)</i>' : '<i>（续）</i>') : '';
+        current = `${title}${continued}\n\n${entry}`;
+      } else {
+        current = candidate;
+      }
+    });
+    if (entries.length) hasSection = true;
+  };
+  appendSection(en ? `🆕 <b>${plural(newCount, 'New proposal')}</b>` : '🆕 <b>新提案</b>', newTopics.map(newProposalBlock));
+  appendSection(en ? `🔄 <b>${plural(updatedCount, 'Progress update')}</b>` : '🔄 <b>进展更新</b>', updatedTopics.map(updateBlock));
+  const directoryLink = `<a href="${siteUrl()}/projects">${en ? 'View all proposals →' : '查看全部提案 →'}</a>`;
+  if (`${current}\n\n${directoryLink}`.length > 3_800) {
+    messages.push(current);
+    current = directoryLink;
+  } else {
+    current = `${current}\n\n${directoryLink}`;
   }
   if (current) messages.push(current);
   return messages;
