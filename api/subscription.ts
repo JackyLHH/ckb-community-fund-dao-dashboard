@@ -6,7 +6,7 @@ import {
   proposals,
   statusMeta,
   type Proposal,
-} from '../lib/proposals';
+} from '../lib/proposals.js';
 
 const forumBaseUrl = 'https://talk.nervos.org';
 const categoryPath = '/c/daos-funding/ckb-community-fund-dao/65.json';
