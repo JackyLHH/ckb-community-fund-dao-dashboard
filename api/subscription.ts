@@ -7,9 +7,16 @@ import {
   statusMeta,
   type Proposal,
 } from '../lib/proposals.js';
+import {
+  DIGEST_LOOKBACK_MS,
+  isRecentTopic,
+  progressUpdatePosts,
+  stripForumHtml,
+  topicChanged,
+} from '../lib/digest-activity.js';
 
 const forumBaseUrl = 'https://talk.nervos.org';
-const categoryPath = '/c/daos-funding/ckb-community-fund-dao/65.json';
+const categoryPath = '/c/daos-funding/ckb-community-fund-dao/65/l/latest.json';
 const publicSiteUrl = 'https://ckbcommunityfunddao.xyz';
 const replyTo = 'jacky@ckba.build';
 
@@ -202,25 +209,9 @@ function confirmationMessage(locale: Locale, url: string) {
 const topicUrl = (topic: Topic, postNumber?: number) => `${forumBaseUrl}/t/${topic.slug}/${topic.id}${postNumber ? `/${postNumber}` : ''}`;
 const proposalUrl = (topic: Topic) => `${siteUrl()}/project?id=${topic.id}`;
 
-function stripForumHtml(value = '') {
-  return value
-    .replace(/<aside[^>]*class=["'][^"']*quote[^"']*["'][^>]*>[\s\S]*?<\/aside>/gi, ' ')
-    .replace(/<br\s*\/?>/gi, ' ')
-    .replace(/<\/(?:p|li|h[1-6]|blockquote|div)>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&quot;/gi, '"')
-    .replace(/&#0*39;|&apos;/gi, "'")
-    .replace(/&#(\d+);/g, (_match, code: string) => String.fromCodePoint(Number(code)))
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 function clipped(value: string, length = 320) {
-  return value.length > length ? `${value.slice(0, length).trim()}…` : value;
+  const compact = value.replace(/\s+/g, ' ').trim();
+  return compact.length > length ? `${compact.slice(0, length).trim()}…` : compact;
 }
 
 function extractDigestBudget(text: string) {
@@ -249,7 +240,7 @@ async function fetchTopicDetail(topic: Topic) {
     .sort((a, b) => a.post_number - b.post_number);
 }
 
-async function buildDigestTopic(topic: Topic, previous?: TopicState): Promise<DigestTopic> {
+async function buildDigestTopic(topic: Topic, previous?: TopicState, knownPosts?: ForumPost[]): Promise<DigestTopic> {
   const proposal = proposalById.get(String(topic.id));
   const fallback = {
     topic,
@@ -264,7 +255,7 @@ async function buildDigestTopic(topic: Topic, previous?: TopicState): Promise<Di
     newPostCount: Math.max(0, topic.posts_count - (previous?.posts_count ?? topic.posts_count)),
   } satisfies DigestTopic;
   try {
-    const posts = await fetchTopicDetail(topic);
+    const posts = knownPosts ?? await fetchTopicDetail(topic);
     const firstPost = posts.find((post) => post.post_number === 1) ?? posts[0];
     const latestPost = posts.at(-1) ?? firstPost;
     const firstText = stripForumHtml(firstPost?.cooked);
@@ -280,6 +271,29 @@ async function buildDigestTopic(topic: Topic, previous?: TopicState): Promise<Di
     };
   } catch {
     return fallback;
+  }
+}
+
+async function buildProgressDigestTopics(topic: Topic, previous: TopicState, cutoffMs: number): Promise<DigestTopic[]> {
+  try {
+    const posts = await fetchTopicDetail(topic);
+    const firstPost = posts.find((post) => post.post_number === 1) ?? posts[0];
+    const firstText = stripForumHtml(firstPost?.cooked);
+    const base = await buildDigestTopic(topic, previous, posts);
+    return progressUpdatePosts(posts, previous, cutoffMs).map((post) => ({
+      ...base,
+      proposer: firstPost?.username ?? base.proposer,
+      budget: base.proposal?.budgetLabel ?? extractDigestBudget(firstText),
+      firstPostExcerpt: clipped(firstText || base.firstPostExcerpt),
+      latestPostAuthor: post.username,
+      latestPostCreatedAt: post.created_at,
+      latestPostExcerpt: clipped(stripForumHtml(post.cooked)),
+      latestPostNumber: post.post_number,
+      newPostCount: 1,
+    }));
+  } catch {
+    // A failed topic fetch must never create an unverified "progress update" email.
+    return [];
   }
 }
 
@@ -619,21 +633,22 @@ async function digest(request: Request) {
       return json({ ok: true, seeded: topics.length, sent: 0 });
     }
     const byId = new Map(previous.map((item) => [item.topic_id, item]));
-    const fresh = topics.filter((topic) => !byId.has(topic.id));
-    const updated = topics.filter((topic) => {
+    const cutoffMs = Date.now() - DIGEST_LOOKBACK_MS;
+    const fresh = topics.filter((topic) => !byId.has(topic.id) && isRecentTopic(topic, cutoffMs));
+    const changed = topics.filter((topic) => {
       const old = byId.get(topic.id);
-      const last = topic.last_posted_at ?? topic.bumped_at ?? topic.created_at;
-      return Boolean(old && (topic.posts_count > old.posts_count || last > old.last_posted_at));
+      return Boolean(old && topicChanged(topic, old));
     });
-    if (!fresh.length && !updated.length) {
+    const [freshDigestTopics, progressTopicGroups] = await Promise.all([
+      Promise.all(fresh.map((topic) => buildDigestTopic(topic))),
+      Promise.all(changed.map((topic) => buildProgressDigestTopics(topic, byId.get(topic.id)!, cutoffMs))),
+    ]);
+    const updatedDigestTopics = progressTopicGroups.flat();
+    if (!freshDigestTopics.length && !updatedDigestTopics.length) {
       await saveStates(topics);
       if (runId) await db<void>('digest_runs', `id=eq.${runId}`, { method: 'PATCH', body: { status: 'no_changes', completed_at: new Date().toISOString() } });
       return json({ ok: true, changes: 0, sent: 0 });
     }
-    const [freshDigestTopics, updatedDigestTopics] = await Promise.all([
-      Promise.all(fresh.map((topic) => buildDigestTopic(topic))),
-      Promise.all(updated.map((topic) => buildDigestTopic(topic, byId.get(topic.id)))),
-    ]);
     const subscribers = await db<Subscriber[]>('email_subscribers', 'select=*&status=eq.confirmed');
     let sent = 0;
     let failed = 0;
@@ -665,8 +680,8 @@ async function digest(request: Request) {
       body: {
         status: failed || telegramFailed ? 'partial' : 'completed',
         completed_at: new Date().toISOString(),
-        new_proposals: fresh.length,
-        updated_proposals: updated.length,
+        new_proposals: freshDigestTopics.length,
+        updated_proposals: updatedDigestTopics.length,
         recipients: sent,
         error_message: [failed ? `${failed} email delivery failure(s)` : '', ...deliveryErrors].filter(Boolean).join('; ').slice(0, 500) || null,
       },
@@ -674,8 +689,8 @@ async function digest(request: Request) {
     const partial = failed > 0 || telegramFailed > 0;
     return json({
       ok: !partial,
-      newProposals: fresh.length,
-      updatedProposals: updated.length,
+      newProposals: freshDigestTopics.length,
+      updatedProposals: updatedDigestTopics.length,
       email: { sent, failed },
       telegram: { configuredLocales: telegramConfigured, messagesSent: telegramMessages, failed: telegramFailed },
     }, partial ? 207 : 200);

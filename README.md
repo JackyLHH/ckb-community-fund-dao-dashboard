@@ -32,6 +32,8 @@ The `main` branch is connected to the production Vercel project. Pushing to `mai
 
 The production cron calls `/api/cron/digest` at `08:00 UTC` (`16:00` China Standard Time). The same detected proposal changes are delivered to confirmed email subscribers and, when configured, to separate Chinese and English Telegram channels.
 
+Digest activity is limited to the preceding 24 hours. A new proposal must be a newly created proposal topic in the category. A progress update must be a new reply from the original proposal author and must either use a recognizable update/report heading (for example, weekly, monthly, milestone, status, delivery, or completion report) or contain multiple concrete delivery signals. Ordinary community replies, likes, bumps, formatting-only timestamp differences, and historical topics missing from state do not trigger a digest. The topic cursor is still advanced when non-qualifying replies appear, so the same discussion activity is not reconsidered on later days.
+
 Telegram delivery uses one Bot API token in Vercel:
 
 ```text
