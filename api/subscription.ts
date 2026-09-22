@@ -359,15 +359,11 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
   const updateCard = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
     const status = localizedStatus(item, locale);
-    const postCount = item.newPostCount > 0
-      ? en ? `${item.newPostCount} new ${plural(item.newPostCount, 'post')}` : `新增 ${item.newPostCount} 篇帖子`
-      : en ? 'New activity detected' : '检测到新动态';
     const postedAt = digestTime(locale, item.latestPostCreatedAt);
     const metadata = en
-      ? `Posted by ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''} · ${postCount}`
-      : `由 ${item.latestPostAuthor} 发布${postedAt ? ` · ${postedAt}` : ''} · ${postCount}`;
-    const excerpt = item.latestPostExcerpt || (en ? 'A new reply or proposal update was posted. Open the discussion to read it.' : '该提案出现了新的回复或进展，请打开讨论查看详情。');
-    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'Proposal update' : '提案进展'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:8px 0;color:#7a847f;font-size:12px">${esc(metadata)}</p><p style="margin:12px 0 0;color:#4d5953;font-size:14px;line-height:1.7">${esc(excerpt)}</p><p style="margin:16px 0 0"><a href="${topicUrl(item.topic, item.latestPostNumber)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View this update' : '查看本次更新'}</a> <a href="${proposalUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Proposal record →' : '提案记录 →'}</a></p></li>`;
+      ? `Updated by ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}`
+      : `由 ${item.latestPostAuthor} 更新${postedAt ? ` · ${postedAt}` : ''}`;
+    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'Proposal update' : '提案进展'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:8px 0;color:#7a847f;font-size:12px">${esc(metadata)}</p><p style="margin:16px 0 0"><a href="${topicUrl(item.topic, item.latestPostNumber)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View this update' : '查看本次更新'}</a> <a href="${proposalUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Proposal record →' : '提案记录 →'}</a></p></li>`;
   };
   const section = (title: string, items: DigestTopic[], render: (item: DigestTopic) => string) => items.length
     ? `<h2 style="margin:30px 0 12px;font-size:19px">${title}</h2><ul style="padding:0;margin:0">${items.map(render).join('')}</ul>`
@@ -380,7 +376,10 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
     : `今日汇总：${newCount} 份新提案，${updatedCount} 条进展更新。`;
   const textItem = (item: DigestTopic, updated: boolean) => {
     const title = localizedTitle(item, locale);
-    if (updated) return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}\n${item.latestPostExcerpt}\n${topicUrl(item.topic, item.latestPostNumber)}`;
+    if (updated) {
+      const postedAt = digestTime(locale, item.latestPostCreatedAt);
+      return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}\n${en ? 'View this update' : '查看本次更新'}: ${topicUrl(item.topic, item.latestPostNumber)}`;
+    }
     return `${title}\n${en ? 'Proposer' : '提案人'}: ${item.proposer}\n${en ? 'Budget' : '预算'}: ${item.budget ?? (en ? 'Not stated' : '未标明')}\n${localizedOverview(item, locale)}\n${proposalUrl(item.topic)}`;
   };
   const textSections = [
