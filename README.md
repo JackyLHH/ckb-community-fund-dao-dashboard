@@ -30,9 +30,9 @@ The `main` branch is connected to the production Vercel project. Pushing to `mai
 
 ## Proposal overview translations
 
-Human-reviewed `objectiveZh` and `objectiveEn` values always take precedence. When a live proposal supplies only one language, `/api/translation` translates that exact overview into the missing language through Vercel AI Gateway. Production uses the short-lived `VERCEL_OIDC_TOKEN` supplied by Vercel, so no permanent model credential is exposed to the browser. Local translation testing can use `AI_GATEWAY_API_KEY`.
+Human-reviewed `objectiveZh` and `objectiveEn` values always take precedence. When a live proposal supplies only one language, `/api/translation` translates that exact overview into the missing language. Production uses the public MyMemory Translation API by default, which requires no browser-exposed credential or payment method. If `AI_GATEWAY_API_KEY` is configured, Vercel AI Gateway is preferred and the public service becomes the fallback.
 
-Generated translations are cached in the browser and in warm function instances. Adding a reviewed translation later replaces the generated value automatically.
+Generated translations are cached at Vercel's CDN, in the browser, and in warm function instances. Adding a reviewed translation later replaces the generated value automatically.
 
 ## Daily digest delivery
 

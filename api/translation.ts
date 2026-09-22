@@ -1,6 +1,7 @@
 const gatewayUrl = 'https://ai-gateway.vercel.sh/v1/chat/completions';
 const translationModel = 'google/gemini-2.5-flash-lite';
-const maxSourceLength = 3_000;
+const publicTranslationUrl = 'https://api.mymemory.translated.net/get';
+const maxSourceLength = 1_000;
 
 type TargetLocale = 'zh' | 'en';
 type TranslationRequest = {
@@ -14,8 +15,17 @@ type GatewayResponse = {
   error?: { message?: string };
 };
 
+type PublicTranslationResponse = {
+  responseData?: { translatedText?: string };
+  responseStatus?: number;
+  quotaFinished?: boolean;
+};
+
 const memoryCache = new Map<string, string>();
-const json = (data: unknown, status = 200) => Response.json(data, { status });
+const json = (data: unknown, status = 200, cache = false) => Response.json(data, {
+  status,
+  headers: cache ? { 'Cache-Control': 'public, s-maxage=31536000, stale-while-revalidate=86400' } : undefined,
+});
 
 function isSameOrigin(request: Request) {
   const origin = request.headers.get('origin');
@@ -35,41 +45,16 @@ function cleanTranslation(value: string) {
     .trim();
 }
 
-export async function POST(request: Request) {
-  if (!isSameOrigin(request)) return json({ ok: false, code: 'forbidden' }, 403);
-
-  let body: TranslationRequest;
-  try {
-    body = await request.json() as TranslationRequest;
-  } catch {
-    return json({ ok: false, code: 'invalid_json' }, 400);
-  }
-
-  const proposalId = body.proposalId?.trim();
-  const target = body.target;
-  const text = body.text?.replace(/\s+/g, ' ').trim();
-  if (!proposalId || !/^\d+$/.test(proposalId) || !text || (target !== 'zh' && target !== 'en')) {
-    return json({ ok: false, code: 'invalid_request' }, 400);
-  }
-  if (text.length > maxSourceLength) return json({ ok: false, code: 'source_too_long' }, 413);
-
-  const cacheKey = `${proposalId}:${target}:${text}`;
-  const cached = memoryCache.get(cacheKey);
-  if (cached) return json({ ok: true, translation: cached, cached: true });
-
-  const token = process.env.AI_GATEWAY_API_KEY
-    || request.headers.get('x-vercel-oidc-token')
-    || process.env.VERCEL_OIDC_TOKEN;
-  if (!token) return json({ ok: false, code: 'translation_unavailable' }, 503);
-
+async function translateWithAiGateway(request: Request, target: TargetLocale, text: string) {
+  // AI Gateway is opt-in because Vercel requires a payment method even when a
+  // project intends to use its monthly free credits.
+  const token = process.env.AI_GATEWAY_API_KEY;
+  if (!token) return null;
   const targetLanguage = target === 'zh' ? 'Simplified Chinese' : 'English';
   const sourceLanguage = target === 'zh' ? 'English' : 'Chinese';
   const response = await fetch(gatewayUrl, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: translationModel,
       temperature: 0,
@@ -83,15 +68,60 @@ export async function POST(request: Request) {
       ],
     }),
   });
-
   const result = await response.json().catch(() => ({})) as GatewayResponse;
   if (!response.ok) {
-    console.error('Proposal overview translation failed', response.status, result.error?.message ?? 'Unknown AI Gateway error');
-    return json({ ok: false, code: 'translation_failed' }, 502);
+    console.warn('AI Gateway overview translation unavailable', response.status, result.error?.message ?? 'Unknown error');
+    return null;
   }
+  return cleanTranslation(result.choices?.[0]?.message?.content ?? '') || null;
+}
 
-  const translation = cleanTranslation(result.choices?.[0]?.message?.content ?? '');
+async function translateWithPublicService(target: TargetLocale, text: string) {
+  const url = new URL(publicTranslationUrl);
+  url.searchParams.set('q', text);
+  url.searchParams.set('langpair', target === 'zh' ? 'en|zh-CN' : 'zh-CN|en');
+  const response = await fetch(url, { headers: { Accept: 'application/json' } });
+  if (!response.ok) return null;
+  const result = await response.json() as PublicTranslationResponse;
+  if (result.quotaFinished || result.responseStatus !== 200) return null;
+  return cleanTranslation(result.responseData?.translatedText ?? '') || null;
+}
+
+async function translate(request: Request, body: TranslationRequest) {
+  const proposalId = body.proposalId?.trim();
+  const target = body.target;
+  const text = body.text?.replace(/\s+/g, ' ').trim();
+  if (!proposalId || !/^\d+$/.test(proposalId) || !text || (target !== 'zh' && target !== 'en')) {
+    return json({ ok: false, code: 'invalid_request' }, 400);
+  }
+  if (text.length > maxSourceLength) return json({ ok: false, code: 'source_too_long' }, 413);
+
+  const cacheKey = `${proposalId}:${target}:${text}`;
+  const cached = memoryCache.get(cacheKey);
+  if (cached) return json({ ok: true, translation: cached, cached: true }, 200, true);
+
+  const translation = await translateWithAiGateway(request, target, text)
+    ?? await translateWithPublicService(target, text);
   if (!translation) return json({ ok: false, code: 'empty_translation' }, 502);
   memoryCache.set(cacheKey, translation);
-  return json({ ok: true, translation });
+  return json({ ok: true, translation }, 200, true);
+}
+
+export async function GET(request: Request) {
+  if (!isSameOrigin(request)) return json({ ok: false, code: 'forbidden' }, 403);
+  const url = new URL(request.url);
+  return translate(request, {
+    proposalId: url.searchParams.get('proposalId') ?? undefined,
+    target: (url.searchParams.get('target') ?? undefined) as TargetLocale | undefined,
+    text: url.searchParams.get('text') ?? undefined,
+  });
+}
+
+export async function POST(request: Request) {
+  if (!isSameOrigin(request)) return json({ ok: false, code: 'forbidden' }, 403);
+  try {
+    return await translate(request, await request.json() as TranslationRequest);
+  } catch {
+    return json({ ok: false, code: 'invalid_json' }, 400);
+  }
 }

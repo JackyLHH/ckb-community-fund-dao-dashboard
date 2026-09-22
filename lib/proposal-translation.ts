@@ -48,11 +48,8 @@ async function requestTranslation(
   const pending = translationsInFlight.get(key);
   if (pending) return pending;
 
-  const request = fetcher('/api/translation', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ proposalId, target, text: source }),
-  })
+  const query = new URLSearchParams({ proposalId, target, text: source });
+  const request = fetcher(`/api/translation?${query}`)
     .then(async (response) => {
       if (!response.ok) return null;
       const result = await response.json() as TranslationResponse;

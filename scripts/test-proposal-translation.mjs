@@ -19,12 +19,12 @@ const englishOnly = proposalWith({
 assert.equal(needsProposalOverviewTranslation(englishOnly), true);
 
 let requests = 0;
-const translatedToChinese = await translateMissingProposalOverview(englishOnly, async (_url, init) => {
+const translatedToChinese = await translateMissingProposalOverview(englishOnly, async (url) => {
   requests += 1;
-  assert.equal(typeof init?.body, 'string');
-  const body = JSON.parse(init.body);
-  assert.equal(body.target, 'zh');
-  assert.equal(body.text, 'An English proposal overview.');
+  assert.equal(typeof url, 'string');
+  const query = new URL(url, 'https://example.test').searchParams;
+  assert.equal(query.get('target'), 'zh');
+  assert.equal(query.get('text'), 'An English proposal overview.');
   return Response.json({ ok: true, translation: '一段英文提案概览。' });
 });
 assert.equal(translatedToChinese.overview.objectiveEn, 'An English proposal overview.');
@@ -43,10 +43,10 @@ assert.equal(unchanged, humanBilingual);
 assert.equal(requests, 1);
 
 const chineseOnly = proposalWith({ objective: '人工提供的中文概览。', milestones: [] });
-const translatedToEnglish = await translateMissingProposalOverview(chineseOnly, async (_url, init) => {
-  assert.equal(typeof init?.body, 'string');
-  const body = JSON.parse(init.body);
-  assert.equal(body.target, 'en');
+const translatedToEnglish = await translateMissingProposalOverview(chineseOnly, async (url) => {
+  assert.equal(typeof url, 'string');
+  const query = new URL(url, 'https://example.test').searchParams;
+  assert.equal(query.get('target'), 'en');
   return Response.json({ ok: true, translation: 'A manually supplied Chinese overview.' });
 });
 assert.equal(translatedToEnglish.overview.objectiveZh, '人工提供的中文概览。');
