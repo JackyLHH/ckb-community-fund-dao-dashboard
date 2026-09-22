@@ -606,7 +606,9 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
     .map((topic) => mapCategoryTopic(topic, category.usernames, funded.entries, fetchedAt))
     .map(enrichProposalFromTopic));
   const proposals = (await Promise.all(enrichedProposals.map(async (proposal) =>
-    isRecentProposal(proposal) ? await translateMissingProposalOverview(proposal) : proposal,
+    isRecentProposal(proposal)
+      ? await translateMissingProposalOverview(proposal, fetch, { useHistorical: !proposalOverridesById[proposal.id]?.overview })
+      : proposal,
   )))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const usedSlugs = new Set<string>();
@@ -725,7 +727,7 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
         ...(completionEvidence ? [completionEvidence] : []),
       ],
     };
-    return await translateMissingProposalOverview(proposal);
+    return await translateMissingProposalOverview(proposal, fetch, { useHistorical: !proposalOverride?.overview });
   } catch {
     return base;
   }

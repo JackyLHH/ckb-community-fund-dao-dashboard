@@ -10,7 +10,8 @@
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "sync:data": "node scripts/sync-forum.mjs",
-    "test": "node scripts/validate-data.mjs && node --experimental-strip-types scripts/test-digest-activity.mjs && node --experimental-strip-types scripts/test-proposal-overrides.mjs && node --experimental-strip-types scripts/test-proposal-translation.mjs",
+    "backfill:translations": "node --experimental-strip-types scripts/backfill-overview-translations.mjs",
+    "test": "node scripts/validate-data.mjs && node --experimental-strip-types scripts/test-digest-activity.mjs && node --experimental-strip-types scripts/test-proposal-overrides.mjs && node --experimental-strip-types scripts/test-proposal-translation.mjs && node --experimental-strip-types scripts/test-historical-translations.mjs",
     "lint": "oxlint",
     "format": "oxfmt"
   },

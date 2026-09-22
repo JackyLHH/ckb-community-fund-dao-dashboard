@@ -1,5 +1,6 @@
 import rawDataset from '../data/proposals.generated.json' with { type: 'json' };
 import { proposalCardSummariesById } from './proposal-card-summaries.js';
+import { proposalOverviewTranslationsById } from './proposal-overview-translations.js';
 import { proposalOverridesById } from './proposal-overrides.js';
 
 export type ProposalStatusTag =
@@ -324,8 +325,12 @@ export function getProposalOverview(proposal: Proposal, locale: 'zh' | 'en') {
     ? !/[\u3400-\u9fff]/u.test(text)
     : /[\u3400-\u9fff]/u.test(text);
   if (overview?.objective?.trim() && isLanguageMatch(overview.objective)) return overview.objective.trim();
+  const translatedOverride = locale === 'en' ? proposal.overview?.objectiveEn : proposal.overview?.objectiveZh;
+  if (overview && translatedOverride?.trim()) return translatedOverride.trim();
   const curated = proposalCardSummariesById[proposal.id];
   if (curated) return curated[locale];
+  const historical = proposalOverviewTranslationsById[proposal.id];
+  if (historical?.[locale]?.trim()) return historical[locale].trim();
   const sourceObjective = locale === 'en'
     ? proposal.overview?.objectiveEn ?? proposal.overview?.objective
     : proposal.overview?.objectiveZh ?? proposal.overview?.objective;

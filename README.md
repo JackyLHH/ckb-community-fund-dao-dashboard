@@ -34,6 +34,8 @@ Human-reviewed `objectiveZh` and `objectiveEn` values always take precedence. Wh
 
 Generated translations are cached at Vercel's CDN, in the browser, and in warm function instances. Adding a reviewed translation later replaces the generated value automatically.
 
+Historical bilingual overviews are persisted in `data/proposal-overview-translations.json`. Run `npm run backfill:translations` after refreshing the proposal snapshot to fill any missing language and then review the generated result before committing it. Rendering priority is: reviewed proposal override, reviewed card summary, persisted historical translation, then live automatic translation.
+
 ## Daily digest delivery
 
 The production cron calls `/api/cron/digest` at `08:00 UTC` (`16:00` China Standard Time). The same detected proposal changes are delivered to confirmed email subscribers and, when configured, to separate Chinese and English Telegram channels.

@@ -1,9 +1,11 @@
 import type { Proposal, ProposalOverview } from '@/lib/proposals';
+import rawTranslations from '../data/proposal-overview-translations.json' with { type: 'json' };
 
 type TargetLocale = 'zh' | 'en';
 type TranslationResponse = { ok?: boolean; translation?: string };
 
 const translationsInFlight = new Map<string, Promise<string | null>>();
+const proposalOverviewTranslationsById = rawTranslations.translations as Record<string, { zh: string; en: string }>;
 
 function containsChinese(value: string) {
   return /[\u3400-\u9fff]/u.test(value);
@@ -65,16 +67,23 @@ async function requestTranslation(
   return request;
 }
 
-function normalizeSourceOverview(overview: ProposalOverview) {
+function normalizeSourceOverview(proposal: Proposal, overview: ProposalOverview, useHistorical = true) {
   const generic = overview.objective?.trim() ?? '';
-  const objectiveEn = overview.objectiveEn?.trim() || (!containsChinese(generic) ? generic : '');
-  const objectiveZh = overview.objectiveZh?.trim() || (containsChinese(generic) ? generic : '');
+  const historical = useHistorical ? proposalOverviewTranslationsById[proposal.id] : undefined;
+  const objectiveEn = overview.objectiveEn?.trim()
+    || (!containsChinese(generic) ? generic : '')
+    || historical?.en?.trim()
+    || '';
+  const objectiveZh = overview.objectiveZh?.trim()
+    || (containsChinese(generic) ? generic : '')
+    || historical?.zh?.trim()
+    || '';
   return { generic, objectiveEn, objectiveZh };
 }
 
-export function needsProposalOverviewTranslation(proposal: Proposal) {
+export function needsProposalOverviewTranslation(proposal: Proposal, useHistorical = true) {
   if (!proposal.overview) return false;
-  const { objectiveEn, objectiveZh } = normalizeSourceOverview(proposal.overview);
+  const { objectiveEn, objectiveZh } = normalizeSourceOverview(proposal, proposal.overview, useHistorical);
   return Boolean((objectiveEn && !objectiveZh) || (objectiveZh && !objectiveEn));
 }
 
@@ -83,10 +92,11 @@ export function needsProposalOverviewTranslation(proposal: Proposal) {
 export async function translateMissingProposalOverview(
   proposal: Proposal,
   fetcher: typeof fetch = fetch,
+  options: { useHistorical?: boolean } = {},
 ): Promise<Proposal> {
   if (!proposal.overview) return proposal;
   const overview = proposal.overview;
-  const { objectiveEn, objectiveZh } = normalizeSourceOverview(overview);
+  const { objectiveEn, objectiveZh } = normalizeSourceOverview(proposal, overview, options.useHistorical ?? true);
   if (objectiveEn && objectiveZh) {
     if (overview.objectiveEn && overview.objectiveZh) return proposal;
     return { ...proposal, overview: { ...overview, objectiveEn, objectiveZh } };

@@ -1,0 +1,289 @@
+{
+  "version": 1,
+  "translations": {
+    "6891": {
+      "zh": "该提案的主要目标是为巴西加密社区提供充分理解并参与 Nervos 生态所需的知识、工具和资源，帮助社区了解 Nervos Network 及其用例，学习如何购买和创建 NFT，以及如何在 Nervos 上开发 DApp。",
+      "en": "The main objective is to bring to the crypto community in Brazil the knowledge, tools and resources to fully understand and participate in the Nervos ecosystem. The community will be able to understand the Nervos Network, it’s use cases, how to buy and create NFTs, and how to develop DAPs on it."
+    },
+    "6968": {
+      "zh": "这是 Nervos Nation 向 Community Fund DAO 提交的资助提案，旨在延续并加强现有的教育和社区增长计划。",
+      "en": "This is the Nervos Nation fund proposal to the Community Fund DAO. It is aimed at building on the existing education and community growth initiatives."
+    },
+    "7004": {
+      "zh": "本提案就 CKB 减半倒计时网站的建设向社区征求意见，以期能快速落地执行。",
+      "en": "This proposal asks the community for feedback on building a CKB halving countdown website so the project can move quickly into implementation."
+    },
+    "7065": {
+      "zh": "该提案旨在推动 HuntingNFT 项目 V2.0 的设计与开发，通过 Play to Earn 吸引更多外部用户迁移到 Nervos 网络进行交互，创造更大的网络价值与知名度，并展示 Nervos 的技术和性能优势。",
+      "en": "This proposal aims to promote the design and development of the HuntingNFT Project V2.0, attract more external users to migrate to the Nervos network for interaction in the form of Play to Earn, generate greater network value and popularity, and demonstrate the technical and performance advantages of Nervos."
+    },
+    "7069": {
+      "zh": "该元规则提案建议禁止通过项目代币、空投或其他奖励来激励 DAO 投票，避免经济利益影响治理结果。",
+      "en": "This meta-rule proposal prohibits token rewards, airdrops, and other incentives for DAO voting to prevent financial inducements from influencing governance."
+    },
+    "7120": {
+      "zh": "这份提案只想往前走一小步，将票数的计算方式更改为：读取 Nervos DAO 的实时存款值。",
+      "en": "This proposal takes one small step forward by changing the vote-counting method to read the real-time value of deposits in Nervos DAO."
+    },
+    "7125": {
+      "zh": "该元规则提案建议暂停 Metaforo 投票 30 天，为社区修复 DAO 投票实现和治理流程中的问题留出时间。",
+      "en": "This meta-rule proposal pauses Metaforo voting for 30 days so the community can correct operational and governance-process issues in the DAO."
+    },
+    "7136": {
+      "zh": "该提案申请经费用于在 r/CryptoCurrency 举办 Nervos Network AMA，让大型加密社区直接向 Nervos 团队提问并了解项目。",
+      "en": "This proposal funds a Nervos Network AMA on r/CryptoCurrency so its large crypto audience can ask the team questions and learn about Nervos."
+    },
+    "7194": {
+      "zh": "该提案申请支持社区教育、内容创作、社交媒体推广、线下活动以及对 Nervos 产品和生态项目的社区建议。",
+      "en": "This proposal seeks support for community education, content creation, social outreach, in-person events, and community guidance for Nervos products and ecosystem projects."
+    },
+    "7201": {
+      "zh": "该提案计划编写一本从第一性原理介绍 CKB 和区块链协议工程的教材，为技术人员提供系统学习并参与 Nervos 开发的入口。",
+      "en": "This proposal creates a first-principles textbook on CKB and blockchain protocol engineering, giving technical readers a systematic path into the Nervos ecosystem."
+    },
+    "7205": {
+      "zh": "Etherion 曾向社区基金提交申请，但由于项目不符合仅支持 CKB Layer 1 的资助范围，该提案随后被关闭。",
+      "en": "Etherion was submitted for community funding but was closed because the project did not fit the grant program’s CKB Layer 1 scope."
+    },
+    "7241": {
+      "zh": "该元规则提案建议允许交易所以其持有 CKB 数量的 1% 作为投票权重，同时防止交易所代表用户托管资产投票。",
+      "en": "This meta-rule proposal gives exchanges voting weight equal to 1% of their CKB holdings while preventing them from voting with customer assets held in custody."
+    },
+    "7242": {
+      "zh": "该提案建议投票失败后设置 30 天的修改与冷静期；若同一提案人针对同一主题再次失败，将不得再次提交该主题。",
+      "en": "This proposal adds a 30-day revision and cooling-off period after a failed vote, with an indefinite restriction on the same proposer and subject after a second failure."
+    },
+    "7251": {
+      "zh": "该元规则提案要求预算超过 10,000 美元的项目分阶段付款，限制启动资金，并以公开进展作为后续拨款依据。",
+      "en": "This meta-rule proposal introduces staged payments for projects above $10,000, caps initial funding, and requires public progress before subsequent disbursements."
+    },
+    "7253": {
+      "zh": "该提案建议允许普通 CKB 持有者（其 CKB 未存入 NervosDAO）参与 CKB Community Fund DAO 投票，投票权重为钱包中 CKB 持有量的 1%。",
+      "en": "This proposal suggests that ordinary CKB holders (whose CKB is not stored in NervosDAO) should also be allowed to participate in the CKB Community Fund DAO voting. The voting weight will be 1% of the CKB amount held in their wallets."
+    },
+    "7317": {
+      "zh": "该提案将为 Nervos 创作一首社区主题曲，作为扩大社区规模、触达更广泛人群的重要内容作品。",
+      "en": "We will be creating a community anthem for Nervos which will be a key piece for expanding the community and reaching to a wider set of people."
+    },
+    "7366": {
+      "zh": "在 Infinity Wallet 中原生集成并支持 Nervos 链。",
+      "en": "Integrate Nervos chain with native support in the Infinity Wallet."
+    },
+    "7396": {
+      "zh": "该提案希望提升 CKB 在那格浦尔的知名度，促进更多商家、持有者和服务采用 CKB。",
+      "en": "Want to raise awareness in Nagpur for more use CKB here, more shop, more holder, more service."
+    },
+    "7449": {
+      "zh": "该提案旨在通过组织线上和线下社区活动、管理社区平台与频道、面向更广泛的社区和公众开展联络，并支持和赋能开发者，推动拉丁美洲地区的社区参与和生态增长。",
+      "en": "Enable and drive community engagement and ecosystem growth in the Latin America region through leading organization of online & offline community initiatives, managing community platforms and channels, outreach and networking with the wider community and public, supporting and empowering Builders."
+    },
+    "7524": {
+      "zh": "该提案计划开发 Nervos.Land，一款基于 Unity 引擎的在线 NFT 策略游戏。",
+      "en": "Propose the development of Nervos.Land is an online NFT strategy game based on the Unity engine."
+    },
+    "7536": {
+      "zh": "该提案建议增加基于 Nervos 链上空间使用权的激励方式，以降低 CKB 价格波动给应用预算、用户入门和商业模式带来的影响。",
+      "en": "This proposal explores incentives based on access to Nervos on-chain space, reducing the impact of CKB price volatility on app budgets, user onboarding, and business models."
+    },
+    "7579": {
+      "zh": "JoyGift 是一款基于 CKB 和 JoyID 构建的去中心化红包赠送应用。",
+      "en": "JoyGift is a decentralized red-packet gifting application built on CKB and JoyID."
+    },
+    "7593": {
+      "zh": "该提案资助 Spore Protocol 在 CKB 主网上线，建立一种以 CKB 容量作为内在价值、支持安全所有权、隐私和零手续费转移的非同质化数字对象新标准。",
+      "en": "This proposal funds the launch of Spore Protocol on CKB mainnet, establishing a new standard for non-fungible digital objects that uses CKB capacity as intrinsic value and supports secure ownership, privacy, and zero-fee transfers."
+    },
+    "7594": {
+      "zh": "该提案计划制作并分发 50 台小型、低功耗且成本较低的 CKB 节点设备，让社区成员更容易持续运行节点，增强网络去中心化程度。",
+      "en": "This proposal builds and distributes 50 small, energy-efficient, low-cost CKB node devices, helping community members run nodes continuously and strengthen network decentralization."
+    },
+    "7615": {
+      "zh": "Omiga 是一个基于 CKB 的铭文协议，旨在提供公平、高效的铭文铸造、管理和交易体验。",
+      "en": "Omiga is an inscription protocol on CKB designed to provide fair and efficient inscription minting, management, and trading experiences."
+    },
+    "7633": {
+      "zh": "该提案希望以可控预算触达全球受众，通过在 Binance 和 CMC 热门文章中的策略性内容投放获得最大曝光，并以具有吸引力、经过 SEO 优化的内容推动自然互动和搜索排名。",
+      "en": "Reaching a global audience without an exorbitant budget. Through strategic placement among Binance and CMC’s top articles, your project can garner maximum visibility. I pledge to fuel organic engagement through captivating, SEO-optimized content. This not only attracts attention but also positions your project favorably in search results."
+    },
+    "7636": {
+      "zh": "motoDEX 提案申请资金，用于部署游戏与 NFT 合约、把 CKB 游戏和 NFT 交易功能集成到 motodex.openbisea.com，并开展上线后的市场推广。",
+      "en": "The motoDEX proposal requests funding to deploy its game and NFT contracts, integrate CKB gameplay and NFT trading into motodex.openbisea.com, and support the launch with marketing."
+    },
+    "7727": {
+      "zh": "Telmo Talks 计划重启每周一期的 Nervos 访谈节目，在 YouTube、X 和 Spotify 发布与开发者、社区成员及生态项目的对话，以通俗内容向更广泛的受众介绍 Nervos。",
+      "en": "Telmo Talks proposes relaunching a weekly Nervos talk show on YouTube, X, and Spotify, featuring conversations with developers, community members, and ecosystem projects to make Nervos accessible to a wider audience."
+    },
+    "7757": {
+      "zh": "该提案建议所有拨款都使用 CKB/USD 的 30 日移动平均价格计算。",
+      "en": "Propose to use a 30 day moving average of CKB/USD for all payouts."
+    },
+    "7849": {
+      "zh": "我提议修改 CKB Community Fund DAO 的元规则：如果价格波动超过 10%，付款时需要重新计算 CKB 数量。",
+      "en": "I propose to make a meta-rule change to the CKB Community Fund DAO: If the price fluctuates by more than 10%, a recalculation of the CKB quantity is required at the time of payment."
+    },
+    "7943": {
+      "zh": "该提案建议修改 DAO 元规则，要求所有申请预算的提案在提交时明确写出所申请的 CKB 数量。",
+      "en": "This proposal amends the DAO rules to require every budget proposal to explicitly state the amount of CKB requested when it is submitted."
+    },
+    "8150": {
+      "zh": "这是 ZenGate 在 Nervos Nation 推荐下向 Community Fund DAO 提交的提案，旨在将 Palmyra RWA 与借贷产品引入 Nervos CKB。资助内容包括：基于 DID（.bit）为生产者和消费者客户提供信誉系统与 KYC 审批，以及在 Nervos CKB 上构建面向真实世界资产的借贷平台，使用户能够参与向实体商品生产者提供借贷。",
+      "en": "This is a ZenGate proposal to the Community Fund DAO with a recommendation from Nervos Nation. This grant is intended to bring the Palmyra RWA and lending product to Nervos CKB. Activities funded: 1. Build on top of DID (.bit) to provide a reputation system and KYC-based approval for its producer and consumer clients. 2. Build an RWA-oriented lending platform on Nervos CKB, allowing users to participate in lending with real-world commodity producers."
+    },
+    "8174": {
+      "zh": "RGBCat 是 CKB 区块链上的新型资产，通过 RGB++ 协议探索比特币生态。项目路线图包括建设专用去中心化交易所、推出 DOB 与 DOB Marketplace，并最终实现 GameFi 项目。",
+      "en": "We are excited to present RGBCat, a dynamic new asset on the CKB blockchain that explores the Bitcoin universe through the innovative RGB++ protocol. Our token, CAT++, was introduced in mid-April 2024 within the framework of the RGB++ protocol, signifying a significant advancement beyond a mere meme coin. CAT++ serves as a portal to a transformative era of blockchain engagement. Our roadmap includes the establishment of a specialized decentralized exchange (DEX) and the launch of our DOB, the DOB Marketplace. Our overarching vision encompasses the realization of the GameFi project, marking a significant milestone in our journey towards redefining blockchain experiences."
+    },
+    "8188": {
+      "zh": "ArtCells 是一个基于 RGB++ 协议的算法艺术发布平台，旨在把艺术 NFT 引入 CKB 生态，让 CKB 用户更方便地收藏艺术 NFT，并将 CKB 数字艺术推广到更广泛的市场。",
+      "en": "We are honored to introduce ArtCells, an algorithmic art publishing platform based on the RGB++ protocol. ArtCells aims to integrate art NFTs into the CKB ecosystem, allowing CKB users to more easily collect art NFTs while promoting CKB’s digital artworks to a broader market. This initiative will enhance the influence of CKB and Nervos in the field of digital art."
+    },
+    "8249": {
+      "zh": "当提案要求以 CKB 支付时，实际支付数量应按照付款当日的 CKB 价格换算。这项规则适用于未来所有 DAO 付款，也追溯适用于当前仍有未付款项且同意采用新规则的受资助方。",
+      "en": "When a pay out in CKB is requested, it always equals the requested amount of CKB on the day of the price of CKB. This proposal would be for all future DAO payments, and would also retroactively affect any grant recipients currently with outstanding payments, assuming they consent to this new rule."
+    },
+    "8369": {
+      "zh": "该提案申请支持 iCKB 与 dCKB Rescuer 的用户和开发者支持等非编程工作，并报销 iCKB 一层脚本的部署与审计费用。",
+      "en": "This proposal funds user and developer support and other non-coding work for iCKB and dCKB Rescuer, and reimburses the deployment and audit costs of iCKB Layer 1 scripts."
+    },
+    "8377": {
+      "zh": "该提案计划录制一首关于 Nervos Network 的嘻哈歌曲，并制作高质量音乐视频，以创造独特内容并帮助推广 CKB。",
+      "en": "What I can do: record a hip-hop track about Nervos Network and then make a quality music video, thereby creating unique content and helping to popularize the coin."
+    },
+    "8539": {
+      "zh": "该提案申请资助 Rosen Bridge 集成 Nervos CKB，使 CKB 与其他已连接的 UTXO 生态之间能够进行双向资产转移。",
+      "en": "This proposal requested funding for Rosen Bridge to integrate Nervos CKB as a supported platform, enabling bidirectional transfers between CKB and the other connected UTXO ecosystems."
+    },
+    "8734": {
+      "zh": "构建一个由 AI Agent 驱动的内容策展平台，自动评估内容质量，并通过 Fiber Network 微支付实时奖励优质创作者。",
+      "en": "Build an AI Agent-driven content curation platform that evaluates content quality and uses Fiber Network micropayments to reward creators in real time."
+    },
+    "8746": {
+      "zh": "该提案拟引入托管与质押担保的交付机制，并结合基于里程碑的激励协议，充分利用 CKB 的可编程货币特性，建立动态可控的资金管理体系，以提升项目质量并保障资金安全。",
+      "en": "To introduce an escrow and stake-backed delivery mechanism combined with milestone-based incentive agreements, fully leveraging CKB’s programmable currency features, in order to establish a dynamic and controllable fund management system that enhances project quality and ensures fund security."
+    },
+    "8832": {
+      "zh": "CKBoost 是面向 CKB 生态的开源游戏化社区参与平台，整合任务与活动、可验证参与、链上积分与奖励、排行榜、社区打赏以及管理员审核工具。",
+      "en": "CKBoost is an open-source gamified community engagement platform for the CKB ecosystem, combining quests and campaigns, verifiable participation, on-chain points and rewards, leaderboards, community tipping, and administrative review tools."
+    },
+    "8918": {
+      "zh": "本提案申请 CKB Community Fund DAO 资助，以完成并部署 Spore Studio。Spore Studio 是一个面向创作者、基于 Spore Protocol 构建的数字对象（DOB）发布平台，为艺术家提供创作、管理和发布数字艺术的直观工具，并结合 IPFS 低成本铸造与链上永久存储。平台接近完成，计划在 3–6 周内上线，部署后将在 GitHub 开源应用文件，并在每个付款里程碑前发布进展更新。",
+      "en": "This proposal requests funding from the CKB Community Fund DAO to finalize the development and deployment of Spore Studio, a creator-focused platform and digital object (DOB) launchpad for the Nervos CKB ecosystem, built on the Spore Protocol. Spore Studio empowers artists with intuitive tools for creating, managing, and launching digital art, leveraging a hybrid storage model (IPFS for cost-effective minting and permanent on-chain storage). The platform’s application files will be open-sourced on GitHub post-deployment, enabling community contributions and adoption. With a near-complete platform, we aim to launch within 3-6 weeks to capture the upcoming CKB bull market. Progress updates will be provided prior to each payment milestone to ensure transparency."
+    },
+    "8973": {
+      "zh": "该提案拟将 CKB Community Fund DAO 升级为基于 did:ckb 的开源 Web5 治理平台，整合提案、投票、资金透明、状态追踪和多语言等功能，并交由中立的 Stewards 团队持续运营。",
+      "en": "This proposal aimed to upgrade the CKB Community Fund DAO into an open-source Web5 governance platform built on did:ckb, integrating proposals, voting, treasury transparency, status tracking, multilingual support, and ongoing operations by a neutral Stewards team."
+    },
+    "9681": {
+      "zh": "ChatPay 计划构建一个 WhatsApp 机器人，为用户创建非托管 Nervos 钱包，并通过熟悉的聊天指令收发 CKB；项目将通过越南试点验证用户上手、交易可靠性和商户支付体验。",
+      "en": "ChatPay proposes a WhatsApp bot that creates non-custodial Nervos wallets and lets users send and receive CKB through familiar chat commands, with a Vietnam pilot used to validate onboarding, transaction reliability, and merchant payments."
+    },
+    "9756": {
+      "zh": "该提案申请 65,000 美元，将 CKB 集成到 Rosen Bridge，使 CKB 能够与 Rosen 支持的网络安全跨链；项目依次完成技术评估、测试环境发布和审计后的主网上线。",
+      "en": "This proposal requests $65,000 to integrate CKB into Rosen Bridge, enabling secure cross-chain transfers between CKB and Rosen-supported networks through a technical assessment, testbed release, and audited mainnet launch."
+    },
+    "9845": {
+      "zh": "Fiber Link 是一个开源支付层，为社区内部提供即时、低手续费的打赏与微支付能力，首个落地产品是 Discourse 插件。",
+      "en": "Fiber Link is an open-source payment layer that enables instant, low-fee tipping and micropayments inside communities (starting with a Discourse plugin)."
+    },
+    "9879": {
+      "zh": "Pocket Node 是一款移动优先的 Android 钱包，通过 JNI 内置官方 CKB 轻客户端，让用户无需依赖远程 RPC 服务器即可管理 CKB、验证链上状态并在本地签署交易。",
+      "en": "Pocket Node is a mobile-first Android wallet that embeds the official CKB Light Client through JNI, allowing users to manage CKB, verify chain state, and sign transactions locally without relying on a remote RPC server."
+    },
+    "10015": {
+      "zh": "Invisibook 是构建在 CKB L1 上、采用 Proof of Buying 共识协议的去中心化隐私订单簿 L2 应用链，通过 MPC + ZK 实现链上撮合、链下结算与链上验证。交易对和报价公开，但链上订单数量以密文保存，公众与交易对手只能执行交易，无法获知他人的真实持仓规模，从而保护交易隐私，并降低大额订单面临的价格冲击、抢跑、内幕交易及各类 MEV 风险。",
+      "en": "Invisibook is a decentralized privacy-preserving order book L2 appchain that uses the Proof of Buying consensus protocol and is built on CKB L1. It achieves on-chain matching, off-chain settlement, and on-chain verification through MPC + ZK. In Invisibook, the trading pair and price quotes are public, but order quantities on-chain are stored in ciphertext form. The public and counterparties can only execute trades — they cannot discover the actual position sizes of others (even AI and quantitative trading algorithms cannot infer them). This design protects traders’ privacy and prevents large orders from suffering price impact, front-running, insider trading, and various forms of MEV that erode substantial profits."
+    },
+    "10070": {
+      "zh": "Nexus 是一个基于 CKB 的生产级去中心化多媒体内容平台，覆盖视频、音乐、文章、直播与 AI 工具，并通过 JoyID、Fiber、Spore 和 RGB++ 实现免助记词登录、按秒付费、内容确权与自动分账。",
+      "en": "Nexus is a production-grade decentralized multimedia platform for video, music, articles, live streaming, and AI tools on CKB, using JoyID for login, Fiber for per-second payments, Spore for content ownership, and RGB++ for automated revenue sharing."
+    },
+    "10100": {
+      "zh": "WarSpore · Saga 是面向 CKB 与 Bitcoin 的全链上卡牌游戏。本提案资助上线前的收尾工作、基于 Fiber 的 PVP、SAGA/CKB 初始流动性和漏洞赏金计划。",
+      "en": "WarSpore · Saga is a fully on-chain card game for CKB and Bitcoin. This proposal funds the remaining launch work, Fiber-based PVP, initial SAGA/CKB liquidity, and a bug bounty program."
+    },
+    "10119": {
+      "zh": "CKB Anywhere Card 是浏览器扩展和即时支付层，让用户能够在 Visa 与 Mastercard 商户使用 CKB，同时在授权消费前始终将 CKB 保留在自己的钱包中。",
+      "en": "CKB Anywhere Card is a browser extension and just-in-time spending layer designed to let users pay at Visa and Mastercard merchants while keeping CKB in their own wallet until a purchase is authorized."
+    },
+    "10179": {
+      "zh": "CryptoMondays London 计划开展为期六个月的定期线下教育与生态活动，通过专题讨论和教育内容，提高 Nervos CKB 在英国的知名度、开发者关注度与社区参与度。",
+      "en": "CryptoMondays London proposes a six-month series of recurring in-person education and ecosystem events, using curated discussions and educational programming to grow Nervos CKB visibility, developer awareness, and community participation in the UK."
+    },
+    "10218": {
+      "zh": "Quantir 计划构建面向 CKB 的风险情报与监控层，采集公开生态信号、识别异常行为、计算标准化风险评分，并为开发者、运营方、数据面板和社区监控流程生成可解释的预警。",
+      "en": "Quantir proposes a CKB-aware risk intelligence and monitoring layer that collects public ecosystem signals, detects abnormal behavior, computes normalized risk scores, and produces explainable alerts for developers, operators, dashboards, and community monitoring workflows."
+    },
+    "10239": {
+      "zh": "Bitcoin Renegade 计划开展为期六个月的媒体推广活动，通过 YouTube 和 X 上的直播、生态项目介绍、教育内容及社交媒体互动，提高 CKB 的知名度并推动社区增长。",
+      "en": "Bitcoin Renegade proposes a six-month media campaign using livestreams on YouTube and X, ecosystem spotlights, educational content, and social media engagement to raise CKB awareness and grow the community."
+    },
+    "10296": {
+      "zh": "fiber-payjoin-kit 是一个开源异步 Rust 库，把协作式 Payjoin 隐私原生引入 Nervos Fiber Network。它允许收款方为状态通道的资金交易提供输入，从而打破共同输入所有权启发式分析，保护链下 CKB 支付隐私。",
+      "en": "fiber-payjoin-kit is an open-source, asynchronous Rust library that brings collaborative Payjoin privacy natively to the Nervos Fiber Network. By allowing the receiver to contribute inputs to the funding transaction of a state channel, it completely breaks the common-input ownership heuristic, ensuring off-chain CKB payments remain entirely private."
+    },
+    "10317": {
+      "zh": "该提案申请 6,000 美元，将 Fiber Desktop 从头重建为生产级桌面应用，让普通用户无需 VPS、路由器配置或命令行经验，就能在 macOS、Windows 和 Linux 上运行官方 Fiber Network Node。",
+      "en": "This proposal requests a $6,000 grant to rebuild Fiber Desktop as a production-ready desktop application that lets ordinary users run the official Fiber Network Node on macOS, Windows, and Linux without VPS hosting, router configuration, or command-line expertise."
+    },
+    "10364": {
+      "zh": "这项为期四个月的宣传计划资助 Rypto 发布通俗易懂的 CKB 视频和文字内容、与更广泛的加密社区互动，并在相关活动中介绍 Nervos，让更多人了解和发现 CKB 生态。",
+      "en": "This four-month campaign funds Rypto to publish accessible CKB videos and written content, engage the wider crypto community, and represent Nervos at relevant events so more people can understand and discover the ecosystem."
+    },
+    "10400": {
+      "zh": "我将为 CKB 提供旗舰级机构 RWA 基础设施——首个由真实硬件和实时交易哈希支持、已经运行的 BTC→CKB→EVM 管道。",
+      "en": "I’m offering CKB its flagship institutional-grade RWA infrastructure — the first working BTC→CKB→EVM pipeline backed by real hardware and live hashes."
+    },
+    "10414": {
+      "zh": "该提案申请 3,000 美元资助，用于构建 FiberLatch Access——一个面向 Fiber 支付流程的开源访问控制层。",
+      "en": "This proposal requests a grant of $3,000 to build FiberLatch Access, an open-source access-control layer for Fiber payment flows."
+    },
+    "10419": {
+      "zh": "该提案申请 7,000 美元资助，将 Vellum 与 did:ckb 从身份功能扩展为可移植的链上信誉系统，并在测试网上交付评分引擎、公开开发者档案、CKBoost 集成、治理准入示例和合作伙伴声明签发工具。",
+      "en": "This proposal requests a $7,000 grant to extend Vellum and did:ckb from identity into a portable on-chain reputation system, with a scoring engine, public builder profiles, CKBoost integration, governance-gating examples, and partner claim-issuance tools delivered on testnet."
+    },
+    "10453": {
+      "zh": "Werra 是一个以肯尼亚为起点的创作者市场，帮助中小企业雇用经过验证的内容创作者、规范内容合作并通过托管机制安全付款。Werra 将在需要信任和结算的环节使用 CKB 基础设施与 USDI，实现受托管保护的创作者付款、协议哈希锚定、付款与退款交易记录，以及未来的自动化结算。",
+      "en": "Werra is a Kenya-first creator marketplace that helps SMEs hire verified content creators, structure content deals, and pay safely through escrow. CKB fits where the product needs trust and settlement. Werra will use CKB infrastructure and USDI for escrow-protected creator payments, agreement hash anchoring, payout/refund transaction records, and future settlement automation."
+    },
+    "10462": {
+      "zh": "该提案申请 5,000 美元，用于构建并发布 Fiber Network 原生 Python SDK，为 Python 开发者和 AI 智能体提供可安装、带类型定义的通道、节点、发票、支付、路由、网络图和比特币跨链功能库。",
+      "en": "This proposal requests $5,000 to build and publish a native Python SDK for Fiber Network, giving Python developers and AI agents a typed, installable library for channels, peers, invoices, payments, routing, network graph access, and Bitcoin cross-chain interoperability."
+    },
+    "10522": {
+      "zh": "CKB Anywhere Card V2 让用户可以在任何接受 Visa 的场所直接使用自托管 CKB，从而把 CKB 变成实用的支付资产。用户可将虚拟 Visa 卡添加到 Apple Wallet 或 Google Wallet，在全球超过 1.75 亿家 Visa 商户进行非接触式支付；与传统加密卡不同，用户在明确授权单笔消费前始终保有 CKB 的完整托管权。",
+      "en": "CKB Anywhere Card V2 transforms CKB into a practical payment asset by allowing users to spend directly from self-custody anywhere Visa is accepted. Users add a virtual Visa card to Apple Wallet or Google Wallet, enabling contactless payments at more than 175 million Visa-accepting merchants worldwide. Unlike traditional crypto card products, users retain full custody of their CKB until they explicitly authorize an individual purchase."
+    },
+    "10583": {
+      "zh": "Pocket Node for iOS 将无服务器、自托管的 CKB 轻客户端钱包带到 iPhone，并增加内置 dApp 浏览器及兼容 CCC 的身份与交易签名功能。",
+      "en": "Pocket Node for iOS brings the self-custody, server-free CKB light-client wallet to iPhone and adds an in-app dApp browser with a CCC-compatible identity and transaction signer."
+    },
+    "10604": {
+      "zh": "fiber-payjoin-kit 是一个开源 Rust 库，为 Nervos Fiber Network 提供协作式通道注资能力。交易双方共同向注资交易提供 CellInputs，使链上归属无法被识别；本提案为第一阶段申请 6,000 美元，用于完成核心协调原语和两个连接真实 Fiber 节点的端到端演示。",
+      "en": "fiber-payjoin-kit is an open-source Rust library enabling collaborative channel funding on the Nervos Fiber Network. Both parties contribute CellInputs to the funding transaction, making chain attribution impossible. This proposal requests $6,000 for Phase 1: the core coordination primitive and two working end-to-end demos against a real Fiber node."
+    },
+    "10609": {
+      "zh": "CrowdCell 是 Nervos CKB 上完全链上的“全有或全无”众筹平台，活动创建、认捐、最终确认与资金分配均由脚本强制执行。活动达到目标后向创建者放款并扣除平台费，否则向所有支持者退款，全程无需平台运营方托管资金。",
+      "en": "CrowdCell is a fully on-chain all-or-nothing crowdfunding platform on Nervos CKB: campaign creation, pledging, finalization, and fund distribution are all enforced by scripts. Campaigns either hit their funding goal and release to the creator (minus the platform fee), or fail and refund every backer, with no platform operator holding custody at any step."
+    },
+    "10613": {
+      "zh": "该提案申请 7,000 美元资助，将 Vellum 与 did:ckb 从身份功能扩展为可移植的链上信誉系统，并在测试网上交付评分引擎、公开开发者档案、CKBoost 集成、治理准入示例和合作伙伴声明签发工具。",
+      "en": "This proposal requests a $7,000 grant to extend Vellum and did:ckb from identity into a portable on-chain reputation system, with a scoring engine, public builder profiles, CKBoost integration, governance-gating examples, and partner claim-issuance tools delivered on testnet."
+    },
+    "10678": {
+      "zh": "Corven 是一个云端开发平台，让开发者能够直接在浏览器中进行 CKB 智能合约开发。前期工作已经验证核心概念并建立可运行原型，涵盖浏览器开发、身份验证、工作区管理、运行时服务、Docker 集成与数据库连接；本提案对应 Corven 整体路线图的第一阶段，目标是把该原型完善为可靠、持久且可公开访问的 CKB 云端开发基础设施平台。",
+      "en": "Corven is a cloud-based development platform designed to make CKB smart contract development accessible directly from a web browser. The initial development work has validated the core concept and established a working prototype with the foundations of browser-based development, authentication, workspace management, runtime services, Docker integration, and database connectivity. This proposal represents Phase 1 of Corven’s broader development roadmap. The objective of Phase 1 is to transform the existing prototype into a reliable, persistent, and publicly accessible CKB cloud development infrastructure platform."
+    },
+    "10685": {
+      "zh": "该提案为为期三个月的直播媒体宣传和本地社区聚会申请资助，希望通过持续的直播内容、社交媒体互动与线下基层网络，提高生态曝光度、开展社区教育并推动采用。",
+      "en": "I am seeking funding for a 3-month livestream media campaign and local community Meet Up designed to increase ecosystem visibility, educate the community, and drive adoption through consistent livestream content, social media engagement, and real-world grassroots networking."
+    },
+    "10712": {
+      "zh": "FNN Safeguard 是一款开源、自托管的运营工具，用于在运营者修改生产节点之前，检查 Fiber Network Node 备份能否恢复，以及目标 FNN 版本能否处理运营者节点状态的副本。FNN 已原生提供备份、恢复和迁移能力；FNN Safeguard 并不取代这些能力，而是在其外围提供一个由运营者独立控制的验证层。",
+      "en": "FNN Safeguard is an open-source, self-hosted operator tool for checking whether a Fiber Network Node backup can be recovered and whether a target FNN release can process a clone of an operator’s state before the operator modifies the live node. FNN already provides native backup, restore, and migration capabilities. FNN Safeguard does not replace those capabilities. It provides an independent operator-controlled verification layer around them."
+    },
+    "10736": {
+      "zh": "该提案申请 3,000 美元，在肯尼亚三所大学开展巡回活动，向 210–300 名学生介绍比特币和 CKB 基础知识，并指导他们使用 Kaze 的 Passkey 流程现场创建自托管 CKB 钱包。每场三小时活动还包括安装应用、校园地点标注和校园大使招募。",
+      "en": "This proposal requests $3,000 to run three university tours in Kenya, teaching 210–300 students Bitcoin and CKB fundamentals and guiding them to create self-custodial CKB wallets with Kaze’s Passkey flow. Each three-hour tour also includes app installation, a campus mapping activity, and ambassador recruitment."
+    }
+  }
+}
