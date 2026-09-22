@@ -67,6 +67,72 @@ export function stripForumHtml(value = '') {
     .trim();
 }
 
+function trimOverviewSentences(input: string, maxLength = 460, sentenceLimit = 2) {
+  const normalized = input.replace(/\s+/g, ' ').trim();
+  const sentences = normalized.split(/(?<=[.!?。！？])\s+(?=[A-Z\u4e00-\u9fff])/g);
+  const selected = sentences
+    .filter((sentence) => sentence.trim().length > 20)
+    .slice(0, sentenceLimit)
+    .join(' ')
+    .trim();
+  const value = selected || normalized;
+  return value.length > maxLength ? `${value.slice(0, maxLength).trim()}…` : value;
+}
+
+function cleanProposalObjective(input: string) {
+  let value = input
+    .replace(/\s+/g, ' ')
+    .replace(/^\s*(?:\d+[.)、]\s*)?(?:one[- ]paragraph overview|executive summary|summary|overview|abstract|摘要|项目摘要|项目概述|简介)\s*[:：-]?\s*/i, '')
+    .trim();
+  value = value.split(/\s+(?=(?:amount requested|grant amount requested|requested amount|requested budget|budget requested|ETA to completion|CKB (?:wallet|address)|funding address|wallet address|申请金额|申请预算|预算|预计完成时间|CKB 地址|收款地址)\s*[:：])/i)[0];
+  value = value
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/\bckb1[a-z0-9]{30,}\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return trimOverviewSentences(value, 460, 2);
+}
+
+function proposalObjectiveScore(input: string) {
+  const text = input.trim();
+  let score = text.length >= 60 && text.length <= 650 ? 3 : 0;
+  if (/\b(?:this proposal|we (?:propose|plan|aim)|aims? to|build|develop|create|integrate|provide|launch)\b|(?:本提案|我们(?:计划|希望|拟)|旨在|开发|构建|集成|推出|提供)/i.test(text)) score += 6;
+  if (/^(?:\d+[.)、]\s*)?(?:title|update|link to|vote|voting|amount|budget|ETA|wallet|CKB address|标题|更新|投票|申请金额|预算|地址)/i.test(text)) score -= 12;
+  if (/ckb1[a-z0-9]{20,}|https?:\/\//i.test(text)) score -= 5;
+  return score;
+}
+
+// The website detail page and daily digest both use this extractor, so a new
+// proposal's overview remains consistent before an editorial override lands.
+export function extractProposalObjective(cooked = '', fallbackSummary = '') {
+  const withoutQuotes = cooked.replace(/<aside[^>]*class=["'][^"']*quote[^"']*["'][^>]*>[\s\S]*?<\/aside>/gi, ' ');
+  const paragraphCandidates = [...withoutQuotes.matchAll(/<(?:p|blockquote)[^>]*>([\s\S]*?)<\/(?:p|blockquote)>/gi)]
+    .map((match) => stripForumHtml(match[1]))
+    .filter((text) => text.length > 35 && !/table of contents|目录|disclaimer|免责声明/i.test(text));
+  const candidates = paragraphCandidates.length
+    ? paragraphCandidates
+    : [stripForumHtml(withoutQuotes), fallbackSummary].filter(Boolean);
+  const selected = candidates.sort((left, right) => proposalObjectiveScore(right) - proposalObjectiveScore(left))[0]
+    ?? fallbackSummary;
+  return cleanProposalObjective(selected || fallbackSummary);
+}
+
+// Keep the requested-budget value identical across the detail page, proposal
+// directory, email digest, and Telegram digest.
+export function extractProposalBudget(text: string) {
+  const value = String.raw`((?:USD|USDT|INR)\s*\$?\s*[\d,.]+|\$\s*[\d,.]+(?:\s*(?:USD|USDT))?|[\d,.]+\s*(?:USD|USDT|CKB(?:s)?|U)\b|0\s*(?:CKB)?)`;
+  const labels = [
+    String.raw`(?:grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
+    String.raw`(?:this proposal requests|we (?:are requesting|request)|our budget is|apply for|the budget for this project is)\s*(?:a grant of|a total budget of|a total of)?\s*${value}`,
+    String.raw`(?:budget breakdown|预算(?:详情|明细)?)\s*.{0,80}?\btotal\s*[:：\-–—]*\s*${value}`,
+  ];
+  for (const pattern of labels) {
+    const match = text.match(new RegExp(pattern, 'i'))?.[1];
+    if (match) return match.replace(/\s+/g, ' ').trim();
+  }
+  return null;
+}
+
 const explicitProgressPattern = /(?:\b(?:weekly|bi[\s-]?weekly|monthly|quarterly|annual|yearly|status|progress|project|development|milestone|completion|delivery|final)\s+(?:updates?|reports?)\b|\b(?:week|month|quarter|year|milestone|phase|stage)\s*#?\d+\s*(?:updates?|reports?|completed|complete|delivered)\b|\bq[1-4]\s+(?:updates?|reports?)\b|\b(?:update|report)\s*#\s*\d+\b|周报|双周报|月报|季报|年报|状态更新|(?:项目|工作)?进展(?:更新|报告)|进度(?:更新|报告)|项目更新|里程碑(?:报告|更新|进展)|里程碑\s*[#第]?[一二三四五六七八九十\d]+\s*(?:已完成|完成|已交付)|结项报告|完结报告|完成报告|交付报告)/i;
 
 export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {

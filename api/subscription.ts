@@ -2,14 +2,17 @@ import {
   cleanSummary,
   getProposalStatusTags,
   getProposalTitle,
-  projectTypeLabels,
   proposals,
   statusMeta,
   type Proposal,
 } from '../lib/proposals.js';
+import { proposalOverridesById } from '../lib/proposal-overrides.js';
+import { proposalOverviewTranslationsById } from '../lib/proposal-overview-translations.js';
 import {
   classifyProgressUpdate,
   DIGEST_LOOKBACK_MS,
+  extractProposalBudget,
+  extractProposalObjective,
   isRecentTopic,
   progressUpdateCategoryLabel,
   progressUpdatePosts,
@@ -64,6 +67,8 @@ type DigestTopic = {
   proposer: string;
   budget: string | null;
   firstPostExcerpt: string;
+  overviewZh: string;
+  overviewEn: string;
   latestPostAuthor: string;
   latestPostCreatedAt?: string;
   latestPostExcerpt: string;
@@ -218,10 +223,52 @@ function clipped(value: string, length = 320) {
   return compact.length > length ? `${compact.slice(0, length).trim()}…` : compact;
 }
 
-function extractDigestBudget(text: string) {
-  const value = String.raw`((?:USD\s*)?\$?\s*[\d,.]+\s*(?:USD|USDT|CKB(?:s)?)?)`;
-  const match = text.match(new RegExp(String.raw`(?:funding requested|requested budget|requested amount|total budget|grant amount|申请总额|总申请金额|申请金额|申请预算|总预算)\s*[:：\-–—]?\s*${value}`, 'i'));
-  return match?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+function savedDigestOverview(id: string, locale: Locale) {
+  const override = proposalOverridesById[id]?.overview;
+  const localized = locale === 'en' ? override?.objectiveEn : override?.objectiveZh;
+  if (localized?.trim()) return localized.trim();
+  const historical = proposalOverviewTranslationsById[id]?.[locale];
+  if (historical?.trim()) return historical.trim();
+  const generic = override?.objective?.trim();
+  if (!generic) return '';
+  const hasChinese = /[\u3400-\u9fff]/u.test(generic);
+  return (locale === 'zh') === hasChinese ? generic : '';
+}
+
+async function translateDigestOverview(proposalId: string, target: Locale, source: string) {
+  if (!source.trim()) return '';
+  try {
+    const response = await fetch(`${siteUrl()}/api/translation`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Origin: siteUrl(),
+      },
+      body: JSON.stringify({ proposalId, target, text: source }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) return '';
+    const result = await response.json() as { ok?: boolean; translation?: string };
+    return result.ok ? result.translation?.trim() ?? '' : '';
+  } catch {
+    return '';
+  }
+}
+
+async function completeDigestOverviews(
+  proposalId: string,
+  sourceObjective: string,
+  initial: { zh: string; en: string },
+) {
+  let zh = initial.zh.trim();
+  let en = initial.en.trim();
+  const sourceHasChinese = /[\u3400-\u9fff]/u.test(sourceObjective);
+  if (!zh && sourceHasChinese) zh = sourceObjective;
+  if (!en && !sourceHasChinese) en = sourceObjective;
+  if (!zh && en) zh = await translateDigestOverview(proposalId, 'zh', en);
+  if (!en && zh) en = await translateDigestOverview(proposalId, 'en', zh);
+  return { zh: zh || sourceObjective, en: en || sourceObjective };
 }
 
 async function fetchTopicDetail(topic: Topic) {
@@ -245,13 +292,21 @@ async function fetchTopicDetail(topic: Topic) {
 }
 
 async function buildDigestTopic(topic: Topic, previous?: TopicState, knownPosts?: ForumPost[]): Promise<DigestTopic> {
-  const proposal = proposalById.get(String(topic.id));
+  const id = String(topic.id);
+  const proposal = proposalById.get(id);
+  const override = proposalOverridesById[id];
+  const initialOverview = {
+    zh: proposal ? cleanSummary(proposal, 2_000, 'zh') : savedDigestOverview(id, 'zh'),
+    en: proposal ? cleanSummary(proposal, 2_000, 'en') : savedDigestOverview(id, 'en'),
+  };
   const fallback = {
     topic,
     proposal,
-    proposer: proposal?.author ?? 'Unknown',
-    budget: proposal?.budgetLabel ?? null,
-    firstPostExcerpt: proposal?.summary ?? '',
+    proposer: override?.author ?? proposal?.author ?? 'Unknown',
+    budget: override?.budgetLabel ?? proposal?.budgetLabel ?? null,
+    firstPostExcerpt: initialOverview.en || initialOverview.zh || proposal?.summary || '',
+    overviewZh: initialOverview.zh,
+    overviewEn: initialOverview.en,
     latestPostAuthor: proposal?.author ?? 'Unknown',
     latestPostCreatedAt: topic.last_posted_at ?? topic.bumped_at ?? topic.created_at,
     latestPostExcerpt: '',
@@ -263,11 +318,15 @@ async function buildDigestTopic(topic: Topic, previous?: TopicState, knownPosts?
     const firstPost = posts.find((post) => post.post_number === 1) ?? posts[0];
     const latestPost = posts.at(-1) ?? firstPost;
     const firstText = stripForumHtml(firstPost?.cooked);
+    const sourceObjective = extractProposalObjective(firstPost?.cooked, firstText || fallback.firstPostExcerpt);
+    const overviews = await completeDigestOverviews(id, sourceObjective, initialOverview);
     return {
       ...fallback,
       proposer: firstPost?.username ?? fallback.proposer,
-      budget: proposal?.budgetLabel ?? extractDigestBudget(firstText),
-      firstPostExcerpt: clipped(firstText || fallback.firstPostExcerpt),
+      budget: override?.budgetLabel ?? proposal?.budgetLabel ?? extractProposalBudget(firstText),
+      firstPostExcerpt: sourceObjective || fallback.firstPostExcerpt,
+      overviewZh: overviews.zh,
+      overviewEn: overviews.en,
       latestPostAuthor: latestPost?.username ?? fallback.latestPostAuthor,
       latestPostCreatedAt: latestPost?.created_at ?? fallback.latestPostCreatedAt,
       latestPostExcerpt: clipped(stripForumHtml(latestPost?.cooked)),
@@ -287,8 +346,7 @@ async function buildProgressDigestTopics(topic: Topic, previous: TopicState, cut
     return progressUpdatePosts(posts, previous, cutoffMs).map((post) => ({
       ...base,
       proposer: firstPost?.username ?? base.proposer,
-      budget: base.proposal?.budgetLabel ?? extractDigestBudget(firstText),
-      firstPostExcerpt: clipped(firstText || base.firstPostExcerpt),
+      budget: base.budget ?? extractProposalBudget(firstText),
       latestPostAuthor: post.username,
       latestPostCreatedAt: post.created_at,
       latestPostExcerpt: clipped(stripForumHtml(post.cooked)),
@@ -318,21 +376,23 @@ function digestTime(locale: Locale, value?: string | Date) {
 }
 
 function localizedTitle(item: DigestTopic, locale: Locale) {
+  const override = proposalOverridesById[String(item.topic.id)];
+  const title = locale === 'en' ? override?.titleEn : override?.titleZh;
+  if (title?.trim()) return title.trim();
   return item.proposal ? getProposalTitle(item.proposal, locale) : item.topic.title.replace(/^\s*[[(]\s*DIS\s*[\])]?\s*/i, '').trim();
 }
 
 function localizedOverview(item: DigestTopic, locale: Locale) {
-  return item.proposal ? cleanSummary(item.proposal, 320, locale) : clipped(item.firstPostExcerpt || (locale === 'en' ? 'Open the source discussion to read the full proposal.' : '请打开原始讨论阅读完整提案。'));
+  const localized = locale === 'en' ? item.overviewEn : item.overviewZh;
+  if (localized.trim()) return localized.trim();
+  return item.proposal
+    ? cleanSummary(item.proposal, 2_000, locale)
+    : item.firstPostExcerpt || (locale === 'en' ? 'Open the source discussion to read the full proposal.' : '请打开原始讨论阅读完整提案。');
 }
 
 function localizedStatus(item: DigestTopic, locale: Locale) {
   const tags = item.proposal ? getProposalStatusTags(item.proposal) : ['discussion'] as const;
   return tags.map((tag) => statusMeta[tag][locale]).join(' · ');
-}
-
-function localizedType(item: DigestTopic, locale: Locale) {
-  if (!item.proposal) return locale === 'en' ? 'Proposal' : '提案';
-  return locale === 'en' ? item.proposal.projectType : projectTypeLabels[item.proposal.projectType] ?? item.proposal.projectType;
 }
 
 function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: DigestTopic[], unsubscribeUrl: string) {
@@ -356,10 +416,8 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
   const proposalCard = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
     const overview = localizedOverview(item, locale);
-    const status = localizedStatus(item, locale);
-    const type = localizedType(item, locale);
     const budget = item.budget ?? (en ? 'Not stated' : '未标明');
-    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'New proposal' : '新提案'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:10px 0 14px;color:#4d5953;font-size:14px;line-height:1.7">${esc(overview)}</p><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="font-size:12px;color:#65706a"><tr><td style="padding:4px 8px 4px 0"><b style="color:#0b0f0e">${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}</td><td style="padding:4px 0"><b style="color:#0b0f0e">${en ? 'Budget' : '预算'}:</b> ${esc(budget)}</td></tr><tr><td style="padding:4px 8px 4px 0"><b style="color:#0b0f0e">${en ? 'Type' : '类型'}:</b> ${esc(type)}</td><td style="padding:4px 0"><b style="color:#0b0f0e">${en ? 'Status' : '状态'}:</b> ${esc(status)}</td></tr></table><p style="margin:16px 0 0"><a href="${proposalUrl(item.topic)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View proposal' : '查看提案'}</a> <a href="${topicUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Source discussion →' : '原始讨论 →'}</a></p></li>`;
+    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'New proposal' : '新提案'}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:10px 0 14px;color:#4d5953;font-size:14px;line-height:1.7">${esc(overview)}</p><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="font-size:12px;color:#65706a"><tr><td style="padding:4px 8px 4px 0"><b style="color:#0b0f0e">${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}</td><td style="padding:4px 0"><b style="color:#0b0f0e">${en ? 'Budget' : '预算'}:</b> ${esc(budget)}</td></tr></table><p style="margin:16px 0 0"><a href="${proposalUrl(item.topic)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View proposal' : '查看提案'}</a> <a href="${topicUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Source discussion →' : '原始讨论 →'}</a></p></li>`;
   };
   const updateCard = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
@@ -415,7 +473,7 @@ function telegramDigestMessages(locale: Locale, newTopics: DigestTopic[], update
     : `<b>你好，CKB 社区的朋友 👋</b>\n\n今天有 ${newCount} 份新提案和 ${updatedCount} 条进展更新：`;
   const newProposalBlock = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
-    const overview = clipped(localizedOverview(item, locale), 360);
+    const overview = clipped(localizedOverview(item, locale), 700);
     const budget = item.budget ?? (en ? 'Not stated' : '未标明');
     return `<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- <b>${en ? 'Overview' : '简介'}:</b> ${esc(overview)}\n\n- <b>${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}\n\n- <b>${en ? 'Budget' : '预算'}:</b> ${esc(budget)}\n\n<a href="${esc(topicUrl(item.topic))}">${en ? 'View source proposal →' : '查看原始提案 →'}</a>`;
   };

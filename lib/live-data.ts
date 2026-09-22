@@ -15,6 +15,10 @@ import {
 } from '@/lib/status-evidence';
 import { proposalOverridesById } from '@/lib/proposal-overrides';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
+import {
+  extractProposalBudget as extractBudget,
+  extractProposalObjective,
+} from '@/lib/digest-activity';
 
 const categoryEndpoint = '/live/nervos/category';
 const fundedTopicEndpoint = '/live/nervos/topic/7793';
@@ -137,20 +141,6 @@ function extractLinks(html = '') {
     .filter((url) => /^https?:\/\//.test(url));
 }
 
-function extractBudget(text: string) {
-  const value = String.raw`((?:USD|USDT|INR)\s*\$?\s*[\d,.]+|\$\s*[\d,.]+(?:\s*(?:USD|USDT))?|[\d,.]+\s*(?:USD|USDT|CKB(?:s)?|U)\b|0\s*(?:CKB)?)`;
-  const labels = [
-    String.raw`(?:grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
-    String.raw`(?:this proposal requests|we (?:are requesting|request)|our budget is|apply for|the budget for this project is)\s*(?:a grant of|a total budget of|a total of)?\s*${value}`,
-    String.raw`(?:budget breakdown|预算(?:详情|明细)?)\s*.{0,80}?\btotal\s*[:：\-–—]*\s*${value}`,
-  ];
-  for (const pattern of labels) {
-    const match = text.match(new RegExp(pattern, 'i'))?.[1];
-    if (match) return match.replace(/\s+/g, ' ').trim();
-  }
-  return null;
-}
-
 function stripQuotedContent(html = '') {
   return html
     .replace(/<aside\b[^>]*class=["'][^"']*\bquote\b[^"']*["'][^>]*>[\s\S]*?<\/aside>/gi, ' ')
@@ -266,35 +256,16 @@ function statusReasonZh(tags: ProposalStatusTag[]) {
   return '提案仍在 7 天讨论期内，尚未进入投票。';
 }
 
-function trimSentences(input: string, maxLength = 460, sentenceLimit = 2) {
+function trimMilestoneDescription(input: string, maxLength = 520, sentenceLimit = 4) {
   const normalized = input.replace(/\s+/g, ' ').trim();
   const sentences = normalized.split(/(?<=[.!?。！？])\s+(?=[A-Z\u4e00-\u9fff])/g);
-  const selected = sentences.filter((sentence) => sentence.trim().length > 20).slice(0, sentenceLimit).join(' ').trim();
+  const selected = sentences
+    .filter((sentence) => sentence.trim().length > 20)
+    .slice(0, sentenceLimit)
+    .join(' ')
+    .trim();
   const value = selected || normalized;
   return value.length > maxLength ? `${value.slice(0, maxLength).trim()}…` : value;
-}
-
-function cleanObjectiveCandidate(input: string) {
-  let value = input
-    .replace(/\s+/g, ' ')
-    .replace(/^(?:one[- ]paragraph overview|executive summary|summary|overview|摘要|项目概述|简介)\s*[:：-]?\s*/i, '')
-    .trim();
-  value = value.split(/\s+(?=(?:amount requested|grant amount requested|requested amount|requested budget|budget requested|ETA to completion|CKB (?:wallet|address)|funding address|wallet address|申请金额|申请预算|预算|预计完成时间|CKB 地址|收款地址)\s*[:：])/i)[0];
-  value = value
-    .replace(/https?:\/\/\S+/g, '')
-    .replace(/\bckb1[a-z0-9]{30,}\b/gi, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return trimSentences(value, 460, 2);
-}
-
-function objectiveScore(input: string) {
-  const text = input.trim();
-  let score = text.length >= 60 && text.length <= 650 ? 3 : 0;
-  if (/\b(?:this proposal|we (?:propose|plan|aim)|aims? to|build|develop|create|integrate|provide|launch)\b|(?:本提案|我们(?:计划|希望|拟)|旨在|开发|构建|集成|推出|提供)/i.test(text)) score += 6;
-  if (/^(?:update|link to|vote|voting|amount|budget|ETA|wallet|CKB address|更新|投票|申请金额|预算|地址)/i.test(text)) score -= 12;
-  if (/ckb1[a-z0-9]{20,}|https?:\/\//i.test(text)) score -= 5;
-  return score;
 }
 
 function milestoneMarker(element: Element) {
@@ -333,31 +304,9 @@ function elementPieces(element: Element) {
 }
 
 function parseProposalOverview(cooked: string, fallbackSummary: string): ProposalOverview {
-  if (typeof DOMParser === 'undefined') return { objective: cleanObjectiveCandidate(fallbackSummary), milestones: [] };
+  const objective = extractProposalObjective(cooked, fallbackSummary);
+  if (typeof DOMParser === 'undefined') return { objective, milestones: [] };
   const doc = new DOMParser().parseFromString(cooked, 'text/html');
-  const headings = [...doc.querySelectorAll('h1, h2, h3, h4, h5, h6')];
-  const overviewHeading = headings.find((heading) => /^(?:summary|executive summary|overview|abstract|项目摘要|摘要|项目概述|简介)\b/i.test((heading.textContent ?? '').trim()));
-  const objectiveCandidates: string[] = [];
-  if (overviewHeading) {
-    let sibling = overviewHeading.nextElementSibling;
-    while (sibling && !/^H[1-6]$/.test(sibling.tagName) && objectiveCandidates.length < 6) {
-      if (sibling.matches('p, blockquote')) {
-        const text = sibling.textContent?.replace(/\s+/g, ' ').trim();
-        if (text && text.length > 35) objectiveCandidates.push(text);
-      }
-      sibling = sibling.nextElementSibling;
-    }
-  }
-  if (!objectiveCandidates.length) {
-    objectiveCandidates.push(
-      ...[...doc.querySelectorAll('p')]
-        .map((node) => node.textContent?.replace(/\s+/g, ' ').trim() ?? '')
-        .filter((text) => text.length > 55 && !/table of contents|目录|disclaimer|免责声明/i.test(text)),
-    );
-  }
-  const objective = cleanObjectiveCandidate(
-    objectiveCandidates.sort((a, b) => objectiveScore(b) - objectiveScore(a))[0] ?? fallbackSummary,
-  );
 
   const candidates = [...doc.querySelectorAll('h2, h3, h4, h5, h6, p, tr, li')]
     .map((element, order) => ({ element, order, marker: milestoneMarker(element) }))
@@ -396,7 +345,7 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
     if (lastDeliverablesLabel >= 0) {
       rawDescription = rawDescription.slice(lastDeliverablesLabel).replace(/^(?:deliverables?|交付内容)\s*[:：]\s*/i, '');
     }
-    const description = trimSentences(rawDescription.replace(/\bckb1[a-z0-9]{30,}\b/gi, ''), 520, 4);
+    const description = trimMilestoneDescription(rawDescription.replace(/\bckb1[a-z0-9]{30,}\b/gi, ''));
     const title = candidate.marker.title
       .replace(/\s*[-–—]\s*(?:\d+(?:\.\d+)?%\s+of (?:the )?grant paid|支付\s*\d+(?:\.\d+)?%\s*资金).*$/i, '')
       .slice(0, 180);
@@ -416,7 +365,7 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
     .slice(0, 12)
     .map(({ order: _order, score: _score, ...milestone }) => milestone);
 
-  return { objective: objective || cleanObjectiveCandidate(fallbackSummary), milestones };
+  return { objective: objective || extractProposalObjective('', fallbackSummary), milestones };
 }
 
 function parseFundedTopic(topic: TopicResponse) {

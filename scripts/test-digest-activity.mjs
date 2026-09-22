@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {
   classifyProgressUpdate,
+  extractProposalBudget,
+  extractProposalObjective,
   isMeaningfulProgressUpdate,
   isRecentTopic,
   progressUpdateCategoryLabel,
@@ -50,5 +52,23 @@ assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate(milestoneExample
 assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate('Biweekly report'), 'zh'), '发布了双周报');
 assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate('Q3 quarterly report'), 'en'), 'Published a quarterly update.');
 assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate('Project completion report'), 'zh'), '发布了结项报告');
+
+const kazeFirstPost = `
+  <ol>
+    <li><p>Title [DIS] Kaze University Tours, Kenya Stage 2</p></li>
+    <li><p>Summary This proposal requests a grant of $3,000 to run three university tours in Kenya. Each tour will teach students Bitcoin and CKB basics and get them to create their own self-custodial CKB wallet live, on the spot, using a Passkey instead of a seed phrase.</p></li>
+  </ol>
+  <p>Requested budget: $3,000</p>
+`;
+assert.equal(
+  extractProposalObjective(kazeFirstPost),
+  'This proposal requests a grant of $3,000 to run three university tours in Kenya. Each tour will teach students Bitcoin and CKB basics and get them to create their own self-custodial CKB wallet live, on the spot, using a Passkey instead of a seed phrase.',
+  'New-proposal digests must extract the same concise objective used by the detail page, not the raw first-post preamble',
+);
+assert.equal(
+  extractProposalBudget('This proposal requests a grant of $3,000 to run three university tours in Kenya.'),
+  '$3,000',
+  'The digest and proposal detail page must resolve the same requested budget',
+);
 
 console.log('Validated daily digest activity classification.');
