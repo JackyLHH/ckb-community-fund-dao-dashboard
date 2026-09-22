@@ -8,11 +8,14 @@ import {
   type Proposal,
 } from '../lib/proposals.js';
 import {
+  classifyProgressUpdate,
   DIGEST_LOOKBACK_MS,
   isRecentTopic,
+  progressUpdateCategoryLabel,
   progressUpdatePosts,
   stripForumHtml,
   topicChanged,
+  type ProgressUpdateCategory,
 } from '../lib/digest-activity.js';
 
 const forumBaseUrl = 'https://talk.nervos.org';
@@ -66,6 +69,7 @@ type DigestTopic = {
   latestPostExcerpt: string;
   latestPostNumber?: number;
   newPostCount: number;
+  updateCategory?: ProgressUpdateCategory;
 };
 type EmailMessage = {
   subject: string;
@@ -290,6 +294,7 @@ async function buildProgressDigestTopics(topic: Topic, previous: TopicState, cut
       latestPostExcerpt: clipped(stripForumHtml(post.cooked)),
       latestPostNumber: post.post_number,
       newPostCount: 1,
+      updateCategory: classifyProgressUpdate(post.cooked),
     }));
   } catch {
     // A failed topic fetch must never create an unverified "progress update" email.
@@ -363,7 +368,8 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
     const metadata = en
       ? `Updated by ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}`
       : `由 ${item.latestPostAuthor} 更新${postedAt ? ` · ${postedAt}` : ''}`;
-    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'Proposal update' : '提案进展'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:8px 0;color:#7a847f;font-size:12px">${esc(metadata)}</p><p style="margin:16px 0 0"><a href="${topicUrl(item.topic, item.latestPostNumber)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View this update' : '查看本次更新'}</a> <a href="${proposalUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Proposal record →' : '提案记录 →'}</a></p></li>`;
+    const updateCategory = progressUpdateCategoryLabel(item.updateCategory ?? { kind: 'general' }, locale);
+    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'Proposal update' : '提案进展'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:8px 0;color:#7a847f;font-size:12px">${esc(metadata)}</p><p style="margin:12px 0 0;color:#0b0f0e;font-size:14px;font-weight:bold;line-height:1.6">${esc(updateCategory)}</p><p style="margin:16px 0 0"><a href="${topicUrl(item.topic, item.latestPostNumber)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View this update' : '查看本次更新'}</a> <a href="${proposalUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Proposal record →' : '提案记录 →'}</a></p></li>`;
   };
   const section = (title: string, items: DigestTopic[], render: (item: DigestTopic) => string) => items.length
     ? `<h2 style="margin:30px 0 12px;font-size:19px">${title}</h2><ul style="padding:0;margin:0">${items.map(render).join('')}</ul>`
@@ -378,7 +384,8 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
     const title = localizedTitle(item, locale);
     if (updated) {
       const postedAt = digestTime(locale, item.latestPostCreatedAt);
-      return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}\n${en ? 'View this update' : '查看本次更新'}: ${topicUrl(item.topic, item.latestPostNumber)}`;
+      const updateCategory = progressUpdateCategoryLabel(item.updateCategory ?? { kind: 'general' }, locale);
+      return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}\n${updateCategory}\n${en ? 'View this update' : '查看本次更新'}: ${topicUrl(item.topic, item.latestPostNumber)}`;
     }
     return `${title}\n${en ? 'Proposer' : '提案人'}: ${item.proposer}\n${en ? 'Budget' : '预算'}: ${item.budget ?? (en ? 'Not stated' : '未标明')}\n${localizedOverview(item, locale)}\n${proposalUrl(item.topic)}`;
   };
