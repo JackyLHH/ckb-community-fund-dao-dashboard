@@ -127,17 +127,6 @@ export function LiveProjectDetail({ id, initialProposal }: { id?: string; initia
     ? proposal.progressNoteEn ?? proposal.progressNoteZh
     : proposal.progressNoteZh ?? proposal.progressNoteEn;
   const displayTitle = getProposalTitle(proposal, locale);
-  const hiddenTags = new Set([
-    'dis',
-    'discussion',
-    'proposal',
-    'meta rule amendment',
-    ...(proposal.hiddenTags ?? []).map((tag) => tag.toLocaleLowerCase().replace(/[-_]+/g, ' ').trim()),
-  ]);
-  const visibleTags = proposal.tags.filter((tag) => {
-    const name = typeof tag === 'string' ? tag : tag.name ?? tag.slug ?? '';
-    return !hiddenTags.has(name.toLocaleLowerCase().replace(/[-_]+/g, ' ').trim());
-  });
   return (
     <main className="min-h-screen bg-[#f5f7f2] text-[#0b0f0e]">
       <SiteHeader />
@@ -234,10 +223,6 @@ export function LiveProjectDetail({ id, initialProposal }: { id?: string; initia
               )}
               <div className="mt-7 flex flex-wrap gap-2">
                 <span className="rounded-full bg-[#e8efea] px-3 py-1.5 text-xs font-bold">{locale === 'en' ? proposal.projectType : projectTypeLabels[proposal.projectType] ?? proposal.projectType}</span>
-                {visibleTags.slice(0, 5).map((tag) => {
-                  const name = typeof tag === 'string' ? tag : tag.name ?? tag.slug;
-                  return name ? <span key={name} className="rounded-full border border-black/10 px-3 py-1.5 text-xs text-black/50">#{name}</span> : null;
-                })}
               </div>
             </article>
 

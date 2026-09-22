@@ -10,7 +10,7 @@
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "sync:data": "node scripts/sync-forum.mjs",
-    "test": "node scripts/validate-data.mjs && node --experimental-strip-types scripts/test-digest-activity.mjs",
+    "test": "node scripts/validate-data.mjs && node --experimental-strip-types scripts/test-digest-activity.mjs && node --experimental-strip-types scripts/test-proposal-overrides.mjs",
     "lint": "oxlint",
     "format": "oxfmt"
   },

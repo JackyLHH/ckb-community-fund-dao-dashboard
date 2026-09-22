@@ -113,9 +113,16 @@ export type ProposalDataset = {
 const sourceDataset = rawDataset as ProposalDataset;
 
 export function normalizeProjectType(value: string) {
-  if (value.toLocaleLowerCase() === 'meta-rule amendment') return 'Governance';
-  if (value.toLocaleLowerCase() === 'apps & culture') return 'Apps';
-  return value;
+  const aliases: Record<string, string> = {
+    apps: 'Apps',
+    'apps & culture': 'Apps',
+    'community & content': 'Community & Content',
+    ecosystem: 'Ecosystem',
+    governance: 'Governance',
+    'meta-rule amendment': 'Governance',
+    infrastructure: 'Infrastructure',
+  };
+  return aliases[value.trim().toLocaleLowerCase()] ?? 'Ecosystem';
 }
 
 const progressUpdatePattern = /(?:\b(?:status|project|development|progress|product delivery|delivery|completion|final|weekly|monthly|month\s*\d+)\s+(?:updates?|reports?)\b|\b(?:update|report)\s*[:：#-]|\bmilestone\s*#?\s*\d+[^.!?]{0,100}\b(?:complete|completed|delivered|report|update|testing)\b|\b(?:is|are|was|were|has been|have been)\s+(?:now\s+)?(?:completed|delivered|deployed|launched|released)\b|\b(?:we|i)\s+(?:have\s+)?(?:completed|delivered|deployed|launched|released|shipped)\b|\b(?:game|project|product|platform|development)\s+(?:is|remains)\s+still\s+(?:in|under)\s+development\b|项目(?:进展|更新|交付|完结)(?:报告|说明|更新)?|周报|(?:进展|状态|交付|完工|完成|最终|月度|周度)(?:更新|报告)|里程碑\s*[#第]?\s*[\d一二三四五六七八九十]+[^。！？]{0,80}(?:完成|交付|报告|更新|测试)|(?:游戏|项目|产品|平台)[^。！？]{0,16}(?:仍在|正在)开发)/i;
@@ -145,6 +152,7 @@ export const dataset: ProposalDataset = {
     return {
       ...merged,
       projectType: normalizeProjectType(merged.projectType),
+      tags: [],
       updates: override?.updates
         ? merged.updates
         : merged.updates.filter((update) => override?.allowNonAuthorUpdates || isUpdateByProposalAuthor(update, merged)),
@@ -322,7 +330,9 @@ export function getProposalOverview(proposal: Proposal, locale: 'zh' | 'en') {
     ? proposal.overview?.objectiveEn ?? proposal.overview?.objective
     : proposal.overview?.objectiveZh ?? proposal.overview?.objective;
   if (sourceObjective?.trim() && isLanguageMatch(sourceObjective)) return sourceObjective.trim();
-  let summary = proposal.summary
+  const sourceLanguageObjective = overview?.objective?.trim() || proposal.overview?.objective?.trim();
+  if (sourceLanguageObjective) return sourceLanguageObjective;
+  const summary = proposal.summary
     .replace(proposal.originalTitle, '')
     .replace(proposal.title, '')
     .replace(proposal.titleZh ?? '', '')
@@ -333,9 +343,7 @@ export function getProposalOverview(proposal: Proposal, locale: 'zh' | 'en') {
   const isGeneratedFallback = !summary
     || summary === '原帖未提供可提取的摘要。'
     || summary === '原始讨论帖暂未提供可提取的简短摘要，请前往来源页查看完整内容。';
-  if (isGeneratedFallback || !isLanguageMatch(summary)) return locale === 'en'
-    ? 'An English overview is not yet available. Read the original proposal for details.'
-    : '中文概览尚未提供，请查看原始提案了解详情。';
+  if (isGeneratedFallback) return getProposalTitle(proposal, locale);
   return summary;
 }
 

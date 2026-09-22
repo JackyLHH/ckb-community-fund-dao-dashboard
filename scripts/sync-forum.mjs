@@ -190,7 +190,7 @@ async function enrichTopic(topic) {
     originalUrl: `${baseUrl}/t/${topic.slug}/${topic.id}`,
     createdAt: topic.created_at,
     updatedAt: topic.last_posted_at ?? topic.bumped_at ?? topic.created_at,
-    tags: topic.tags ?? [],
+    tags: [],
     projectType: classify(topic.title, topic.tags),
     budgetLabel,
     discussion: {

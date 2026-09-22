@@ -492,15 +492,15 @@ function mapCategoryTopic(
     titleZh: proposalOverride?.titleZh ?? fallback?.titleZh,
     titleEn: proposalOverride?.titleEn ?? fallback?.titleEn,
     originalTitle: topic.title,
-    summary: stripHtml(topic.excerpt ?? '') || fallback?.summary || '原帖未提供可提取的摘要。',
+    summary: stripHtml(topic.excerpt ?? '') || fallback?.summary || cleanTitle(topic.title),
     overview: proposalOverride?.overview ?? fallback?.overview,
     author: proposalOverride?.author ?? author,
     originalUrl,
     createdAt: topic.created_at,
     updatedAt: topic.last_posted_at ?? topic.bumped_at ?? topic.created_at,
-    tags: topic.tags ?? fallback?.tags ?? [],
+    tags: [],
     projectType: normalizeProjectType(proposalOverride?.projectType ?? fallback?.projectType ?? classify(topic.title, topic.tags)),
-    budgetLabel: proposalOverride?.budgetLabel ?? fundedEntry?.budgetLabel ?? fallback?.budgetLabel ?? null,
+    budgetLabel: proposalOverride?.budgetLabel ?? fundedEntry?.budgetLabel ?? fallback?.budgetLabel ?? extractBudget(stripHtml(topic.excerpt ?? '')),
     discussion,
     voting,
     funded,
@@ -526,6 +526,40 @@ function mapCategoryTopic(
       ...(completionEvidence ? [completionEvidence] : []),
     ],
   };
+}
+
+function needsTopicEnrichment(proposal: Proposal) {
+  const age = Date.now() - new Date(proposal.createdAt).getTime();
+  const isRecent = Number.isFinite(age) && age >= 0 && age <= 45 * 24 * 60 * 60 * 1_000;
+  return isRecent && (!proposal.budgetLabel || !proposal.overview?.objective?.trim());
+}
+
+async function enrichProposalFromTopic(proposal: Proposal) {
+  if (!needsTopicEnrichment(proposal)) return proposal;
+  try {
+    const detail = await fetchJson<TopicResponse>(topicEndpoint(proposal.id));
+    const firstPost = detail.post_stream?.posts?.find((post) => post.post_number === 1) ?? detail.post_stream?.posts?.[0];
+    const cooked = firstPost?.cooked ?? '';
+    const text = stripHtml(cooked);
+    if (!text) return proposal;
+    const parsed = parseProposalOverview(cooked, text);
+    const objective = parsed.objective.trim();
+    const sourceIsChinese = /[\u3400-\u9fff]/u.test(objective);
+    const overview: ProposalOverview = {
+      ...parsed,
+      ...(sourceIsChinese ? { objectiveZh: objective } : { objectiveEn: objective }),
+    };
+    return {
+      ...proposal,
+      summary: objective || proposal.summary,
+      overview,
+      author: firstPost?.username ?? proposal.author,
+      budgetLabel: proposal.budgetLabel ?? extractBudget(text),
+      updatedAt: detail.last_posted_at ?? firstPost?.updated_at ?? proposal.updatedAt,
+    };
+  } catch {
+    return proposal;
+  }
 }
 
 async function fetchAllCategoryPages() {
@@ -562,8 +596,9 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
     fetchChainBalance().catch(() => null),
   ]);
   const funded = parseFundedTopic(fundedTopic);
-  const proposals = category.topics
+  const proposals = (await Promise.all(category.topics
     .map((topic) => mapCategoryTopic(topic, category.usernames, funded.entries, fetchedAt))
+    .map(enrichProposalFromTopic)))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const usedSlugs = new Set<string>();
   for (const proposal of proposals) {

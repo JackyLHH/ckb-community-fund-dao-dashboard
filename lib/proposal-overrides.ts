@@ -42,6 +42,54 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '10736': {
+    titleZh: 'Kaze × CKB 肯尼亚大学巡回活动续期提案',
+    titleEn: 'Kaze X CKB Unitour Continuation Proposal',
+    budgetLabel: '$3,000',
+    projectType: 'Community & Content',
+    milestoneStructureZh: '3 个里程碑',
+    milestoneStructureEn: '3 Milestones',
+    overview: {
+      objective: 'This proposal requests $3,000 to run three university tours in Kenya, teaching 210–300 students Bitcoin and CKB fundamentals and guiding them to create self-custodial CKB wallets with Kaze’s Passkey flow. Each three-hour tour also includes app installation, a campus mapping activity, and ambassador recruitment.',
+      objectiveZh: '该提案申请 3,000 美元，在肯尼亚三所大学开展巡回活动，向 210–300 名学生介绍比特币和 CKB 基础知识，并指导他们使用 Kaze 的 Passkey 流程现场创建自托管 CKB 钱包。每场三小时活动还包括安装应用、校园地点标注和校园大使招募。',
+      objectiveEn: 'This proposal requests $3,000 to run three university tours in Kenya, teaching 210–300 students Bitcoin and CKB fundamentals and guiding them to create self-custodial CKB wallets with Kaze’s Passkey flow. Each three-hour tour also includes app installation, a campus mapping activity, and ambassador recruitment.',
+      milestones: [
+        {
+          title: 'Milestone 1: Machakos University, Main Campus',
+          titleZh: '里程碑 1：马查科斯大学主校区',
+          titleEn: 'Milestone 1: Machakos University, Main Campus',
+          description: 'Run a three-hour tour covering Bitcoin and CKB education, live Passkey wallet creation, Kaze app installation, and campus ambassador sign-up.',
+          descriptionZh: '开展一场三小时活动，内容包括比特币与 CKB 教学、现场创建 Passkey 钱包、安装 Kaze 应用以及校园大使报名。',
+          descriptionEn: 'Run a three-hour tour covering Bitcoin and CKB education, live Passkey wallet creation, Kaze app installation, and campus ambassador sign-up.',
+          budget: '$1,000',
+          etaZh: '第 2–3 周',
+          etaEn: 'Weeks 2–3',
+        },
+        {
+          title: 'Milestone 2: Pwani University, Kilifi',
+          titleZh: '里程碑 2：普瓦尼大学基利菲校区',
+          titleEn: 'Milestone 2: Pwani University, Kilifi',
+          description: 'Run a three-hour tour covering Bitcoin and CKB education, live Passkey wallet creation, Kaze app installation, and campus ambassador sign-up.',
+          descriptionZh: '开展一场三小时活动，内容包括比特币与 CKB 教学、现场创建 Passkey 钱包、安装 Kaze 应用以及校园大使报名。',
+          descriptionEn: 'Run a three-hour tour covering Bitcoin and CKB education, live Passkey wallet creation, Kaze app installation, and campus ambassador sign-up.',
+          budget: '$1,000',
+          etaZh: '第 4–5 周',
+          etaEn: 'Weeks 4–5',
+        },
+        {
+          title: 'Milestone 3: University of Nairobi or KCA University',
+          titleZh: '里程碑 3：内罗毕大学或 KCA 大学',
+          titleEn: 'Milestone 3: University of Nairobi or KCA University',
+          description: 'Run the third three-hour tour at the final selected university, covering the same education, wallet creation, app installation, and ambassador recruitment activities.',
+          descriptionZh: '在最终确定的大学开展第三场三小时活动，继续完成教学、钱包创建、应用安装和校园大使招募。',
+          descriptionEn: 'Run the third three-hour tour at the final selected university, covering the same education, wallet creation, app installation, and ambassador recruitment activities.',
+          budget: '$1,000',
+          etaZh: '第 6–8 周',
+          etaEn: 'Weeks 6–8',
+        },
+      ],
+    },
+  },
   '10712': {
     budgetLabel: '8,263,000 CKB',
     milestoneStructureZh: '4 个里程碑',
