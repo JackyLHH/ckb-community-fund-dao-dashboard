@@ -419,10 +419,10 @@ function telegramDigestMessages(locale: Locale, newTopics: DigestTopic[], update
     const budget = item.budget ?? (en ? 'Not stated' : '未标明');
     return `<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- <b>${en ? 'Overview' : '简介'}:</b> ${esc(overview)}\n\n- <b>${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}\n\n- <b>${en ? 'Budget' : '预算'}:</b> ${esc(budget)}\n\n<a href="${esc(topicUrl(item.topic))}">${en ? 'View source proposal →' : '查看原始提案 →'}</a>`;
   };
-  const updateBlock = (item: DigestTopic) => {
+  const updateBlock = (item: DigestTopic, index: number) => {
     const title = localizedTitle(item, locale);
-    const excerpt = clipped(item.latestPostExcerpt || (en ? 'A new proposal update was posted.' : '该提案发布了新的进展。'), 360);
-    return `<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- ${esc(excerpt)}\n\n<a href="${esc(topicUrl(item.topic, item.latestPostNumber))}">${en ? 'Read this update →' : '阅读本次更新 →'}</a>`;
+    const updateCategory = progressUpdateCategoryLabel(item.updateCategory ?? { kind: 'general' }, locale);
+    return `${index + 1}. <a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- ${esc(updateCategory)}\n\n<a href="${esc(topicUrl(item.topic, item.latestPostNumber))}">${en ? 'Read this update →' : '阅读本次更新 →'}</a>`;
   };
   const messages: string[] = [];
   let current = header;
