@@ -28,6 +28,12 @@ The project exports a static build to `dist/client` and includes `vercel.json`. 
 
 The `main` branch is connected to the production Vercel project. Pushing to `main` deploys the live site, while pull requests and other branches receive Vercel preview deployments.
 
+## Proposal overview translations
+
+Human-reviewed `objectiveZh` and `objectiveEn` values always take precedence. When a live proposal supplies only one language, `/api/translation` translates that exact overview into the missing language through Vercel AI Gateway. Production uses the short-lived `VERCEL_OIDC_TOKEN` supplied by Vercel, so no permanent model credential is exposed to the browser. Local translation testing can use `AI_GATEWAY_API_KEY`.
+
+Generated translations are cached in the browser and in warm function instances. Adding a reviewed translation later replaces the generated value automatically.
+
 ## Daily digest delivery
 
 The production cron calls `/api/cron/digest` at `08:00 UTC` (`16:00` China Standard Time). The same detected proposal changes are delivered to confirmed email subscribers and, when configured, to separate Chinese and English Telegram channels.

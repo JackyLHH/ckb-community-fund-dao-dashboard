@@ -14,6 +14,7 @@ import {
   voteEvidenceByProposalId,
 } from '@/lib/status-evidence';
 import { proposalOverridesById } from '@/lib/proposal-overrides';
+import { translateMissingProposalOverview } from '@/lib/proposal-translation';
 
 const categoryEndpoint = '/live/nervos/category';
 const fundedTopicEndpoint = '/live/nervos/topic/7793';
@@ -534,6 +535,11 @@ function needsTopicEnrichment(proposal: Proposal) {
   return isRecent && (!proposal.budgetLabel || !proposal.overview?.objective?.trim());
 }
 
+function isRecentProposal(proposal: Proposal) {
+  const age = Date.now() - new Date(proposal.createdAt).getTime();
+  return Number.isFinite(age) && age >= 0 && age <= 45 * 24 * 60 * 60 * 1_000;
+}
+
 async function enrichProposalFromTopic(proposal: Proposal) {
   if (!needsTopicEnrichment(proposal)) return proposal;
   try {
@@ -596,9 +602,12 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
     fetchChainBalance().catch(() => null),
   ]);
   const funded = parseFundedTopic(fundedTopic);
-  const proposals = (await Promise.all(category.topics
+  const enrichedProposals = await Promise.all(category.topics
     .map((topic) => mapCategoryTopic(topic, category.usernames, funded.entries, fetchedAt))
-    .map(enrichProposalFromTopic)))
+    .map(enrichProposalFromTopic));
+  const proposals = (await Promise.all(enrichedProposals.map(async (proposal) =>
+    isRecentProposal(proposal) ? await translateMissingProposalOverview(proposal) : proposal,
+  )))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const usedSlugs = new Set<string>();
   for (const proposal of proposals) {
@@ -693,7 +702,7 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
     const statusTags = statusTagsFor(id, { ...base, discussion }, voting);
     const completionEvidence = completionEvidenceByProposalId[id];
     const overview = proposalOverride?.overview ?? parseProposalOverview(cooked, base.summary);
-    return {
+    const proposal: Proposal = {
       ...base,
       title: cleanTitle(detail.title ?? base.originalTitle),
       originalTitle: detail.title ?? base.originalTitle,
@@ -716,6 +725,7 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
         ...(completionEvidence ? [completionEvidence] : []),
       ],
     };
+    return await translateMissingProposalOverview(proposal);
   } catch {
     return base;
   }

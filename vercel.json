@@ -7,6 +7,9 @@
   "functions": {
     "api/subscription.ts": {
       "maxDuration": 60
+    },
+    "api/translation.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [
