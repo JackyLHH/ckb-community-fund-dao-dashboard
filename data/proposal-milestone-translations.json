@@ -1,0 +1,1575 @@
+{
+  "version": 1,
+  "translations": {
+    "7065": [
+      {
+        "titleZh": "阶段 1：发放空投奖励并开启 DEX 交易",
+        "titleEn": "Stage 1: Airdrop rewards and DEX trading",
+        "descriptionZh": "发放空投奖励，将代币上线 DEX 并开始交易。",
+        "descriptionEn": "Distribute the airdrop rewards, list the token on a DEX, and begin trading.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 2：开放 GameFi 玩法",
+        "titleEn": "Stage 2: GameFi modes",
+        "descriptionZh": "开放献祭、驻守和挖矿等 GameFi 游戏模式。",
+        "descriptionEn": "Open GameFi modes including sacrifice, garrison, and mining.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 3：启动代币质押",
+        "titleEn": "Stage 3: Token staking",
+        "descriptionZh": "启动代币质押活动。",
+        "descriptionEn": "Launch the token staking campaign.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 4：升级 Lv5–10 装备玩法",
+        "titleEn": "Stage 4: Lv5–10 equipment gameplay upgrade",
+        "descriptionZh": "完成 Lv5–10 装备的 GameFi 玩法升级。",
+        "descriptionEn": "Complete the GameFi gameplay upgrades for Lv5–10 equipment.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "7366": [
+      {
+        "titleZh": "里程碑 1（3,379,040 CKB）",
+        "titleEn": "Milestone 1 (3,379,040 CKB)",
+        "descriptionZh": "在 Infinity Wallet 中原生集成并支持 Nervos 链。",
+        "descriptionEn": "Integrate Nervos chain with native support in the Infinity Wallet.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "7524": [
+      {
+        "titleZh": "Beta 版本改进",
+        "titleEn": "Beta Improvement",
+        "descriptionZh": "改进现有 Beta 版本及其核心游戏体验。",
+        "descriptionEn": "Improve the existing beta version and its core gameplay experience.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "智能合约集成",
+        "titleEn": "Smart Contract Integration",
+        "descriptionZh": "集成游戏所需的智能合约。",
+        "descriptionEn": "Integrate the smart contracts required by the game.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "在线扩展",
+        "titleEn": "Online Scaling",
+        "descriptionZh": "扩展并稳定游戏的在线能力。",
+        "descriptionEn": "Expand and stabilize the game’s online capabilities.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "最终改进与测试",
+        "titleEn": "Final Enhancements and Testing",
+        "descriptionZh": "完成最终改进与全面测试。",
+        "descriptionEn": "Complete the final enhancements and comprehensive testing.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "发布与社区参与",
+        "titleEn": "Launch and Community Engagement",
+        "descriptionZh": "发布游戏并推动社区参与和增长。",
+        "descriptionEn": "Launch the game and support community participation and growth.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "7579": [
+      {
+        "titleZh": "阶段 0：设计阶段（09/29-10/13）",
+        "titleEn": "Stage 0: Design Phase (09/29-10/13)",
+        "descriptionZh": "完成产品与界面设计。",
+        "descriptionEn": "Complete the product and interface design phase.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 1：开发阶段（10/13-12/10）",
+        "titleEn": "Stage 1: Development Phase (10/13-12/10)",
+        "descriptionZh": "实现规划中的 JoyGift 产品功能。",
+        "descriptionEn": "Implement the planned JoyGift product functionality.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 2：公开测试阶段（12/11-12/21，进行中）",
+        "titleEn": "Stage 2: Public Testing Phase (12/11-12/21, in progress)",
+        "descriptionZh": "开放产品测试并收集公开反馈。",
+        "descriptionEn": "Open the product for public testing and collect feedback.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "推广阶段（暂定 12/21）",
+        "titleEn": "Promotion Phase (tentatively 12/21)",
+        "descriptionZh": "在公开测试阶段之后启动推广。",
+        "descriptionEn": "Begin promotion after the public testing phase.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "优化阶段（12/25–）",
+        "titleEn": "Optimization Phase (12/25–)",
+        "descriptionZh": "上线后持续优化产品。",
+        "descriptionEn": "Continue improving the product after launch.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "7593": [
+      {
+        "titleZh": "阶段 1：Spore 与 Cluster 合约",
+        "titleEn": "Stage 1: Spore and Cluster Contracts",
+        "descriptionZh": "在 CKB 主网上部署核心 Spore 与 Cluster 合约。",
+        "descriptionEn": "Deploy the essential Spore and Cluster contracts on CKB mainnet.",
+        "budgetZh": "110,492 CKB",
+        "budgetEn": "110,492 CKB",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 2：Cluster Proxy 与 Cluster Agent",
+        "titleEn": "Stage 2: Cluster Proxy and Cluster Agent",
+        "descriptionZh": "部署 Cluster Proxy 与 Cluster Agent 合约。",
+        "descriptionEn": "Deploy the Cluster Proxy and Cluster Agent contracts.",
+        "budgetZh": "83,780 CKB",
+        "budgetEn": "83,780 CKB",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 3：Mutant 与 Spore Lua 库",
+        "titleEn": "Stage 3: Mutant and Spore Lua Library",
+        "descriptionZh": "部署 Mutant 与 Spore Lua 库，完成主网上线所需组件。",
+        "descriptionEn": "Deploy Mutant and the Spore Lua library to complete the mainnet launch package.",
+        "budgetZh": "313,092 CKB",
+        "budgetEn": "313,092 CKB",
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "7615": [
+      {
+        "titleZh": "项目启动",
+        "titleEn": "Project Launch",
+        "descriptionZh": "启动 Omiga 项目并确立初始产品方向。",
+        "descriptionEn": "Launch the Omiga project and establish its initial product direction.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "测试网上线",
+        "titleEn": "Testnet Launch",
+        "descriptionZh": "在 CKB 测试网部署 Omiga 协议与应用。",
+        "descriptionEn": "Deploy the Omiga protocol and application on the CKB testnet.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "主网上线",
+        "titleEn": "Mainnet Launch",
+        "descriptionZh": "在 CKB 主网部署 Omiga 合约和正式应用。",
+        "descriptionEn": "Deploy Omiga contracts and the production application on CKB mainnet.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "支持 MetaMask",
+        "titleEn": "MetaMask Support",
+        "descriptionZh": "为 Omiga 应用增加 MetaMask 钱包支持。",
+        "descriptionEn": "Add MetaMask wallet support to the Omiga application.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "支持 Unisat Wallet",
+        "titleEn": "Unisat Wallet Support",
+        "descriptionZh": "为 Omiga 用户增加 Unisat Wallet 支持。",
+        "descriptionEn": "Add Unisat Wallet support for Omiga users.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "订单簿市场",
+        "titleEn": "OrderBook Marketplace",
+        "descriptionZh": "上线支持相关资产的去中心化订单簿市场。",
+        "descriptionEn": "Launch a decentralized orderbook marketplace for supported assets.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "Omiga 盲盒铭文",
+        "titleEn": "Omiga Blind Box Inscription",
+        "descriptionZh": "开发并推出 Omiga 盲盒铭文功能。",
+        "descriptionEn": "Develop and launch Omiga’s blind-box inscription functionality.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "Omiga PoW 铭文",
+        "titleEn": "Omiga PoW Inscription",
+        "descriptionZh": "开发并推出 Omiga PoW 铭文功能。",
+        "descriptionEn": "Develop and launch Omiga’s proof-of-work inscription functionality.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "7636": [
+      {
+        "titleZh": "里程碑 1：智能合约开发与部署",
+        "titleEn": "Milestone 1: Smart Contract Implementation and Deployment",
+        "descriptionZh": "创建并部署主游戏合约和 NFT 合约。",
+        "descriptionEn": "Create and deploy the main game contract and NFT contract.",
+        "budgetZh": "$20,000",
+        "budgetEn": "$20,000",
+        "etaZh": "8 周",
+        "etaEn": "8 weeks"
+      },
+      {
+        "titleZh": "里程碑 2：集成 motoDEX 平台",
+        "titleEn": "Milestone 2: motoDEX Platform Integration",
+        "descriptionZh": "将 NFT 购买、游戏和竞价功能集成到 motodex.openbisea.com。",
+        "descriptionEn": "Integrate NFT purchasing, gameplay, and bidding into motodex.openbisea.com.",
+        "budgetZh": "$10,000",
+        "budgetEn": "$10,000",
+        "etaZh": "1 个月",
+        "etaEn": "1 month"
+      },
+      {
+        "titleZh": "里程碑 3：上线后推广",
+        "titleEn": "Milestone 3: Post-Launch Marketing",
+        "descriptionZh": "开展计划中的上线后市场推广并发布宣传内容。",
+        "descriptionEn": "Run the planned post-launch marketing campaign and publish promotional content.",
+        "budgetZh": "$20,000",
+        "budgetEn": "$20,000",
+        "etaZh": "3 个月",
+        "etaEn": "3 months"
+      }
+    ],
+    "8174": [
+      {
+        "titleZh": "项目启动（2024 年 4 月）",
+        "titleEn": "Project Launch (April 2024)",
+        "descriptionZh": "在 RGB++ 生态中推出 CAT++。",
+        "descriptionEn": "Launch CAT++ within the RGB++ ecosystem.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "订单簿 DEX",
+        "titleEn": "Orderbook DEX",
+        "descriptionZh": "提供支持 JoyID 的 CAT++ 订单簿交易市场。",
+        "descriptionEn": "Provide an orderbook marketplace for CAT++ trading with JoyID support.",
+        "budgetZh": "$30,000 USD",
+        "budgetEn": "$30,000 USD",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "DOB 设计与发布",
+        "titleEn": "DOB Design and Launch",
+        "descriptionZh": "设计并推出以猫为主题、可用于未来 GameFi 的 DOB。",
+        "descriptionEn": "Design and launch a CAT-themed DOB for future GameFi use.",
+        "budgetZh": "$28,000 USD",
+        "budgetEn": "$28,000 USD",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "DOB Marketplace",
+        "titleEn": "DOB Marketplace",
+        "descriptionZh": "建设用于交易 DOB 和相关 GameFi 装备的市场。",
+        "descriptionEn": "Build a marketplace for trading DOBs and related GameFi gear.",
+        "budgetZh": "$30,000 USD",
+        "budgetEn": "$30,000 USD",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "游戏开发",
+        "titleEn": "Gaming",
+        "descriptionZh": "开发整合 CAT++、DOB 与区块链游戏基础设施的 GameFi 体验。",
+        "descriptionEn": "Develop a GameFi experience integrating CAT++, DOB, and blockchain game infrastructure.",
+        "budgetZh": "$30,000 USD",
+        "budgetEn": "$30,000 USD",
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "8188": [
+      {
+        "titleZh": "项目启动与设计文档 V1",
+        "titleEn": "Project Kickoff and Design Document V1",
+        "descriptionZh": "启动项目并完成第一版设计文档。",
+        "descriptionEn": "Kick off the project and complete the first version of the design document.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "测试网上线",
+        "titleEn": "Testnet Launch",
+        "descriptionZh": "在测试网部署并开放 ArtCells 平台。",
+        "descriptionEn": "Deploy and open the ArtCells platform on testnet.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "主网上线并发布首个艺术 NFT",
+        "titleEn": "Mainnet Launch + First Art NFT",
+        "descriptionZh": "在主网上线并发布平台的首个艺术 NFT。",
+        "descriptionEn": "Launch on mainnet and publish the platform’s first art NFT.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "支持 Unisat Wallet",
+        "titleEn": "Unisat Wallet Support",
+        "descriptionZh": "增加对 Unisat Wallet 的连接和使用支持。",
+        "descriptionEn": "Add support for connecting and using Unisat Wallet.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "引入亚洲顶尖生成艺术家的作品",
+        "titleEn": "Introduction of a Top Asian Generative Artist’s Work",
+        "descriptionZh": "引入并发布一位亚洲顶尖生成艺术家的作品。",
+        "descriptionEn": "Introduce and publish work from a leading Asian generative artist.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "上线二级交易功能",
+        "titleEn": "Launch of Secondary Trading Function",
+        "descriptionZh": "上线受支持艺术 NFT 的二级市场交易功能。",
+        "descriptionEn": "Launch secondary-market trading for supported art NFTs.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "成立 CKB 艺术策展委员会",
+        "titleEn": "Establishment of the CKB Art Curatorial Committee",
+        "descriptionZh": "成立委员会，支持 CKB 生态的艺术策展工作。",
+        "descriptionEn": "Establish a committee to support art curation in the CKB ecosystem.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "社区运营",
+        "titleEn": "Community Operations",
+        "descriptionZh": "运营并发展 ArtCells 的艺术家和收藏者社区。",
+        "descriptionEn": "Operate and grow the ArtCells artist and collector community.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "8539": [
+      {
+        "titleZh": "里程碑 1：技术评估和开发计划",
+        "titleEn": "Milestone 1: Technical Assessment and Development Plan",
+        "descriptionZh": "深入调查实施细节，明确集成需求，并最终确定实施计划与时间表。",
+        "descriptionEn": "Investigate the implementation details, define the integration requirements, and finalize the implementation plan and timeline.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 2：测试床发布",
+        "titleEn": "Milestone 2: Testbed Release",
+        "descriptionZh": "将 Nervos CKB 集成部署到 Rosen Bridge 的隔离测试环境，并使用零价值测试代币与 CKB 原生资产测试全部跨链桥功能。",
+        "descriptionEn": "Deploy the Nervos CKB integration to Rosen Bridge’s isolated testbed and test all bridge functions with zero-value test tokens and native CKB assets.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 3：主网发布",
+        "titleEn": "Milestone 3: Mainnet Release",
+        "descriptionZh": "完成最终测试，将 Rosen Bridge 集成部署到 CKB 主网，并向公众开放真实资产转移。",
+        "descriptionEn": "Complete final testing, deploy the Rosen Bridge integration on CKB mainnet, and enable live asset transfers for the public.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "8734": [
+      {
+        "titleZh": "启动阶段（里程碑 0）",
+        "titleEn": "Launch Phase (Milestone 0)",
+        "descriptionZh": "启动项目并确认范围、资源和交付计划。",
+        "descriptionEn": "Launch the project and confirm its scope, resources, and delivery plan.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "基础框架阶段（里程碑 1）",
+        "titleEn": "Foundation Framework Phase (Milestone 1)",
+        "descriptionZh": "构建 AI 策展与 Fiber 微支付的基础框架。",
+        "descriptionEn": "Build the foundation framework for AI curation and Fiber micropayments.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "功能扩展阶段（里程碑 2）",
+        "titleEn": "Feature Extension Phase (Milestone 2)",
+        "descriptionZh": "扩展规划中的内容评估和奖励功能。",
+        "descriptionEn": "Extend the platform with the planned content evaluation and reward features.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "市场验证阶段（里程碑 3）",
+        "titleEn": "Market Validation Phase (Milestone 3)",
+        "descriptionZh": "通过创作者、用户和市场反馈验证产品。",
+        "descriptionEn": "Validate the product with creators, users, and market feedback.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "规模扩展阶段（里程碑 4）",
+        "titleEn": "Scale-up Phase (Milestone 4)",
+        "descriptionZh": "扩展平台、运营和支持的内容活动规模。",
+        "descriptionEn": "Scale the platform, operations, and supported content activity.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "生态建设阶段（里程碑 5）",
+        "titleEn": "Ecological Construction Phase (Milestone 5)",
+        "descriptionZh": "建设更广泛的创作者、策展人和合作伙伴生态。",
+        "descriptionEn": "Develop the broader creator, curator, and partner ecosystem.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "8832": [
+      {
+        "titleZh": "里程碑 1：基础框架与核心 MVP",
+        "titleEn": "Milestone 1: Foundation and Core MVP",
+        "descriptionZh": "构建集成 CCC 钱包的 Next.js 应用，完成界面原型，开发核心协议、锁与活动脚本，并实现 Points UDT 和锁定奖励分发。",
+        "descriptionEn": "Build the Next.js application with CCC wallet integration, prototype the interface, develop the core protocol, lock, and campaign scripts, and implement Points UDT with locked reward distribution.",
+        "budgetZh": "总资助的 30%",
+        "budgetEn": "30% of grant",
+        "etaZh": "约第 1 个月",
+        "etaEn": "About Month 1"
+      },
+      {
+        "titleZh": "里程碑 2：高级验证与游戏化",
+        "titleEn": "Milestone 2: Advanced Verification and Gamification",
+        "descriptionZh": "加入 Telegram 审核和后续 DID/KYC 接口、排行榜、贡献档案、连续参与奖励、难度倍率、徽章、同伴审批打赏，以及更完整的管理与分析功能。",
+        "descriptionEn": "Add Telegram review and future DID/KYC hooks, leaderboards, contribution profiles, streaks, difficulty multipliers, badges, peer-approved tipping, and expanded administration and analytics.",
+        "budgetZh": "总资助的 30%",
+        "budgetEn": "30% of grant",
+        "etaZh": "约第 2 个月",
+        "etaEn": "About Month 2"
+      },
+      {
+        "titleZh": "里程碑 3：测试活动与扩展前准备",
+        "titleEn": "Milestone 3: Test Campaigns and Pre-Scaling",
+        "descriptionZh": "运行真实测试活动，与用户验证奖励和认证流程，研究链上行为自动验证，发布使用文档，并完成最终测试、错误修复和 DAO 报告。",
+        "descriptionEn": "Run real test campaigns, validate reward and verification flows with users, research automated on-chain action verification, publish onboarding documentation, and complete final testing, bug fixes, and the DAO report.",
+        "budgetZh": "总资助的 30%",
+        "budgetEn": "30% of grant",
+        "etaZh": "约第 3 个月",
+        "etaEn": "About Month 3"
+      }
+    ],
+    "8918": [
+      {
+        "titleZh": "里程碑 1：资助开始（约第 0 周）",
+        "titleEn": "Milestone 1: Grant Commencement (~Week 0)",
+        "descriptionZh": "提供初始进展报告；完成 React 前端、钱包集成和 Spore Protocol 合约；测试 IPFS 与链上混合存储；并为部署后的应用文件开源做好准备。",
+        "descriptionEn": "Provide an initial progress report; finalize the React frontend, wallet integration, and Spore Protocol contracts; test IPFS and on-chain storage; and prepare the application files for open-source release after deployment.",
+        "budgetZh": "总预算的 50% · $24,000",
+        "budgetEn": "50% of grant · $24,000",
+        "etaZh": "约第 0 周",
+        "etaEn": "~Week 0"
+      },
+      {
+        "titleZh": "里程碑 2：公开推出与开源发布（约第 6 周）",
+        "titleEn": "Milestone 2: Public Launch & Open-Source Release (~Week 6)",
+        "descriptionZh": "完成收藏管理、公开投放、社区投票与创作者测试；在 CKB 主网公开部署 Spore Studio；在 GitHub 开源应用文件；发布创作者入门文档；并提交最终进展报告与 DAO 报告。",
+        "descriptionEn": "Complete collection management, public drops, community voting, and creator testing; deploy Spore Studio on CKB mainnet; open-source the application on GitHub; publish onboarding documentation; and submit the final progress and DAO reports.",
+        "budgetZh": "总预算的 50% · $24,000",
+        "budgetEn": "50% of grant · $24,000",
+        "etaZh": "约第 6 周",
+        "etaEn": "~Week 6"
+      }
+    ],
+    "8973": [
+      {
+        "titleZh": "里程碑 0：项目启动",
+        "titleEn": "Milestone 0: Project Launch",
+        "descriptionZh": "社区批准提案后启动项目，确认实施安排并拨付启动资金。",
+        "descriptionEn": "Launch the project after community approval, confirm the implementation arrangements, and release the initial funding.",
+        "budgetZh": "总预算的 10%",
+        "budgetEn": "10% of total budget",
+        "etaZh": "提案获批后",
+        "etaEn": "After approval"
+      },
+      {
+        "titleZh": "里程碑 1：MVP 开发与测试网上线",
+        "titleEn": "Milestone 1: MVP Development and Testnet Launch",
+        "descriptionZh": "完成基于 did:ckb 的账户体系以及提案讨论、投票、个人主页、资金透明与多语言等 MVP 核心功能，并部署到测试网供社区测试。",
+        "descriptionEn": "Build the did:ckb account system and the MVP features for proposal discussion, voting, profiles, treasury transparency, and multilingual support, then deploy them to testnet for community testing.",
+        "budgetZh": "总预算的 52%",
+        "budgetEn": "52% of total budget",
+        "etaZh": "2025 年 9 月至 11 月底",
+        "etaEn": "September–November 2025"
+      },
+      {
+        "titleZh": "里程碑 2：主网上线与试运行",
+        "titleEn": "Milestone 2: Mainnet Launch and Trial Operations",
+        "descriptionZh": "补齐计划功能并部署主网，加入里程碑治理、数据看板、搜索和状态筛选、Stewards 与规则页面，随后完成首轮试运行修复。",
+        "descriptionEn": "Complete the planned features and deploy to mainnet, adding milestone governance, dashboards, search and status filters, Stewards, and rules pages, followed by fixes from the first trial operation.",
+        "budgetZh": "总预算的 20%",
+        "budgetEn": "20% of total budget",
+        "etaZh": "2025 年 12 月至 2026 年 2 月中旬",
+        "etaEn": "December 2025–mid-February 2026"
+      },
+      {
+        "titleZh": "里程碑 3：物业团队正式运营",
+        "titleEn": "Milestone 3: Stewards Team Operations",
+        "descriptionZh": "组建中立的 Stewards 团队，正式承担提案全生命周期管理、平台维护与社区服务。",
+        "descriptionEn": "Establish a neutral Stewards team to manage the full proposal lifecycle, platform maintenance, and community services.",
+        "budgetZh": "总预算的 18%",
+        "budgetEn": "18% of total budget",
+        "etaZh": "Milestone 2 后运营 12 个月",
+        "etaEn": "12 months after Milestone 2"
+      }
+    ],
+    "9681": [
+      {
+        "titleZh": "首付款：提案获批",
+        "titleEn": "Initial Payment: Grant Approval",
+        "descriptionZh": "提案获批后启动为期三个月的第一阶段基础建设。",
+        "descriptionEn": "Begin the three-month Phase 1 foundation work after grant approval.",
+        "budgetZh": "$5,700 · 30%",
+        "budgetEn": "$5,700 · 30%",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 1：机器人开发与审计",
+        "titleEn": "Milestone 1: Bot Development and Audit",
+        "descriptionZh": "完成支持创建钱包、查看余额和测试网转账的 WhatsApp 机器人，并完成计划中的审计。",
+        "descriptionEn": "Build the WhatsApp bot for wallet creation, balance viewing, and testnet transfers, then complete the planned audit.",
+        "budgetZh": "$4,750 · 25%",
+        "budgetEn": "$4,750 · 25%",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 2：封闭测试",
+        "titleEn": "Milestone 2: Closed Beta",
+        "descriptionZh": "面向 50–100 名社区成员开展封闭测试，验证用户上手、可靠性、安全性和使用体验目标。",
+        "descriptionEn": "Run a closed beta with 50–100 community members and validate the onboarding, reliability, security, and user experience targets.",
+        "budgetZh": "$4,750 · 25%",
+        "budgetEn": "$4,750 · 25%",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 3：最终演示与报告",
+        "titleEn": "Milestone 3: Final Demo and Report",
+        "descriptionZh": "交付最终产品演示、试点结果、数据分析面板与 SDK 证据，以及项目完结报告。",
+        "descriptionEn": "Deliver the final product demonstration, pilot findings, analytics dashboard and SDK evidence, and the closing report.",
+        "budgetZh": "$3,800 · 20%",
+        "budgetEn": "$3,800 · 20%",
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "9756": [
+      {
+        "titleZh": "里程碑 1：技术评估与开发计划",
+        "titleEn": "Milestone 1: Technical Assessment and Development Plan",
+        "descriptionZh": "深入评估 CKB 集成方案，并形成正式实施计划，说明所需技术架构与开发工作。",
+        "descriptionEn": "Investigate the CKB integration in depth and produce a documented implementation plan covering the required technical architecture and development work.",
+        "budgetZh": "$15,000",
+        "budgetEn": "$15,000",
+        "etaZh": "2026 年第一季度",
+        "etaEn": "Q1 2026"
+      },
+      {
+        "titleZh": "里程碑 2：测试环境发布",
+        "titleEn": "Milestone 2: Testbed Release",
+        "descriptionZh": "将 CKB 集成部署到 Rosen Bridge 的隔离测试环境，使用零价值代币测试完整跨链流程与全部功能。",
+        "descriptionEn": "Deploy the CKB integration to Rosen Bridge’s isolated testbed with zero-value tokens and test the complete bridge flow and functionality.",
+        "budgetZh": "$25,000",
+        "budgetEn": "$25,000",
+        "etaZh": "2026 年第二季度",
+        "etaEn": "Q2 2026"
+      },
+      {
+        "titleZh": "里程碑 3：主网发布",
+        "titleEn": "Milestone 3: Mainnet Release",
+        "descriptionZh": "完成内部测试与代码审查，委托正式外部审计并修复问题，完成最终测试后在 Rosen Bridge 主网公开上线 CKB 集成。",
+        "descriptionEn": "Complete internal testing and code review, commission a formal external audit, resolve findings, perform final tests, and publicly launch the CKB integration on Rosen Bridge mainnet.",
+        "budgetZh": "$25,000",
+        "budgetEn": "$25,000",
+        "etaZh": "2026 年第三至第四季度",
+        "etaEn": "Q3–Q4 2026"
+      }
+    ],
+    "9845": [
+      {
+        "titleZh": "里程碑 1：技术设计与 Fiber 集成原型",
+        "titleEn": "Milestone 1: Technical Design and Fiber Integration Prototype",
+        "descriptionZh": "完成架构与威胁模型，在测试网部署 Hub FNN，建立后端与数据库骨架，验证发票结算，并发布从支付到内部记账的最小演示。",
+        "descriptionEn": "Complete the architecture and threat model, deploy a Hub FNN on testnet, build the backend and database skeleton, verify invoice settlement, and publish a minimal payment-to-ledger demo.",
+        "budgetZh": "$4,000 · 20%",
+        "budgetEn": "$4,000 · 20%",
+        "etaZh": "第 1–2 周",
+        "etaEn": "Weeks 1–2"
+      },
+      {
+        "titleZh": "里程碑 2：Discourse 插件与端到端打赏",
+        "titleEn": "Milestone 2: Discourse Plugin and End-to-End Tipping",
+        "descriptionZh": "完成 Discourse 打赏界面与后端接口，接入支付状态追踪，并在测试网演示中交付包含余额和打赏记录的创作者面板。",
+        "descriptionEn": "Build the Discourse tipping interface and backend endpoints, integrate payment-state tracking, and deliver a creator dashboard with balances and tip history on a testnet demo.",
+        "budgetZh": "$8,000 · 40%",
+        "budgetEn": "$8,000 · 40%",
+        "etaZh": "第 3–5 周",
+        "etaEn": "Weeks 3–5"
+      },
+      {
+        "titleZh": "里程碑 3：提现与主网就绪",
+        "titleEn": "Milestone 3: Withdrawals and Mainnet Readiness",
+        "descriptionZh": "交付创作者提现、管理员资产与限额配置、生产监控、限流、备份、完善文档以及主网上线检查清单。",
+        "descriptionEn": "Deliver creator withdrawals, administrator asset and limit controls, production monitoring, rate limiting, backups, polished documentation, and the mainnet deployment checklist.",
+        "budgetZh": "$8,000 · 40%",
+        "budgetEn": "$8,000 · 40%",
+        "etaZh": "第 6–8 周",
+        "etaEn": "Weeks 6–8"
+      }
+    ],
+    "9879": [
+      {
+        "titleZh": "里程碑 1：主网就绪与硬件级安全保障",
+        "titleEn": "Milestone 1: Mainnet Ready & Hardware-Backed Security",
+        "descriptionZh": "完成生产级主网配置、由 Android 硬件密钥保护的 BIP39 助记词、生物识别与备用认证，以及真实交易主网测试。",
+        "descriptionEn": "Complete production mainnet configuration, BIP39 mnemonic support protected by Android hardware-backed keys, biometric authentication with fallback, and real-transaction mainnet testing.",
+        "budgetZh": "$3,375 · 22.5%",
+        "budgetEn": "$3,375 · 22.5%",
+        "etaZh": "第 1 个月",
+        "etaEn": "Month 1"
+      },
+      {
+        "titleZh": "里程碑 2：Nervos DAO 协议集成",
+        "titleEn": "Milestone 2: Nervos DAO Protocol Integration",
+        "descriptionZh": "在钱包内实现 Nervos DAO 存款、取款、到期解锁、补偿、APY 和倒计时功能，并测试不同存款金额与锁定周期。",
+        "descriptionEn": "Build DAO deposit, withdrawal, maturity-unlock, compensation, APY, and countdown functionality inside the wallet and test multiple deposit and lock-period scenarios.",
+        "budgetZh": "$3,375 · 22.5%",
+        "budgetEn": "$3,375 · 22.5%",
+        "etaZh": "第 2 个月",
+        "etaEn": "Month 2"
+      },
+      {
+        "titleZh": "里程碑 3：多钱包与同步优化",
+        "titleEn": "Milestone 3: Multi-Wallet & Sync Optimization",
+        "descriptionZh": "加入安全多账户存储与钱包切换，优化 SQLite 的并发脚本过滤性能，实现交易导出与高级余额追踪，并对内置节点进行压力测试。",
+        "descriptionEn": "Add secure multi-account storage and wallet switching, tune SQLite for concurrent script filters, implement transaction export and advanced balance tracking, and stress-test the embedded node.",
+        "budgetZh": "$3,375 · 22.5%",
+        "budgetEn": "$3,375 · 22.5%",
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      },
+      {
+        "titleZh": "里程碑 4：通讯录、体验完善与上线",
+        "titleEn": "Milestone 4: Address Book, Polish & Launch",
+        "descriptionZh": "完成 JNI 与 Keystore 内部安全审查，加入本地通讯录和发送流程智能建议，完善界面与应用商店页面，并发布用户指南、JNI 文档及 DAO 完结报告。",
+        "descriptionEn": "Complete the internal JNI and Keystore security review, add the local address book and send-flow suggestions, polish the UI and store listing, and publish the user guide, JNI documentation, and DAO completion report.",
+        "budgetZh": "$3,375 · 22.5%",
+        "budgetEn": "$3,375 · 22.5%",
+        "etaZh": "第 4 个月",
+        "etaEn": "Month 4"
+      }
+    ],
+    "10015": [
+      {
+        "titleZh": "第 1 个月：核心订单簿与前端",
+        "titleEn": "Month 1: Core Order Book and Frontend",
+        "descriptionZh": "完成 Invisibook L2 的核心链上订单簿功能，包括撮合、挂单和吃单（本阶段不包含杠杆功能），并完成订单簿前端开发。",
+        "descriptionEn": "Complete core on-chain order book functionality on Invisibook L2—matching, placing orders, and taking orders, excluding leverage features at this stage—and complete the Invisibook order book frontend.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 1 个月",
+        "etaEn": "Month 1"
+      },
+      {
+        "titleZh": "第 2 个月：MPC 结算与 ZK 电路",
+        "titleEn": "Month 2: MPC Settlement and ZK Circuits",
+        "descriptionZh": "实现恶意安全 MPC 模型下的客户端订单结算功能，并开发用于证明订单结算正确性的定制 ZK 电路。",
+        "descriptionEn": "Implement order settlement between clients under malicious-secure MPC and develop custom ZK circuits to prove the correctness of order settlement.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 2 个月",
+        "etaEn": "Month 2"
+      },
+      {
+        "titleZh": "第 3 个月：Proof of Buying 共识",
+        "titleEn": "Month 3: Proof of Buying Consensus",
+        "descriptionZh": "为 Invisibook L2 实现 Proof of Buying 共识协议并接入 CKB L1，同时开发矿工参与共识所需的前端组件。",
+        "descriptionEn": "Implement the Proof of Buying consensus protocol for Invisibook L2, integrate it with CKB L1, and develop frontend components for miner participation in consensus.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      },
+      {
+        "titleZh": "第 4 个月：跨链转账与资产隐私声明",
+        "titleEn": "Month 4: Cross-chain Transfers and Private Asset Declaration",
+        "descriptionZh": "完成与 ETH、CKB 等主要公链之间的跨链转账功能和资产隐私声明。",
+        "descriptionEn": "Complete cross-chain transfer functionality and privacy asset declaration with the major public chains ETH and CKB.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 4 个月",
+        "etaEn": "Month 4"
+      }
+    ],
+    "10070": [
+      {
+        "titleZh": "里程碑 1（第 1–4 周）：Bug 修复、安全加固与 UI 打磨",
+        "titleEn": "Milestone 1 (Weeks 1–4): Bug Fixes, Security Hardening & UI Polish",
+        "descriptionZh": "修复网关、支付边界和前端状态同步等已知问题，完成密钥管理、依赖审计、渗透测试与防重放等安全加固，并统一约 20 个核心页面的界面。验收要求无 Critical/High 漏洞、已知 Bug 全部修复且核心页面 UI 一致。",
+        "descriptionEn": "Fix known gateway, payment-boundary, and frontend-state issues; complete security hardening and penetration testing; and standardize the UI across about 20 core pages. Acceptance requires no Critical or High vulnerabilities, all known bugs fixed, and consistent core-page UI.",
+        "budgetZh": "25% · $10,000",
+        "budgetEn": "25% · $10,000",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 2（第 5–8 周）：测试、性能优化与主网上线",
+        "titleEn": "Milestone 2 (Weeks 5–8): Testing, Performance & Mainnet",
+        "descriptionZh": "完成核心支付流程的端到端测试、k6 压力测试与前端性能优化，并接入 Fiber、CKB L1、Spore 和 RGB++ 主网。验收要求核心支付路径测试覆盖率达到 100%、p95 延迟不高于 500 ms，且主网交易可公开核验。",
+        "descriptionEn": "Complete end-to-end coverage for the core payment flow, k6 load testing and frontend optimization, then connect Fiber, CKB L1, Spore, and RGB++ on mainnet. Acceptance requires 100% coverage of the core payment path, p95 latency at or below 500 ms, and publicly verifiable mainnet transactions.",
+        "budgetZh": "40% · $16,000",
+        "budgetEn": "40% · $16,000",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 3（第 9–12 周）：生产部署、文档与运维",
+        "titleEn": "Milestone 3 (Weeks 9–12): Production Deployment, Documentation & Operations",
+        "descriptionZh": "完成包含 Docker、Nginx、SSL、日志、监控告警、备份、迁移与回滚的生产部署，发布用户、API、运维和 CKB 集成文档，并公开开源材料与演示。验收要求主网实例可访问、文档完整且监控系统正常运行。",
+        "descriptionEn": "Deploy the production service with Docker, Nginx, SSL, logging, monitoring, alerts, backup, migrations, and rollback; publish user, API, operations, and CKB integration documentation; and release the open-source materials and demo. Acceptance requires a mainnet-accessible instance, complete documentation, and working operational monitoring.",
+        "budgetZh": "35% · $14,000",
+        "budgetEn": "35% · $14,000",
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "10100": [
+      {
+        "titleZh": "里程碑 1：上线前收尾",
+        "titleEn": "Milestone 1: Wrap-Up",
+        "descriptionZh": "完成中英文国际化、集成 UniSat 与 OKX 钱包、完成多平台测试，并补齐上线所需的非玩法工作。",
+        "descriptionEn": "Complete Chinese and English internationalization, integrate UniSat and OKX wallets, finish multi-platform testing, and prepare the remaining non-gameplay work for launch.",
+        "budgetZh": "$2,000",
+        "budgetEn": "$2,000",
+        "etaZh": "约 1 个月",
+        "etaEn": "About 1 month"
+      },
+      {
+        "titleZh": "里程碑 2：PVP 与 Fiber 集成",
+        "titleEn": "Milestone 2: PVP with Fiber Integration",
+        "descriptionZh": "使用 Fiber 通道构建基于战斗结果即时结算的 PVP 模式，加入去中心化 Relayer 服务，并完成相关游戏界面和测试。",
+        "descriptionEn": "Build PVP battles using Fiber channels for instant outcome-based settlement, add a decentralized relayer service, and complete the related game interface and testing.",
+        "budgetZh": "$16,000",
+        "budgetEn": "$16,000",
+        "etaZh": "约 4–5 个月",
+        "etaEn": "About 4–5 months"
+      },
+      {
+        "titleZh": "里程碑 3：UGC 模式与 RGB++ 集成",
+        "titleEn": "Milestone 3: UGC Mode and RGB++ Integration",
+        "descriptionZh": "加入由社区共同创作的游戏世界观、DOB 与 RGB++ 集成和代币持有人代理投票；该里程碑目前暂停，待前两个里程碑上主网并获得市场反馈后再决定是否继续。",
+        "descriptionEn": "Add community-authored game lore, DOB and RGB++ integration, and token-holder proxy voting; this milestone is paused pending feedback after Milestones 1 and 2 reach mainnet.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "目前暂停",
+        "etaEn": "Currently paused"
+      }
+    ],
+    "10119": [
+      {
+        "titleZh": "里程碑 1：原型",
+        "titleEn": "Milestone 1: Prototype",
+        "descriptionZh": "构建 Chrome 与 Firefox 扩展原型，集成 Zebec API，并使用 JoyID 签名完成 CKB 测试网交易演示。",
+        "descriptionEn": "Build the Chrome and Firefox extension scaffold, integrate the Zebec API, and demonstrate a CKB testnet transaction using JoyID signing.",
+        "budgetZh": "$10,000",
+        "budgetEn": "$10,000",
+        "etaZh": "第 1 个月",
+        "etaEn": "Month 1"
+      },
+      {
+        "titleZh": "里程碑 2：Beta 测试",
+        "titleEn": "Milestone 2: Beta",
+        "descriptionZh": "集成 UTXOSwap、实现滑点引擎，并向 50 名受邀社区成员发布候选测试版本。",
+        "descriptionEn": "Integrate UTXOSwap, implement the slippage engine, and distribute a release candidate to 50 invited community testers.",
+        "budgetZh": "$10,000",
+        "budgetEn": "$10,000",
+        "etaZh": "第 2 个月",
+        "etaEn": "Month 2"
+      },
+      {
+        "titleZh": "里程碑 3：正式上线",
+        "titleEn": "Milestone 3: Launch",
+        "descriptionZh": "完成安全审计、建立 DAO 多签、部署社区所有的流动性备用金，并将扩展发布到 Chrome 与 Firefox 商店。",
+        "descriptionEn": "Complete the security audit, set up the DAO multisig, deploy the community-owned liquidity reserve, and publish the extension in the Chrome and Firefox stores.",
+        "budgetZh": "$50,000 社区流动性资金",
+        "budgetEn": "$50,000 community liquidity reserve",
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      }
+    ],
+    "10218": [
+      {
+        "titleZh": "里程碑 1：范围、CKB 信号分类与架构",
+        "titleEn": "Milestone 1: Scope, CKB Signal Taxonomy, and Architecture",
+        "descriptionZh": "明确 CKB 监控范围，梳理公开数据源，定义至少五类风险，设计初始预警结构，并发布技术架构和实施计划。",
+        "descriptionEn": "Define the CKB monitoring scope, map public data sources, document at least five risk categories, design the initial alert schema, and publish the technical architecture and implementation plan.",
+        "budgetZh": "$6,000",
+        "budgetEn": "$6,000",
+        "etaZh": "第 1–2 周",
+        "etaEn": "Weeks 1–2"
+      },
+      {
+        "titleZh": "里程碑 2：数据采集原型与标准化风险信号",
+        "titleEn": "Milestone 2: Ingestion Prototype and Normalized Risk Signals",
+        "descriptionZh": "构建面向 CKB 的数据采集原型、标准化信号生成、初始评分逻辑、示例预警和核心信号处理测试。",
+        "descriptionEn": "Build the CKB-aware ingestion prototype, normalized signal generation, initial scoring logic, sample alerts, and core signal-processing tests.",
+        "budgetZh": "$9,000",
+        "budgetEn": "$9,000",
+        "etaZh": "第 3–5 周",
+        "etaEn": "Weeks 3–5"
+      },
+      {
+        "titleZh": "里程碑 3：可解释预警与集成输出",
+        "titleEn": "Milestone 3: Explainable Alerts and Integration Outputs",
+        "descriptionZh": "增加可读的预警解释、可供 API 和 WebSocket 使用的输出格式、参考消费端或集成示例，以及外部接入文档。",
+        "descriptionEn": "Add human-readable alert explanations, API and WebSocket-ready output formats, a reference consumer or integration example, and external-consumer documentation.",
+        "budgetZh": "$8,000",
+        "budgetEn": "$8,000",
+        "etaZh": "第 6–8 周",
+        "etaEn": "Weeks 6–8"
+      },
+      {
+        "titleZh": "里程碑 4：验证、文档与最终交付",
+        "titleEn": "Milestone 4: Validation, Documentation, and Final Delivery",
+        "descriptionZh": "完成至少三个验证示例和十个预警场景，发布安装与测试指南、最终技术报告以及可供审查的代码仓库。",
+        "descriptionEn": "Complete at least three validation examples and ten sample alert scenarios, then publish setup and testing guides, the final technical report, and a reviewable repository.",
+        "budgetZh": "$7,000",
+        "budgetEn": "$7,000",
+        "etaZh": "第 9–10 周",
+        "etaEn": "Weeks 9–10"
+      }
+    ],
+    "10296": [
+      {
+        "titleZh": "首付款",
+        "titleEn": "Initial Down Payment",
+        "descriptionZh": "启动项目、建立代码仓库，并完成 CKB Cells 对应 PSBT 架构的初步映射。",
+        "descriptionEn": "Kick off the project, set up the repository, and map the PSBT-equivalent architecture for CKB Cells.",
+        "budgetZh": "$5,000 · 20%",
+        "budgetEn": "$5,000 · 20%",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 1：核心 Rust 原语",
+        "titleEn": "Milestone 1: The Core Rust Primitive",
+        "descriptionZh": "将 Payjoin 核心状态机移植到 CKB Cell 结构，并实现发送方与接收方之间未签名 Cell 载荷的安全传递。",
+        "descriptionEn": "Port the core Payjoin state machine to CKB Cell structures and implement secure exchange of unsigned Cell payloads between sender and receiver.",
+        "budgetZh": "$8,000",
+        "budgetEn": "$8,000",
+        "etaZh": "第 1–4 周",
+        "etaEn": "Weeks 1–4"
+      },
+      {
+        "titleZh": "里程碑 2：Fiber Network 集成",
+        "titleEn": "Milestone 2: Fiber Network Integration",
+        "descriptionZh": "将 Payjoin 库接入 Fiber Network SDK，并构建通过 Fiber P2P 层协调协作式通道注资的异步通信协议。",
+        "descriptionEn": "Connect the Payjoin library to the Fiber Network SDK and build the asynchronous Fiber P2P coordination protocol for collaborative channel funding.",
+        "budgetZh": "$8,000",
+        "budgetEn": "$8,000",
+        "etaZh": "第 5–8 周",
+        "etaEn": "Weeks 5–8"
+      },
+      {
+        "titleZh": "里程碑 3：CLI、示例与审计",
+        "titleEn": "Milestone 3: CLI, Examples, and Audit",
+        "descriptionZh": "交付用于本地协作式通道测试的开发者 CLI，并发布完整文档和钱包集成示例。",
+        "descriptionEn": "Deliver a developer CLI for local collaborative-channel testing and publish complete documentation and wallet-integration examples.",
+        "budgetZh": "$4,000",
+        "budgetEn": "$4,000",
+        "etaZh": "第 9–10 周",
+        "etaEn": "Weeks 9–10"
+      }
+    ],
+    "10317": [
+      {
+        "titleZh": "启动款",
+        "titleEn": "Grant Commencement",
+        "descriptionZh": "按照获批的交付计划启动为期三个月的 v1 重建。",
+        "descriptionEn": "Begin the three-month v1 rebuild under the approved delivery plan.",
+        "budgetZh": "$1,500 · 25%",
+        "budgetEn": "$1,500 · 25%",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 1：应用框架、仪表盘与节点",
+        "titleEn": "Milestone 1: App Shell, Dashboard, and Node",
+        "descriptionZh": "以新的应用框架和导航替换原型界面，交付引导式设置与节点控制，保留已验证的 Rust 外壳，并发布能够在测试网上运行官方 fnn 节点的测试版本。",
+        "descriptionEn": "Replace the prototype interface with the new application shell and navigation, deliver guided setup and node controls, retain the validated Rust shell, and publish test builds that run an official fnn node on testnet.",
+        "budgetZh": "$1,500 · 25%",
+        "budgetEn": "$1,500 · 25%",
+        "etaZh": "第 1 个月",
+        "etaEn": "Month 1"
+      },
+      {
+        "titleZh": "里程碑 2：钱包、节点连接与通道",
+        "titleEn": "Milestone 2: Wallet, Peers, and Channels",
+        "descriptionZh": "交付钱包收发、发票管理、节点连接、通道开启与监控、网络视图，以及测试网上完整的 Fiber 端到端支付流程。",
+        "descriptionEn": "Deliver wallet send and receive, invoice management, peer connection, channel opening and monitoring, the network view, and a complete end-to-end Fiber payment flow on testnet.",
+        "budgetZh": "$1,500 · 25%",
+        "budgetEn": "$1,500 · 25%",
+        "etaZh": "第 2 个月",
+        "etaEn": "Month 2"
+      },
+      {
+        "titleZh": "里程碑 3：运维、品牌升级与 v1.0.0 发布",
+        "titleEn": "Milestone 3: Operations, Rebrand, and v1.0.0 Launch",
+        "descriptionZh": "完成支付历史、升级与恢复流程、跨平台测试、产品品牌升级、网站与自定义域名、签名分发、内部安全审查，并公开发布 v1.0.0 与完结报告。",
+        "descriptionEn": "Finish payment history, upgrade and recovery flows, cross-platform testing, product rebranding, the website and custom domain, signed distribution, internal security review, and the public v1.0.0 release with a completion report.",
+        "budgetZh": "$1,500 · 25%",
+        "budgetEn": "$1,500 · 25%",
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      }
+    ],
+    "10364": [
+      {
+        "titleZh": "第 1 个月",
+        "titleEn": "Month 1",
+        "descriptionZh": "发布 8 个短视频和 2 篇文章或长帖，按需主持 1 场 X Space，并提交数据分析基准报告。",
+        "descriptionEn": "Publish 8 short-form videos and 2 written posts or threads, host 1 X Space on request, and deliver an analytics baseline report.",
+        "budgetZh": "$1,125",
+        "budgetEn": "$1,125",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "第 2 个月",
+        "titleEn": "Month 2",
+        "descriptionZh": "发布 8 个短视频和 2 篇文章或长帖，按需主持 1 场 X Space，并提交当月数据分析报告。",
+        "descriptionEn": "Publish 8 short-form videos and 2 written posts or threads, host 1 X Space on request, and deliver the monthly analytics report.",
+        "budgetZh": "$1,125",
+        "budgetEn": "$1,125",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "第 3 个月",
+        "titleEn": "Month 3",
+        "descriptionZh": "发布 8 个短视频和 2 篇文章或长帖，按需主持 1 场 X Space，并提交当月数据分析报告。",
+        "descriptionEn": "Publish 8 short-form videos and 2 written posts or threads, host 1 X Space on request, and deliver the monthly analytics report.",
+        "budgetZh": "$1,125",
+        "budgetEn": "$1,125",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "第 4 个月",
+        "titleEn": "Month 4",
+        "descriptionZh": "发布 8 个短视频和 2 篇文章或长帖，按需主持 1 场 X Space，并提交包含累计数据分析的最终宣传报告。",
+        "descriptionEn": "Publish 8 short-form videos and 2 written posts or threads, host 1 X Space on request, and deliver the final campaign report with cumulative analytics.",
+        "budgetZh": "$1,125",
+        "budgetEn": "$1,125",
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "10400": [
+      {
+        "titleZh": "阶段 1：运营与基础设施加固",
+        "titleEn": "Phase 1: Operations and Infrastructure Hardening",
+        "descriptionZh": "维持实时测试网基础设施运行、强化管道安全，并为下一阶段持续维护自托管 SPV 服务。",
+        "descriptionEn": "Keep the live testnet infrastructure running, harden pipeline security, and maintain the self-hosted SPV service for the next phase.",
+        "budgetZh": "$50,000",
+        "budgetEn": "$50,000",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "阶段 2：首席工程师与企业级主网准备",
+        "titleEn": "Phase 2: Lead Engineer and Enterprise Mainnet Preparation",
+        "descriptionZh": "全职聘请并引入一名 CKB 首席系统工程师，接管 CKB 侧管道运营，并为企业级主网部署做好准备。",
+        "descriptionEn": "Hire and onboard a full-time lead CKB systems engineer to take ownership of the CKB-side pipeline operations and prepare for enterprise-grade mainnet deployment.",
+        "budgetZh": "$100,000",
+        "budgetEn": "$100,000",
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "10414": [
+      {
+        "titleZh": "阶段 1：范围、收据格式与保护规则",
+        "titleEn": "Phase 1: Scope, Receipt Format, and Protection Rules",
+        "descriptionZh": "确定软件包范围与设计、访问收据格式、过期规则和防重放规则。",
+        "descriptionEn": "Finalize the package scope and design, access-receipt format, expiration rules, and replay-protection rules.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 1–2 周",
+        "etaEn": "Weeks 1–2"
+      },
+      {
+        "titleZh": "阶段 2：软件包与付费资源示例",
+        "titleEn": "Phase 2: Package and Paid-resource Example",
+        "descriptionZh": "构建可复用的访问收据 Node.js 软件包和付费资源示例，实现有效访问授权并拒绝重复使用。",
+        "descriptionEn": "Build the reusable access-receipt Node.js package and a paid-resource example that grants valid access and rejects reuse.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 3–4 周",
+        "etaEn": "Weeks 3–4"
+      },
+      {
+        "titleZh": "阶段 3：文档、测试与完结报告",
+        "titleEn": "Phase 3: Documentation, Testing, and Final Report",
+        "descriptionZh": "完成安装与使用文档、软件包测试、代码清理、外部开发者验证及最终交付报告。",
+        "descriptionEn": "Complete setup and usage documentation, package testing, cleanup, external-developer verification, and the final delivery report.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 5–6 周",
+        "etaEn": "Weeks 5–6"
+      }
+    ],
+    "10419": [
+      {
+        "titleZh": "首期资金",
+        "titleEn": "Initial Funding",
+        "descriptionZh": "确认提案获批，并发布公开路线图和 GitHub 项目看板。",
+        "descriptionEn": "Confirm proposal acceptance and publish the public roadmap and GitHub project board.",
+        "budgetZh": "$700 · 10%",
+        "budgetEn": "$700 · 10%",
+        "etaZh": "第 0 周",
+        "etaEn": "Week 0"
+      },
+      {
+        "titleZh": "里程碑 1：Claim Cell、SDK 与评分引擎",
+        "titleEn": "Milestone 1: Claim Cell, SDK, and Scoring Engine",
+        "descriptionZh": "在 CKB 测试网部署 Claim Cell Type Script，为 did:ckb SDK 增加 readClaims 与 writeClaim，通过评分引擎签发已验证的社交声明，并发布数据结构规范。",
+        "descriptionEn": "Deploy the Claim Cell Type Script on CKB testnet, add readClaims and writeClaim to the did:ckb SDK, issue verified social claims through the scoring engine, and publish the schema specifications.",
+        "budgetZh": "$2,100 · 30%",
+        "budgetEn": "$2,100 · 30%",
+        "etaZh": "2026 年第三季度 · 第 1–4 周",
+        "etaEn": "Q3 2026 · Weeks 1–4"
+      },
+      {
+        "titleZh": "里程碑 2：开发者档案、CKBoost 集成与网页优化",
+        "titleEn": "Milestone 2: Builder Profiles, CKBoost Integration, and Webpage Polish",
+        "descriptionZh": "上线基于 DID 的公开开发者档案，在测试网上将 CKBoost 任务完成声明接入信誉评分与活动记录，并优化 Vellum 的身份、信誉、导航和文案体验。",
+        "descriptionEn": "Launch public DID-based builder profiles, integrate CKBoost quest-completion claims into reputation scores and activity feeds on testnet, and improve Vellum’s identity, reputation, navigation, and copy.",
+        "budgetZh": "$2,100 · 30%",
+        "budgetEn": "$2,100 · 30%",
+        "etaZh": "2026 年第三季度 · 第 5–8 周",
+        "etaEn": "Q3 2026 · Weeks 5–8"
+      },
+      {
+        "titleZh": "里程碑 3：治理示例、演示、签发界面与独立域名",
+        "titleEn": "Milestone 3: Governance Reference, Demo, Issuance UI, and Domain",
+        "descriptionZh": "交付治理准入参考实现与交互演示、面向生态合作伙伴的声明签发界面、Vellum 独立域名，并对全部交付物完成测试网验证。",
+        "descriptionEn": "Deliver a governance-gating reference and interactive demo, a claim-issuance interface for ecosystem partners, a dedicated Vellum domain, and a complete testnet validation pass for all deliverables.",
+        "budgetZh": "$2,100 · 30%",
+        "budgetEn": "$2,100 · 30%",
+        "etaZh": "2026 年第四季度 · 第 9–12 周",
+        "etaEn": "Q4 2026 · Weeks 9–12"
+      }
+    ],
+    "10453": [
+      {
+        "titleZh": "阶段 1：开发阶段",
+        "titleEn": "Phase 1: Development Phase",
+        "descriptionZh": "将 Werra 从原型推进到可用的 V1 Beta，完成产品流程、管理与争议处理工具、CKB/USDI 托管集成、协议哈希、付款与退款处理、交易追踪及部署基础设施。",
+        "descriptionEn": "Move Werra from a prototype to a functional V1 beta, completing the product flows, admin and dispute tools, CKB/USDI escrow integration, agreement hashes, payout and refund handling, transaction tracking, and deployment infrastructure.",
+        "budgetZh": "$18,100",
+        "budgetEn": "$18,100",
+        "etaZh": "前 1.5 个月",
+        "etaEn": "Months 1–1.5"
+      },
+      {
+        "titleZh": "阶段 2：分发与 Beta 种子阶段",
+        "titleEn": "Phase 2: Distribution and Beta Seeding Phase",
+        "descriptionZh": "通过引入 5 家试点企业和 20 名创作者、支持首批合作、获取 Beta 用户、监测托管与付款体验、收集反馈，并发布 Beta 与 CKB/USDI 使用报告，验证 Werra 的真实市场需求。",
+        "descriptionEn": "Validate Werra with real users by onboarding 5 pilot businesses and 20 creators, supporting initial gigs, acquiring beta users, monitoring escrow and payouts, collecting feedback, and publishing beta and CKB/USDI usage reports.",
+        "budgetZh": "$9,100",
+        "budgetEn": "$9,100",
+        "etaZh": "后 1.5 个月",
+        "etaEn": "Months 1.5–3"
+      }
+    ],
+    "10462": [
+      {
+        "titleZh": "里程碑 1：核心 SDK",
+        "titleEn": "Milestone 1: Core SDK",
+        "descriptionZh": "将 fiber-sdk 发布到 PyPI，交付异步 JSON-RPC 客户端、全部 28 个支持方法的 Pydantic 类型模型、类型化异常，以及安装和快速入门文档。",
+        "descriptionEn": "Publish fiber-sdk to PyPI with an asynchronous JSON-RPC client, typed Pydantic models for all 28 supported SDK methods, typed exceptions, and installation and quick-start documentation.",
+        "budgetZh": "约 $2,500",
+        "budgetEn": "Approx. $2,500",
+        "etaZh": "第 1–4 周",
+        "etaEn": "Weeks 1–4"
+      },
+      {
+        "titleZh": "里程碑 2：示例与文档",
+        "titleEn": "Milestone 2: Examples and Documentation",
+        "descriptionZh": "交付四个公共测试网示例，涵盖发票轮询、完整通道生命周期、智能体按调用付费和 BTC 跨链结算，并提供完整 API 文档、更新日志和论坛公告。",
+        "descriptionEn": "Deliver four public-testnet examples covering invoice polling, the full channel lifecycle, agent pay-per-call, and BTC cross-chain settlement, plus complete API documentation, a changelog, and a forum announcement.",
+        "budgetZh": "约 $2,500",
+        "budgetEn": "Approx. $2,500",
+        "etaZh": "第 5–8 周",
+        "etaEn": "Weeks 5–8"
+      }
+    ],
+    "10522": [
+      {
+        "titleZh": "里程碑 1：智能合约与平台集成",
+        "titleEn": "Milestone 1: Smart Contract & Platform Integration",
+        "descriptionZh": "在测试网部署授权合约并演示端到端授权流程，完成 JoyID 与 Rain 集成，在测试环境启用 Apple Wallet 和 Google Wallet 发卡，启动独立安全审计，并测试流动性补充自动化。",
+        "descriptionEn": "Deploy the authorization contract to testnet, demonstrate the end-to-end authorization flow, integrate JoyID and Rain, enable Apple Wallet and Google Wallet provisioning in the test environment, commission the independent audit, and test liquidity replenishment automation.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 1–2 个月",
+        "etaEn": "Months 1–2"
+      },
+      {
+        "titleZh": "里程碑 2：主网上线",
+        "titleEn": "Milestone 2: Mainnet Launch",
+        "descriptionZh": "将授权合约与支付流程部署到主网，发布完成的安全审计，公开演示可核验结算；经社区确认后释放 DAO 所有的循环流动性资金，并开始月度运营报告。",
+        "descriptionEn": "Deploy the authorization contract and payment flow to mainnet, publish the completed security audit, demonstrate publicly verifiable settlement, release the DAO-owned revolving liquidity facility after community approval, and begin monthly reporting.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      },
+      {
+        "titleZh": "里程碑 3：运营验证",
+        "titleEn": "Milestone 3: Operational Validation",
+        "descriptionZh": "引入早期社区用户，监控并优化生产性能，继续发布月度运营报告和技术文档，并准备与钱包无关的授权框架及未来结算路线图。",
+        "descriptionEn": "Onboard early community users, monitor and optimize production performance, continue monthly operational reporting, publish technical documentation, and prepare the wallet-agnostic authorization framework and future settlement roadmap.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 4 个月",
+        "etaEn": "Month 4"
+      }
+    ],
+    "10583": [
+      {
+        "titleZh": "里程碑 1：共享核心、iOS 桥接与应用骨架",
+        "titleEn": "Milestone 1: Shared Core, iOS Bridge, and App Skeleton",
+        "descriptionZh": "建立多平台共享模块，替换仅适用于 Android 的 CKB 密码学组件，通过 UniFFI 将 Rust 轻客户端接入 iOS，并交付可完成测试网查询的 SwiftUI 应用骨架。",
+        "descriptionEn": "Create the multiplatform shared module, replace Android-only CKB cryptography where needed, connect the Rust light client to iOS through UniFFI, and deliver a SwiftUI shell that can complete a testnet query.",
+        "budgetZh": "$2,500 · 16.7%",
+        "budgetEn": "$2,500 · 16.7%",
+        "etaZh": "第 1 个月",
+        "etaEn": "Month 1"
+      },
+      {
+        "titleZh": "里程碑 2：密钥、安全、引导与收款",
+        "titleEn": "Milestone 2: Keys, Security, Onboarding, and Receive",
+        "descriptionZh": "实现 Keychain 与 Secure Enclave 密钥保护、生物识别或 PIN 解锁、BIP39 钱包创建与导入、备份验证、新手引导，以及带地址和二维码的收款界面。",
+        "descriptionEn": "Implement Keychain and Secure Enclave protection, biometric or PIN unlocking, BIP39 wallet creation and import, backup verification, onboarding, and the receive screen with address and QR code.",
+        "budgetZh": "$2,500 · 16.7%",
+        "budgetEn": "$2,500 · 16.7%",
+        "etaZh": "第 2 个月",
+        "etaEn": "Month 2"
+      },
+      {
+        "titleZh": "里程碑 3：发送、同步与活动记录",
+        "titleEn": "Milestone 3: Send, Sync, and Activity",
+        "descriptionZh": "交付共享同步引擎、设备端交易构建与签名、广播与校验流程、分页活动记录、二维码扫描以及首个 TestFlight Beta。",
+        "descriptionEn": "Deliver the shared sync engine, on-device transaction construction and signing, broadcast and validation flows, paginated activity history, QR scanning, and the first TestFlight beta.",
+        "budgetZh": "$2,500 · 16.7%",
+        "budgetEn": "$2,500 · 16.7%",
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      },
+      {
+        "titleZh": "里程碑 4：Nervos DAO、多钱包与功能对齐",
+        "titleEn": "Milestone 4: Nervos DAO, Multi-wallet, and Feature Parity",
+        "descriptionZh": "增加 Nervos DAO 存取款与补偿追踪、多钱包和 HD 子账户管理、后台追赶同步、地址簿、CSV 导出、设置及四语言本地化。",
+        "descriptionEn": "Add Nervos DAO deposits and withdrawals, compensation tracking, multi-wallet and HD sub-account management, background catch-up, address book, CSV export, settings, and four-language localization.",
+        "budgetZh": "$2,500 · 16.7%",
+        "budgetEn": "$2,500 · 16.7%",
+        "etaZh": "第 4 个月",
+        "etaEn": "Month 4"
+      },
+      {
+        "titleZh": "里程碑 5：App Store 上线与 CCC 签名器",
+        "titleEn": "Milestone 5: App Store Launch and CCC Signer",
+        "descriptionZh": "通过 App Store 提交并发布应用，同时交付内置 dApp 浏览器和兼容 CCC 的身份、交易及消息签名器，由钱包展示授权详情并通过生物识别或 PIN 确认。",
+        "descriptionEn": "Submit and launch the app through the App Store, then deliver the in-app dApp browser and CCC-compatible identity, transaction, and message signer with wallet-rendered approval and biometric or PIN confirmation.",
+        "budgetZh": "$2,500 · 16.7%",
+        "budgetEn": "$2,500 · 16.7%",
+        "etaZh": "第 5 个月",
+        "etaEn": "Month 5"
+      }
+    ],
+    "10604": [
+      {
+        "titleZh": "交付项 1：协调引擎",
+        "titleEn": "Deliverable 1: Coordination Engine",
+        "descriptionZh": "构建并测试双边 CellInput 协调协议，包括输入验证、TxUpdate 与 TxComplete 可见性规则及安全回退路径，并在开发网上演示完整交易广播。",
+        "descriptionEn": "Build and test the two-party CellInput coordination protocol, including input validation, TxUpdate and TxComplete visibility rules, and a safe fallback path; demonstrate a complete transaction broadcast on devnet.",
+        "budgetZh": "$4,000",
+        "budgetEn": "$4,000",
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "交付项 2：Fiber 节点演示与文档",
+        "titleEn": "Deliverable 2: Fiber Node Demos and Documentation",
+        "descriptionZh": "连接真实 Fiber 节点交付两个端到端演示——手续费分担与隐私通道开启，并提供交易流程文档、README 和可运行示例。",
+        "descriptionEn": "Deliver two end-to-end demos against a real Fiber node—fee contribution and privacy-preserving channel opening—together with transaction-flow documentation, a README, and runnable examples.",
+        "budgetZh": "$2,000",
+        "budgetEn": "$2,000",
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "10609": [
+      {
+        "titleZh": "启动款",
+        "titleEn": "Commencement",
+        "descriptionZh": "接受资助、为专用钱包注资、启动 Scalebit 合作并开始开发。",
+        "descriptionEn": "Accept the grant, fund the dedicated wallet, initiate the Scalebit engagement, and begin work.",
+        "budgetZh": "$1,500 · 10%",
+        "budgetEn": "$1,500 · 10%",
+        "etaZh": "第 0 天",
+        "etaEn": "Day 0"
+      },
+      {
+        "titleZh": "里程碑 1：链上信任加固与费用执行",
+        "titleEn": "Milestone 1: On-chain Trust Tightening & Fee Enforcement",
+        "descriptionZh": "加入活动累计与链上状态验证，修复已发现的信任边界，并通过平台配置 Cell 强制执行认捐锁定费用。",
+        "descriptionEn": "Add campaign accumulation and on-chain status verification, fix the identified trust boundaries, and enforce pledge-lock fees against the platform config cell.",
+        "budgetZh": "$2,000 · 13%",
+        "budgetEn": "$2,000 · 13%",
+        "etaZh": "第 1.5 个月",
+        "etaEn": "Month 1.5"
+      },
+      {
+        "titleZh": "里程碑 2：配置 Cell、金库、集成与测试网端到端验证",
+        "titleEn": "Milestone 2: Config Cell, Treasury, Integration & Testnet E2E",
+        "descriptionZh": "部署配置 Cell、建立多签金库，完成交易构建器、索引器与前端集成，验证完整测试网流程并启动外部审计。",
+        "descriptionEn": "Deploy the config cell, establish the multisig treasury, complete transaction-builder, indexer, and frontend integration, verify the full testnet flow, and start the external audit.",
+        "budgetZh": "$2,500 · 17%",
+        "budgetEn": "$2,500 · 17%",
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      },
+      {
+        "titleZh": "里程碑 3：CrowdCell 品牌升级与用户面板",
+        "titleEn": "Milestone 3: CrowdCell Rebrand & User Dashboards",
+        "descriptionZh": "完成 CrowdCell 品牌升级、创建者与支持者面板、服务重命名和移动端响应式质量检查，并与审计并行推进。",
+        "descriptionEn": "Complete the CrowdCell rebrand, creator and backer dashboards, service renaming, and mobile-responsive QA while the audit proceeds in parallel.",
+        "budgetZh": "$2,500 · 17%",
+        "budgetEn": "$2,500 · 17%",
+        "etaZh": "第 4 个月",
+        "etaEn": "Month 4"
+      },
+      {
+        "titleZh": "里程碑 4：外部审计与问题修复",
+        "titleEn": "Milestone 4: External Audit & Findings Fixes",
+        "descriptionZh": "完成 Scalebit 审计，修复全部发现的问题，并重新测试相关合约以达到主网上线要求。",
+        "descriptionEn": "Complete the Scalebit audit, fix all findings, and re-test the affected contracts for mainnet readiness.",
+        "budgetZh": "$4,500 · 30%",
+        "budgetEn": "$4,500 · 30%",
+        "etaZh": "外部审计周期",
+        "etaEn": "External audit window"
+      },
+      {
+        "titleZh": "里程碑 5：主网上线与推广",
+        "titleEn": "Milestone 5: Mainnet Launch & Promotion",
+        "descriptionZh": "将合约与前端配置部署到主网，为机器人钱包注资，并发布双语上线公告、演示视频、社交媒体长帖和 CKBuilder 条目。",
+        "descriptionEn": "Deploy the contracts and frontend configuration to mainnet, fund the bot wallet, and publish the bilingual launch announcement, demo video, social thread, and CKBuilder entry.",
+        "budgetZh": "$2,000 · 13%",
+        "budgetEn": "$2,000 · 13%",
+        "etaZh": "审计通过后约 2 周",
+        "etaEn": "~2 weeks after audit clearance"
+      }
+    ],
+    "10613": [
+      {
+        "titleZh": "首期资金",
+        "titleEn": "Initial Funding",
+        "descriptionZh": "确认提案获批，并发布公开路线图和 GitHub 项目看板。",
+        "descriptionEn": "Confirm proposal acceptance and publish the public roadmap and GitHub project board.",
+        "budgetZh": "$1,750 · 25%",
+        "budgetEn": "$1,750 · 25%",
+        "etaZh": "第 0 周",
+        "etaEn": "Week 0"
+      },
+      {
+        "titleZh": "里程碑 1：Claim Cell、SDK 与评分引擎",
+        "titleEn": "Milestone 1: Claim Cell, SDK, and Scoring Engine",
+        "descriptionZh": "在 CKB 测试网部署 Claim Cell Type Script，为 did:ckb SDK 增加 readClaims 与 writeClaim，通过评分引擎签发已验证的社交声明，并发布数据结构规范。",
+        "descriptionEn": "Deploy the Claim Cell Type Script on CKB testnet, add readClaims and writeClaim to the did:ckb SDK, issue verified social claims through the scoring engine, and publish the schema specifications.",
+        "budgetZh": "$1,750 · 25%",
+        "budgetEn": "$1,750 · 25%",
+        "etaZh": "2026 年第四季度 · 第 1–4 周",
+        "etaEn": "Q4 2026 · Weeks 1–4"
+      },
+      {
+        "titleZh": "里程碑 2：开发者档案、CKBoost 集成与网页优化",
+        "titleEn": "Milestone 2: Builder Profiles, CKBoost Integration, and Webpage Polish",
+        "descriptionZh": "上线基于 DID 的公开开发者档案，在测试网上将 CKBoost 任务完成声明接入信誉评分与活动记录，并优化 Vellum 的身份、信誉、导航和文案体验。",
+        "descriptionEn": "Launch public DID-based builder profiles, integrate CKBoost quest-completion claims into reputation scores and activity feeds on testnet, and improve Vellum’s identity, reputation, navigation, and copy.",
+        "budgetZh": "$1,750 · 25%",
+        "budgetEn": "$1,750 · 25%",
+        "etaZh": "2026 年第四季度 · 第 5–8 周",
+        "etaEn": "Q4 2026 · Weeks 5–8"
+      },
+      {
+        "titleZh": "里程碑 3：治理示例、演示、签发界面与独立域名",
+        "titleEn": "Milestone 3: Governance Reference, Demo, Issuance UI, and Domain",
+        "descriptionZh": "交付治理准入参考实现与交互演示、面向生态合作伙伴的声明签发界面、Vellum 独立域名，并对全部交付物完成测试网验证。",
+        "descriptionEn": "Deliver a governance-gating reference and interactive demo, a claim-issuance interface for ecosystem partners, a dedicated Vellum domain, and a complete testnet validation pass for all deliverables.",
+        "budgetZh": "$1,750 · 25%",
+        "budgetEn": "$1,750 · 25%",
+        "etaZh": "2026 年第四季度 · 第 9–12 周",
+        "etaEn": "Q4 2026 · Weeks 9–12"
+      }
+    ],
+    "10678": [
+      {
+        "titleZh": "里程碑 1：云端工作区基础设施",
+        "titleEn": "Milestone 1: Cloud Workspace Infrastructure",
+        "descriptionZh": "完成工作区生命周期管理、资源配置与控制、持久化、监控、恢复和清理，让开发者能够可靠地创建、启动、停止、恢复和监控工作区。",
+        "descriptionEn": "Complete workspace lifecycle management, provisioning, resource controls, persistence, monitoring, recovery, and cleanup so developers can reliably create, start, stop, restore, and monitor workspaces.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 1 个月",
+        "etaEn": "Month 1"
+      },
+      {
+        "titleZh": "里程碑 2：CKB 开发环境",
+        "titleEn": "Milestone 2: CKB Development Environment",
+        "descriptionZh": "集成 CKB 工具链、Rust 与 RISC-V 支持、项目模板、构建、测试、日志、错误处理和终端访问，形成完整的浏览器端 CKB 开发流程。",
+        "descriptionEn": "Integrate the CKB toolchain, Rust and RISC-V support, project templates, builds, tests, logs, error handling, and terminal access into a complete browser-based CKB workflow.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 2 个月",
+        "etaEn": "Month 2"
+      },
+      {
+        "titleZh": "里程碑 3：开发工具与 AI 助手",
+        "titleEn": "Milestone 3: Developer Tooling and AI Assistant",
+        "descriptionZh": "增加诊断、终端、日志与调试工具，并提供能够结合工作区上下文协助编写代码、分析错误和运行测试的编辑器 AI 助手。",
+        "descriptionEn": "Add diagnostics, terminal, logs, debugging tools, and an editor-aware AI assistant that can help with code, errors, and tests using workspace context.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 3 个月",
+        "etaEn": "Month 3"
+      },
+      {
+        "titleZh": "里程碑 4：基础设施加固与公开发布",
+        "titleEn": "Milestone 4: Infrastructure Hardening and Public Release",
+        "descriptionZh": "强化安全与性能，完成端到端测试和文档，公开部署平台、引入测试用户并发布可运行演示。",
+        "descriptionEn": "Harden security and performance, complete end-to-end testing and documentation, deploy the public platform, onboard testers, and publish a working demonstration.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": "第 4 个月",
+        "etaEn": "Month 4"
+      }
+    ],
+    "10712": [
+      {
+        "titleZh": "里程碑 1 — 生产级隔离与恢复语义",
+        "titleEn": "Milestone 1 — Production isolation and recovery semantics",
+        "descriptionZh": "交付物：证据级隔离后端；可在本地查询、同时阻断公共网络出口的恢复节点；经过测试的出口失败探针；分别生成的官方恢复与回退恢复报告；修订后的结果分类体系；已知密钥对比测试；针对已发现恢复路径故障的脱敏上游报告；更新后的威胁模型与安全文档。",
+        "descriptionEn": "Deliverables: evidence-grade isolation backend; locally queryable recovered node with public egress blocked; tested failed-egress probe; separate official-restore and fallback-recovery reports; revised result taxonomy; known-secret comparison tests; sanitized upstream report for the observed restore-path failure; updated threat model and security documentation.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 2 — 升级前资格验证",
+        "titleEn": "Milestone 2 — Pre-upgrade qualification",
+        "descriptionZh": "交付物：fnn-safeguard qualify --target <binary-or-image>；基于克隆恢复点进行资格验证；固定二进制文件与镜像摘要；捕获迁移与启动过程；迁移前后的身份比较；迁移前后的通道比较；迁移前后的支付比较；PASS、WARN 和 BLOCK 判定；负向与破坏性测试；受支持版本兼容性矩阵；升级规划报告。",
+        "descriptionEn": "Deliverables: fnn-safeguard qualify --target <binary-or-image>; qualification against a cloned recovery point; pinned binary and image digests; migration and startup capture; pre/post identity comparison; pre/post channel comparison; pre/post payment comparison; PASS, WARN, and BLOCK decisions; negative and destructive tests; supported-version compatibility matrix; upgrade-planning report.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 3 — 加密的异机恢复",
+        "titleEn": "Milestone 3 — Encrypted off-host recovery",
+        "descriptionZh": "交付物：基于 Restic 的加密复制；支持本地存储库；支持 SFTP 存储库；支持兼容 S3 的存储库；支持保留策略；远程快照验证；下载与校验和验证；使用下载快照进行恢复演练。",
+        "descriptionEn": "Deliverables: encrypted Restic-based replication; local repository support; SFTP repository support; S3-compatible repository support; retention policy support; remote snapshot verification; download and checksum verification; recovery drill from a downloaded snapshot.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      },
+      {
+        "titleZh": "里程碑 4 — 打包、公开验证与文档",
+        "titleEn": "Milestone 4 — Packaging, public validation, and documentation",
+        "descriptionZh": "交付物：带版本号的 Linux 发行版；带版本号的 Docker 发行版；systemd 服务与定时器示例；公开的 Fiber 测试网报告；在至少两台独立主机上完成验证；恢复操作手册；升级资格验证操作手册；最终演示视频；完结报告；90 天兼容性修复承诺。",
+        "descriptionEn": "Deliverables: versioned Linux release; versioned Docker release; systemd service and timer examples; public Fiber testnet report; validation on at least two separate hosts; recovery runbook; upgrade-qualification runbook; final demonstration video; completion report; 90-day compatibility-fix commitment.",
+        "budgetZh": null,
+        "budgetEn": null,
+        "etaZh": null,
+        "etaEn": null
+      }
+    ],
+    "10736": [
+      {
+        "titleZh": "里程碑 1：马查科斯大学主校区",
+        "titleEn": "Milestone 1: Machakos University, Main Campus",
+        "descriptionZh": "开展一场三小时活动，内容包括比特币与 CKB 教学、现场创建 Passkey 钱包、安装 Kaze 应用以及校园大使报名。",
+        "descriptionEn": "Run a three-hour tour covering Bitcoin and CKB education, live Passkey wallet creation, Kaze app installation, and campus ambassador sign-up.",
+        "budgetZh": "$1,000",
+        "budgetEn": "$1,000",
+        "etaZh": "第 2–3 周",
+        "etaEn": "Weeks 2–3"
+      },
+      {
+        "titleZh": "里程碑 2：普瓦尼大学基利菲校区",
+        "titleEn": "Milestone 2: Pwani University, Kilifi",
+        "descriptionZh": "开展一场三小时活动，内容包括比特币与 CKB 教学、现场创建 Passkey 钱包、安装 Kaze 应用以及校园大使报名。",
+        "descriptionEn": "Run a three-hour tour covering Bitcoin and CKB education, live Passkey wallet creation, Kaze app installation, and campus ambassador sign-up.",
+        "budgetZh": "$1,000",
+        "budgetEn": "$1,000",
+        "etaZh": "第 4–5 周",
+        "etaEn": "Weeks 4–5"
+      },
+      {
+        "titleZh": "里程碑 3：内罗毕大学或 KCA 大学",
+        "titleEn": "Milestone 3: University of Nairobi or KCA University",
+        "descriptionZh": "在最终确定的大学开展第三场三小时活动，继续完成教学、钱包创建、应用安装和校园大使招募。",
+        "descriptionEn": "Run the third three-hour tour at the final selected university, covering the same education, wallet creation, app installation, and ambassador recruitment activities.",
+        "budgetZh": "$1,000",
+        "budgetEn": "$1,000",
+        "etaZh": "第 6–8 周",
+        "etaEn": "Weeks 6–8"
+      }
+    ],
+    "10739": [
+      {
+        "titleZh": "里程碑 1：CoTA 入门与主权护照",
+        "titleEn": "Milestone 1: CoTA Onboarding and Sovereign Passport",
+        "descriptionZh": "集成 CoTA 账户抽象、JoyID 临时钱包创建流程、由 Rivet 补贴的 CoTA Cell 创建、RGB++ Spore DOB 铸造以及公开个人资料支持。验收标准：端到端入门与护照铸造流程已在测试网上线。",
+        "descriptionEn": "Integrate CoTA account abstraction, the JoyID burner-wallet creation flow, Rivet-subsidized CoTA Cell creation, RGB++ Spore DOB minting, and public-profile support. Acceptance: end-to-end onboarding and passport minting are live on testnet.",
+        "budgetZh": "$2,500",
+        "budgetEn": "$2,500",
+        "etaZh": "第 1–4 周",
+        "etaEn": "Weeks 1–4"
+      },
+      {
+        "titleZh": "里程碑 2：CLI 恢复工具与强化",
+        "titleEn": "Milestone 2: CLI Restore Tooling and Hardening",
+        "descriptionZh": "交付适用于 Linux、macOS 和 Windows 的跨平台 CLI，支持 Exact 和 Attribution 两种恢复模式、git-filter-repo 集成、rivet backup、status、verify 和 restore 命令，同时增强 RPC 错误处理与 Auto Sync 的可靠性。验收标准：CLI 已发布，恢复流程可在测试网上验证。",
+        "descriptionEn": "Deliver a cross-platform CLI for Linux, macOS, and Windows with Exact and Attribution restore modes, git-filter-repo integration, rivet backup, status, verify, and restore commands, robust RPC error handling, and more reliable Auto Sync. Acceptance: the CLI is published and the restore flow is verifiable on testnet.",
+        "budgetZh": "$2,500",
+        "budgetEn": "$2,500",
+        "etaZh": "第 5–8 周",
+        "etaEn": "Weeks 5–8"
+      }
+    ]
+  }
+}

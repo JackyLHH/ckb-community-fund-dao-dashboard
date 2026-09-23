@@ -2,6 +2,7 @@ import rawDataset from '../data/proposals.generated.json' with { type: 'json' };
 import { proposalCardSummariesById } from './proposal-card-summaries.js';
 import { proposalOverviewTranslationsById } from './proposal-overview-translations.js';
 import { proposalOverridesById } from './proposal-overrides.js';
+import { applyPersistedMilestoneTranslations } from './proposal-milestone-translation.js';
 
 export type ProposalStatusTag =
   | 'discussion'
@@ -150,7 +151,7 @@ export const dataset: ProposalDataset = {
   proposals: sourceDataset.proposals.map((proposal) => {
     const override = proposalOverridesById[proposal.id as keyof typeof proposalOverridesById];
     const merged = (override ? { ...proposal, ...override } : proposal) as Proposal;
-    return {
+    const normalized = {
       ...merged,
       projectType: normalizeProjectType(merged.projectType),
       tags: [],
@@ -158,6 +159,7 @@ export const dataset: ProposalDataset = {
         ? merged.updates
         : merged.updates.filter((update) => override?.allowNonAuthorUpdates || isUpdateByProposalAuthor(update, merged)),
     };
+    return applyPersistedMilestoneTranslations(normalized);
   }),
 };
 

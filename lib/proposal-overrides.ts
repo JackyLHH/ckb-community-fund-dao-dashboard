@@ -42,6 +42,45 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '10739': {
+    milestoneStructureZh: '2 个里程碑',
+    milestoneStructureEn: '2 Milestones',
+    overview: {
+      objective: 'Rivet is a decentralized developer platform that backs up, timestamps, and restores GitHub history using CKB, IPFS, and Arweave. This proposal requests $5,000 for Phase 1, covering CoTA frictionless onboarding, the Sovereign Passport, and the production release of the Rivet CLI restore tooling.',
+      objectiveZh: 'Rivet 是一个使用 CKB、IPFS 和 Arweave 备份、时间戳记录并恢复 GitHub 历史记录的去中心化开发者平台。本提案为第一阶段申请 5,000 美元，涵盖 CoTA 无摩擦入门、主权护照以及 Rivet CLI 恢复工具的生产版本发布。',
+      objectiveEn: 'Rivet is a decentralized developer platform that backs up, timestamps, and restores GitHub history using CKB, IPFS, and Arweave. This proposal requests $5,000 for Phase 1, covering CoTA frictionless onboarding, the Sovereign Passport, and the production release of the Rivet CLI restore tooling.',
+      milestones: [
+        {
+          title: 'Milestone 1: CoTA Onboarding and Sovereign Passport',
+          titleZh: '里程碑 1：CoTA 入门与主权护照',
+          titleEn: 'Milestone 1: CoTA Onboarding and Sovereign Passport',
+          description: 'Integrate CoTA account abstraction, the JoyID burner-wallet creation flow, Rivet-subsidized CoTA Cell creation, RGB++ Spore DOB minting, and public-profile support. Acceptance: end-to-end onboarding and passport minting are live on testnet.',
+          descriptionZh: '集成 CoTA 账户抽象、JoyID 临时钱包创建流程、由 Rivet 补贴的 CoTA Cell 创建、RGB++ Spore DOB 铸造以及公开个人资料支持。验收标准：端到端入门与护照铸造流程已在测试网上线。',
+          descriptionEn: 'Integrate CoTA account abstraction, the JoyID burner-wallet creation flow, Rivet-subsidized CoTA Cell creation, RGB++ Spore DOB minting, and public-profile support. Acceptance: end-to-end onboarding and passport minting are live on testnet.',
+          budget: '$2,500',
+          budgetZh: '$2,500',
+          budgetEn: '$2,500',
+          eta: 'Weeks 1–4',
+          etaZh: '第 1–4 周',
+          etaEn: 'Weeks 1–4',
+        },
+        {
+          title: 'Milestone 2: CLI Restore Tooling and Hardening',
+          titleZh: '里程碑 2：CLI 恢复工具与强化',
+          titleEn: 'Milestone 2: CLI Restore Tooling and Hardening',
+          description: 'Deliver a cross-platform CLI for Linux, macOS, and Windows with Exact and Attribution restore modes, git-filter-repo integration, rivet backup, status, verify, and restore commands, robust RPC error handling, and more reliable Auto Sync. Acceptance: the CLI is published and the restore flow is verifiable on testnet.',
+          descriptionZh: '交付适用于 Linux、macOS 和 Windows 的跨平台 CLI，支持 Exact 和 Attribution 两种恢复模式、git-filter-repo 集成、rivet backup、status、verify 和 restore 命令，同时增强 RPC 错误处理与 Auto Sync 的可靠性。验收标准：CLI 已发布，恢复流程可在测试网上验证。',
+          descriptionEn: 'Deliver a cross-platform CLI for Linux, macOS, and Windows with Exact and Attribution restore modes, git-filter-repo integration, rivet backup, status, verify, and restore commands, robust RPC error handling, and more reliable Auto Sync. Acceptance: the CLI is published and the restore flow is verifiable on testnet.',
+          budget: '$2,500',
+          budgetZh: '$2,500',
+          budgetEn: '$2,500',
+          eta: 'Weeks 5–8',
+          etaZh: '第 5–8 周',
+          etaEn: 'Weeks 5–8',
+        },
+      ],
+    },
+  },
   '10736': {
     titleZh: 'Kaze × CKB 肯尼亚大学巡回活动续期提案',
     titleEn: 'Kaze X CKB Unitour Continuation Proposal',

@@ -15,6 +15,7 @@ import {
 } from '@/lib/status-evidence';
 import { proposalOverridesById } from '@/lib/proposal-overrides';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
+import { translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
 import {
   extractMilestoneBudget,
   extractProposalBudget as extractBudget,
@@ -584,11 +585,13 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
   const enrichedProposals = await Promise.all(category.topics
     .map((topic) => mapCategoryTopic(topic, category.usernames, funded.entries, fetchedAt))
     .map(enrichProposalFromTopic));
-  const proposals = (await Promise.all(enrichedProposals.map(async (proposal) =>
-    isRecentProposal(proposal)
-      ? await translateMissingProposalOverview(proposal, fetch, { useHistorical: !proposalOverridesById[proposal.id]?.overview })
-      : proposal,
-  )))
+  const proposals = (await Promise.all(enrichedProposals.map(async (proposal) => {
+    const useHistorical = !proposalOverridesById[proposal.id]?.overview;
+    const withOverview = isRecentProposal(proposal)
+      ? await translateMissingProposalOverview(proposal, fetch, { useHistorical })
+      : proposal;
+    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical });
+  })))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const usedSlugs = new Set<string>();
   for (const proposal of proposals) {
@@ -706,7 +709,9 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
         ...(completionEvidence ? [completionEvidence] : []),
       ],
     };
-    return await translateMissingProposalOverview(proposal, fetch, { useHistorical: !proposalOverride?.overview });
+    const useHistorical = !proposalOverride?.overview;
+    const withOverview = await translateMissingProposalOverview(proposal, fetch, { useHistorical });
+    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical });
   } catch {
     return base;
   }

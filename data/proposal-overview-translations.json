@@ -284,6 +284,10 @@
     "10736": {
       "zh": "该提案申请 3,000 美元，在肯尼亚三所大学开展巡回活动，向 210–300 名学生介绍比特币和 CKB 基础知识，并指导他们使用 Kaze 的 Passkey 流程现场创建自托管 CKB 钱包。每场三小时活动还包括安装应用、校园地点标注和校园大使招募。",
       "en": "This proposal requests $3,000 to run three university tours in Kenya, teaching 210–300 students Bitcoin and CKB fundamentals and guiding them to create self-custodial CKB wallets with Kaze’s Passkey flow. Each three-hour tour also includes app installation, a campus mapping activity, and ambassador recruitment."
+    },
+    "10739": {
+      "zh": "Rivet 是一个使用 CKB、IPFS 和 Arweave 备份、时间戳记录并恢复 GitHub 历史记录的去中心化开发者平台。本提案为第一阶段申请 5,000 美元，涵盖 CoTA 无摩擦入门、主权护照以及 Rivet CLI 恢复工具的生产版本发布。",
+      "en": "Rivet is a decentralized developer platform that backs up, timestamps, and restores GitHub history using CKB, IPFS, and Arweave. This proposal requests $5,000 for Phase 1, covering CoTA frictionless onboarding, the Sovereign Passport, and the production release of the Rivet CLI restore tooling."
     }
   }
 }
