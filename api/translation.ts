@@ -4,7 +4,7 @@ const publicTranslationUrl = 'https://api.mymemory.translated.net/get';
 const maxSourceLength = 1_000;
 
 type TargetLocale = 'zh' | 'en';
-type TranslationKind = 'overview' | 'milestone-title' | 'milestone-description';
+type TranslationKind = 'overview' | 'proposal-title' | 'milestone-title' | 'milestone-description';
 type TranslationRequest = {
   proposalId?: string;
   target?: TargetLocale;
@@ -61,9 +61,11 @@ async function translateWithAiGateway(
   const sourceLanguage = target === 'zh' ? 'English' : 'Chinese';
   const contentName = kind === 'overview'
     ? 'proposal overview'
-    : kind === 'milestone-title'
-      ? 'roadmap milestone title'
-      : 'roadmap milestone description';
+    : kind === 'proposal-title'
+      ? 'proposal title'
+      : kind === 'milestone-title'
+        ? 'roadmap milestone title'
+        : 'roadmap milestone description';
   const response = await fetch(gatewayUrl, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -106,7 +108,7 @@ async function translate(request: Request, body: TranslationRequest) {
   const text = body.text?.replace(/\s+/g, ' ').trim();
   if (!proposalId || !/^\d+$/.test(proposalId) || !text
     || (target !== 'zh' && target !== 'en')
-    || !['overview', 'milestone-title', 'milestone-description'].includes(kind)) {
+    || !['overview', 'proposal-title', 'milestone-title', 'milestone-description'].includes(kind)) {
     return json({ ok: false, code: 'invalid_request' }, 400);
   }
   if (text.length > maxSourceLength) return json({ ok: false, code: 'source_too_long' }, 413);

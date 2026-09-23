@@ -1,0 +1,365 @@
+{
+  "version": 1,
+  "translations": {
+    "6891": {
+      "sourceTitle": "Complete onboarding of the BR crypto community into the Nervos ecosystem",
+      "zh": "让巴西加密社区全面融入 Nervos 生态",
+      "en": "Complete onboarding of the BR crypto community into the Nervos ecosystem"
+    },
+    "6968": {
+      "sourceTitle": "Nervos Nation community grant proposal",
+      "zh": "Nervos Nation 社区资助提案",
+      "en": "Nervos Nation community grant proposal"
+    },
+    "7004": {
+      "sourceTitle": "CKBFans社区赞助提案——ckbdapps.com|CKBFans Community grant Proposal - ckbdapps.com",
+      "zh": "CKBFans社区赞助提案——ckbdapps.com",
+      "en": "CKBFans Community grant Proposal - ckbdapps.com"
+    },
+    "7065": {
+      "sourceTitle": "HuntingNFT Project grant proposal",
+      "zh": "HuntingNFT 项目资助提案",
+      "en": "HuntingNFT Project grant proposal"
+    },
+    "7069": {
+      "sourceTitle": "Consideration about incentivizing voting process",
+      "zh": "关于激励投票流程的考虑",
+      "en": "Consideration about incentivizing voting process"
+    },
+    "7120": {
+      "sourceTitle": "修改票数的计算方式 / Changing How Votes Are Calculated",
+      "zh": "修改票数的计算方式",
+      "en": "Changing How Votes Are Calculated"
+    },
+    "7125": {
+      "sourceTitle": "Pause all CKB Community Fund DAO proposal voting for 30 days",
+      "zh": "暂停所有 CKB Community Fund DAO 提案投票 30 天",
+      "en": "Pause all CKB Community Fund DAO proposal voting for 30 days"
+    },
+    "7136": {
+      "sourceTitle": "AMA on r/Cryptocurrency subreddit",
+      "zh": "在 r/Cryptocurrency 子版块举办 AMA",
+      "en": "AMA on r/Cryptocurrency subreddit"
+    },
+    "7194": {
+      "sourceTitle": "CKB Community DAO Proposal",
+      "zh": "CKB Community DAO 提案",
+      "en": "CKB Community DAO Proposal"
+    },
+    "7201": {
+      "sourceTitle": "CKB Textbook: Computing Common Knowledge Community Grants Proposal",
+      "zh": "CKB 教科书：Computing Common Knowledge 社区资助提案",
+      "en": "CKB Textbook: Computing Common Knowledge Community Grants Proposal"
+    },
+    "7205": {
+      "sourceTitle": "Etherion",
+      "zh": "Etherion",
+      "en": "Etherion"
+    },
+    "7241": {
+      "sourceTitle": "Meta-rule change: Exchanges can vote with 1% of CKB they hold",
+      "zh": "元规则修改：交易所持有的 CKB 按 1% 权重投票",
+      "en": "Meta-rule change: Exchanges can vote with 1% of CKB they hold"
+    },
+    "7242": {
+      "sourceTitle": "Meta rule change: Introduce 30 day delay period for resubmission",
+      "zh": "元规则修改：提案重新提交前设置 30 天等待期",
+      "en": "Meta rule change: Introduce 30 day delay period for resubmission"
+    },
+    "7251": {
+      "sourceTitle": "Meta-rule change: Implement staged payments for proposals with a budget exceeding $10,000｜对预算超过$10000的提案实行分阶段付款",
+      "zh": "对预算超过$10000的提案实行分阶段付款",
+      "en": "Meta-rule change: Implement staged payments for proposals with a budget exceeding $10,000"
+    },
+    "7253": {
+      "sourceTitle": "Meta-rule change: CKB in circulation can vote with a weight of 1%｜流通状态的CKB按1%权重投票",
+      "zh": "流通状态的CKB按1%权重投票",
+      "en": "Meta-rule change: CKB in circulation can vote with a weight of 1%"
+    },
+    "7317": {
+      "sourceTitle": "Nervos Community Anthem",
+      "zh": "Nervos 社区主题曲",
+      "en": "Nervos Community Anthem"
+    },
+    "7366": {
+      "sourceTitle": "Infinity Wallet Nervos Integration",
+      "zh": "Infinity Wallet 集成 Nervos",
+      "en": "Infinity Wallet Nervos Integration"
+    },
+    "7396": {
+      "sourceTitle": "Mass market campaign in Nagpur India",
+      "zh": "印度那格浦尔大众市场推广活动",
+      "en": "Mass market campaign in Nagpur India"
+    },
+    "7449": {
+      "sourceTitle": "Nervos Network ES (en español), LatAm Community & Ecosystem Grant Proposal - 2023 Q4",
+      "zh": "Nervos Network 西语社区：拉丁美洲社区与生态资助提案——2023 年第四季度",
+      "en": "Nervos Network ES (en español), LatAm Community & Ecosystem Grant Proposal - 2023 Q4"
+    },
+    "7524": {
+      "sourceTitle": "Nervos.Land - Online NFT Strategy Game Development",
+      "zh": "Nervos.Land——在线 NFT 策略游戏开发",
+      "en": "Nervos.Land - Online NFT Strategy Game Development"
+    },
+    "7536": {
+      "sourceTitle": "关于增加Nervos 空间使用权激励方式的提案---Proposal to Increase Nervos Space Access Incentive Options",
+      "zh": "关于增加 Nervos 空间使用权激励方式的提案",
+      "en": "Proposal to Increase Nervos Space Access Incentive Options"
+    },
+    "7579": {
+      "sourceTitle": "JoyGift Phase 1 Sponsorship Proposal| JoyGift 第一期赞助提案",
+      "zh": "JoyGift 第一期赞助提案",
+      "en": "JoyGift Phase 1 Sponsorship Proposal"
+    },
+    "7593": {
+      "sourceTitle": "Spore Protocol Mainnet Launch Sponsorship Proposal | Spore Protocol 上主网赞助提案",
+      "zh": "Spore Protocol 上主网赞助提案",
+      "en": "Spore Protocol Mainnet Launch Sponsorship Proposal"
+    },
+    "7594": {
+      "sourceTitle": "Build and Distribute Efficient Network Nodes",
+      "zh": "构建并分发高效网络节点",
+      "en": "Build and Distribute Efficient Network Nodes"
+    },
+    "7615": {
+      "sourceTitle": "Omiga Inscription Protocol Sponsorship Proposal｜Omiga CKB铭文协议赞助提案",
+      "zh": "Omiga CKB铭文协议赞助提案",
+      "en": "Omiga Inscription Protocol Sponsorship Proposal"
+    },
+    "7633": {
+      "sourceTitle": "POSTING CONTENT ON BINANCE FEED AND CMC COMMUNITY",
+      "zh": "在 Binance Feed 与 CMC Community 发布内容",
+      "en": "POSTING CONTENT ON BINANCE FEED AND CMC COMMUNITY"
+    },
+    "7636": {
+      "sourceTitle": "motoDEX grant proposal",
+      "zh": "motoDEX 资助提案",
+      "en": "motoDEX grant proposal"
+    },
+    "7727": {
+      "sourceTitle": "Telmo Talks - A Nervos Talk Show - Proposal",
+      "zh": "Telmo Talks——Nervos 访谈节目提案",
+      "en": "Telmo Talks - A Nervos Talk Show - Proposal"
+    },
+    "7757": {
+      "sourceTitle": "Metarule change: use moving 30 day average for calculating CKB/USD payouts",
+      "zh": "元规则修改：使用 30 日移动平均价计算 CKB/USD 付款",
+      "en": "Metarule change: use moving 30 day average for calculating CKB/USD payouts"
+    },
+    "7849": {
+      "sourceTitle": "如果价格波动超过 10%，付款时需重新计算 CKB 数量/If the price fluctuates by more than 10%, a recalculation of the CKB quantity is required at the time of payment",
+      "zh": "如果价格波动超过 10%，付款时需重新计算 CKB 数量",
+      "en": "If the price fluctuates by more than 10%, a recalculation of the CKB quantity is required at the time of payment"
+    },
+    "7943": {
+      "sourceTitle": "元规则修改：提交提案时必须加上申请的 CKB 数量/Meta-rule change: The amount of CKB applied for must be included when submitting a proposal",
+      "zh": "元规则修改：提交提案时必须加上申请的 CKB 数量",
+      "en": "Meta-rule change: The amount of CKB applied for must be included when submitting a proposal"
+    },
+    "8150": {
+      "sourceTitle": "Palmyra: RWA Lending on Nervos",
+      "zh": "Palmyra：Nervos 上的 RWA 借贷",
+      "en": "Palmyra: RWA Lending on Nervos"
+    },
+    "8174": {
+      "sourceTitle": "RGBCat (CAT++) GameFi sponsorship proposal｜RGBCat（CAT++）GameFi 赞助提案",
+      "zh": "RGBCat（CAT++）GameFi 赞助提案",
+      "en": "RGBCat (CAT++) GameFi sponsorship proposal"
+    },
+    "8188": {
+      "sourceTitle": "ArtCells : Generative Art Platform on RGB++ | 算法生成艺术平台: ArtCells",
+      "zh": "算法生成艺术平台: ArtCells",
+      "en": "ArtCells : Generative Art Platform on RGB++"
+    },
+    "8249": {
+      "sourceTitle": "Use USD amounts for DAO payments, calculated on the date of payment",
+      "zh": "DAO 付款使用美元金额并按付款日价格计算",
+      "en": "Use USD amounts for DAO payments, calculated on the date of payment"
+    },
+    "8369": {
+      "sourceTitle": "iCKB & dCKB Rescuer Funding Proposal (Non-Coding Expenses)",
+      "zh": "iCKB 与 dCKB Rescuer 资助提案（非编码费用）",
+      "en": "iCKB & dCKB Rescuer Funding Proposal (Non-Coding Expenses)"
+    },
+    "8377": {
+      "sourceTitle": "Making a song about Nervos Network / 制作一首关于Nervos网络的歌曲",
+      "zh": "制作一首关于Nervos网络的歌曲",
+      "en": "Making a song about Nervos Network"
+    },
+    "8539": {
+      "sourceTitle": "Rosen Bridge - Connecting CKB to Cardano, Ergo, and Beyond",
+      "zh": "Rosen Bridge——连接 CKB、Cardano、Ergo 及更多网络",
+      "en": "Rosen Bridge - Connecting CKB to Cardano, Ergo, and Beyond"
+    },
+    "8734": {
+      "sourceTitle": "AI Agent 驱动的内容打赏与策展系统 | AI Agent-driven Content Tipping and Curation System",
+      "zh": "AI Agent 驱动的内容打赏与策展系统",
+      "en": "AI Agent-driven Content Tipping and Curation System"
+    },
+    "8746": {
+      "sourceTitle": "DAO资金发放改为”后付费“ | Transition to ”Post-Payment“ Model for DAO Fund Disbursement",
+      "zh": "DAO资金发放改为“后付费”",
+      "en": "Transition to “Post-Payment” Model for DAO Fund Disbursement"
+    },
+    "8832": {
+      "sourceTitle": "CKBoost Gamified Community Engagement Platform Proposal",
+      "zh": "CKBoost 游戏化社区参与平台提案",
+      "en": "CKBoost Gamified Community Engagement Platform Proposal"
+    },
+    "8918": {
+      "sourceTitle": "Spore Studio: CKB Ecosystem Digital Art Platform Development and Deployment",
+      "zh": "Spore Studio：CKB 生态数字艺术平台开发与部署",
+      "en": "Spore Studio: CKB Ecosystem Digital Art Platform Development and Deployment"
+    },
+    "8973": {
+      "sourceTitle": "Community Fund DAO v1.1 Web5 优化提案/ Community Fund DAO v1.1 Web5 Optimization Proposal",
+      "zh": "Community Fund DAO v1.1 Web5 优化提案",
+      "en": "Community Fund DAO v1.1 Web5 Optimization Proposal"
+    },
+    "9681": {
+      "sourceTitle": "ChatPay-WhatsApp Payment Integration Proposal- WhatsApp 支付集成提案",
+      "zh": "WhatsApp支付集成提案",
+      "en": "ChatPay-WhatsApp Payment Integration Proposal"
+    },
+    "9756": {
+      "sourceTitle": "CKB Integration for Rosen Bridge",
+      "zh": "Rosen Bridge 的 CKB 集成",
+      "en": "CKB Integration for Rosen Bridge"
+    },
+    "9845": {
+      "sourceTitle": "Fiber Link: A CKB Fiber-based Pay Layer (Tipping & Micropayments) for Communities",
+      "zh": "Fiber Link：面向社区的 CKB Fiber 支付层（打赏与小额支付）",
+      "en": "Fiber Link: A CKB Fiber-based Pay Layer (Tipping & Micropayments) for Communities"
+    },
+    "9879": {
+      "sourceTitle": "Mobile-Ready CKB Light Client (Pocket Node) for Android",
+      "zh": "面向移动端的 CKB 轻客户端（Android Pocket Node）",
+      "en": "Mobile-Ready CKB Light Client (Pocket Node) for Android"
+    },
+    "10015": {
+      "sourceTitle": "Decentralized privacy order-book appchain based on CKB L1 - 2026.phase-1",
+      "zh": "基于 CKB L1 的去中心化隐私订单簿应用链——2026 第一阶段",
+      "en": "Decentralized privacy order-book appchain based on CKB L1 - 2026.phase-1"
+    },
+    "10070": {
+      "sourceTitle": "Nexus Platform 提案",
+      "zh": "Nexus Platform 提案",
+      "en": "Nexus Platform Proposal"
+    },
+    "10100": {
+      "sourceTitle": "WarSpore · Saga — A Fully On-Chain Card Game for CKB & BTC",
+      "zh": "WarSpore · Saga——面向 CKB 与 BTC 的全链上卡牌游戏",
+      "en": "WarSpore · Saga — A Fully On-Chain Card Game for CKB & BTC"
+    },
+    "10119": {
+      "sourceTitle": "CKB Anywhere Card: JIT Spend Layer for Nervos",
+      "zh": "CKB Anywhere Card：Nervos 即时消费层",
+      "en": "CKB Anywhere Card: JIT Spend Layer for Nervos"
+    },
+    "10179": {
+      "sourceTitle": "CryptoMondays London x Nervos (CKB) - UK Education & Ecosystem Series",
+      "zh": "CryptoMondays London × Nervos（CKB）——英国教育与生态系列活动",
+      "en": "CryptoMondays London x Nervos (CKB) - UK Education & Ecosystem Series"
+    },
+    "10218": {
+      "sourceTitle": "Quantir Risk Intelligence for CKB Ecosystem and Cross-Chain Monitoring",
+      "zh": "面向 CKB 生态与跨链监控的 Quantir 风险情报",
+      "en": "Quantir Risk Intelligence for CKB Ecosystem and Cross-Chain Monitoring"
+    },
+    "10239": {
+      "sourceTitle": "Bitcoin Renegade CKB Media Campaign",
+      "zh": "Bitcoin Renegade CKB 媒体宣传活动",
+      "en": "Bitcoin Renegade CKB Media Campaign"
+    },
+    "10296": {
+      "sourceTitle": "fiber-payjoin-kit: Collaborative Privacy for the Nervos Fiber Network",
+      "zh": "fiber-payjoin-kit：Nervos Fiber Network 的协作式隐私方案",
+      "en": "fiber-payjoin-kit: Collaborative Privacy for the Nervos Fiber Network"
+    },
+    "10317": {
+      "sourceTitle": "Fiber Desktop v1 ground-up rebuild and launch — fnn desktop app",
+      "zh": "Fiber Desktop v1 从零重构与发布——FNN 桌面应用",
+      "en": "Fiber Desktop v1 ground-up rebuild and launch — fnn desktop app"
+    },
+    "10364": {
+      "sourceTitle": "Rypto — CKB Content & Advocacy Campaign",
+      "zh": "Rypto——CKB 内容与推广活动",
+      "en": "Rypto — CKB Content & Advocacy Campaign"
+    },
+    "10400": {
+      "sourceTitle": "Luxvoid Protocol: The First Working BTC→CKB→EVM Pipeline — Seeking DAO Support/collab for Production Scaling",
+      "zh": "Luxvoid Protocol：首个可用的 BTC→CKB→EVM 管线——寻求 DAO 支持与生产扩展合作",
+      "en": "Luxvoid Protocol: The First Working BTC→CKB→EVM Pipeline — Seeking DAO Support/collab for Production Scaling"
+    },
+    "10414": {
+      "sourceTitle": "FiberLatch Access - Open-Source Access Control for Fiber Payments",
+      "zh": "FiberLatch Access——面向 Fiber 支付的开源访问控制",
+      "en": "FiberLatch Access - Open-Source Access Control for Fiber Payments"
+    },
+    "10419": {
+      "sourceTitle": "Vellum: Reputation Extension on did:ckb",
+      "zh": "Vellum：did:ckb 信誉扩展",
+      "en": "Vellum: Reputation Extension on did:ckb"
+    },
+    "10453": {
+      "sourceTitle": "Werra: Building Trust Infrastructure for Creator Commerce",
+      "zh": "Werra：为创作者商业构建信任基础设施",
+      "en": "Werra: Building Trust Infrastructure for Creator Commerce"
+    },
+    "10462": {
+      "sourceTitle": "Fiber Python SDK — Native Python Library for Fiber Network Payments",
+      "zh": "Fiber Python SDK——面向 Fiber Network 支付的原生 Python 库",
+      "en": "Fiber Python SDK — Native Python Library for Fiber Network Payments"
+    },
+    "10522": {
+      "sourceTitle": "CKB Anywhere Card — Tap to Pay via Apple & Google Wallet, Self-Custodial",
+      "zh": "CKB Anywhere Card——通过 Apple 与 Google Wallet 轻触支付并保持自托管",
+      "en": "CKB Anywhere Card — Tap to Pay via Apple & Google Wallet, Self-Custodial"
+    },
+    "10583": {
+      "sourceTitle": "Pocket Node for iOS: a self-custody CKB light client for Apple and Identity/Signer for CCC web apps",
+      "zh": "iOS Pocket Node：Apple 端自托管 CKB 轻客户端及 CCC Web 应用身份与签名器",
+      "en": "Pocket Node for iOS: a self-custody CKB light client for Apple and Identity/Signer for CCC web apps"
+    },
+    "10604": {
+      "sourceTitle": "fiber-payjoin-kit: Collaborative Channel Funding Privacy for the Nervos Fiber Network RES",
+      "zh": "fiber-payjoin-kit：Nervos Fiber Network 的协作式通道注资隐私方案 RES",
+      "en": "fiber-payjoin-kit: Collaborative Channel Funding Privacy for the Nervos Fiber Network RES"
+    },
+    "10609": {
+      "sourceTitle": "CrowdCell: Mainnet Launch of Trustless All-or-Nothing Crowdfunding on CKB",
+      "zh": "CrowdCell：CKB 上无须信任的“全有或全无”众筹主网上线",
+      "en": "CrowdCell: Mainnet Launch of Trustless All-or-Nothing Crowdfunding on CKB"
+    },
+    "10613": {
+      "sourceTitle": "Vellum: Reputation Extension on did:ckb",
+      "zh": "Vellum：did:ckb 信誉扩展",
+      "en": "Vellum: Reputation Extension on did:ckb"
+    },
+    "10678": {
+      "sourceTitle": "Corven — Cloud Development Infrastructure for the CKB Ecosystem",
+      "zh": "Corven——面向 CKB 生态的云端开发基础设施",
+      "en": "Corven — Cloud Development Infrastructure for the CKB Ecosystem"
+    },
+    "10685": {
+      "sourceTitle": "Bitcoin Renegade Meet Up and Media Campaign",
+      "zh": "Bitcoin Renegade 线下聚会与媒体宣传活动",
+      "en": "Bitcoin Renegade Meet Up and Media Campaign"
+    },
+    "10712": {
+      "sourceTitle": "FNN Safeguard — Recovery Verification and Pre-Upgrade Qualification for Fiber Nodes",
+      "zh": "FNN Safeguard——Fiber 节点恢复验证与升级前资格检查",
+      "en": "FNN Safeguard — Recovery Verification and Pre-Upgrade Qualification for Fiber Nodes"
+    },
+    "10736": {
+      "sourceTitle": "Kaze X CKB Unitour Continuation Proposal",
+      "zh": "Kaze × CKB 肯尼亚大学巡回活动续期提案",
+      "en": "Kaze X CKB Unitour Continuation Proposal"
+    },
+    "10739": {
+      "sourceTitle": "RIVET: Decentralized GitHub Backup, Timestamping and Restore on CKB",
+      "zh": "RIVET：基于 CKB 的去中心化 GitHub 备份、时间戳与恢复",
+      "en": "RIVET: Decentralized GitHub Backup, Timestamping and Restore on CKB"
+    }
+  }
+}

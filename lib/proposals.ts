@@ -3,6 +3,7 @@ import { proposalCardSummariesById } from './proposal-card-summaries.js';
 import { proposalOverviewTranslationsById } from './proposal-overview-translations.js';
 import { proposalOverridesById } from './proposal-overrides.js';
 import { applyPersistedMilestoneTranslations } from './proposal-milestone-translation.js';
+import { applyPersistedTitleTranslation } from './proposal-title-translation.js';
 
 export type ProposalStatusTag =
   | 'discussion'
@@ -159,7 +160,7 @@ export const dataset: ProposalDataset = {
         ? merged.updates
         : merged.updates.filter((update) => override?.allowNonAuthorUpdates || isUpdateByProposalAuthor(update, merged)),
     };
-    return applyPersistedMilestoneTranslations(normalized);
+    return applyPersistedMilestoneTranslations(applyPersistedTitleTranslation(normalized));
   }),
 };
 

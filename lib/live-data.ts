@@ -16,6 +16,7 @@ import {
 import { proposalOverridesById } from '@/lib/proposal-overrides';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
 import { translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
+import { translateMissingProposalTitle } from '@/lib/proposal-title-translation';
 import {
   extractMilestoneBudget,
   extractProposalBudget as extractBudget,
@@ -586,11 +587,14 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
     .map((topic) => mapCategoryTopic(topic, category.usernames, funded.entries, fetchedAt))
     .map(enrichProposalFromTopic));
   const proposals = (await Promise.all(enrichedProposals.map(async (proposal) => {
-    const useHistorical = !proposalOverridesById[proposal.id]?.overview;
-    const withOverview = isRecentProposal(proposal)
-      ? await translateMissingProposalOverview(proposal, fetch, { useHistorical })
-      : proposal;
-    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical });
+    const proposalOverride = proposalOverridesById[proposal.id];
+    const useHistoricalOverview = !proposalOverride?.overview;
+    const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
+    const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
+    const withOverview = isRecentProposal(withTitle)
+      ? await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview })
+      : withTitle;
+    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
   })))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const usedSlugs = new Set<string>();
@@ -709,9 +713,11 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
         ...(completionEvidence ? [completionEvidence] : []),
       ],
     };
-    const useHistorical = !proposalOverride?.overview;
-    const withOverview = await translateMissingProposalOverview(proposal, fetch, { useHistorical });
-    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical });
+    const useHistoricalOverview = !proposalOverride?.overview;
+    const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
+    const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
+    const withOverview = await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview });
+    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
   } catch {
     return base;
   }
