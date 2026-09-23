@@ -2655,6 +2655,8 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
     ],
   },
   '7120': {
+    titleZh: '修改票数的计算方式',
+    titleEn: 'Changing How Votes Are Calculated',
     budgetLabel: 'NA',
     projectType: 'Governance',
     statusTags: ['vote-passed', 'completed'],

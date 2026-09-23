@@ -15,4 +15,8 @@ assert.equal(
 );
 assert.equal(kaze.overview?.milestones.length, 3);
 
+const voteCalculation = proposalOverridesById['7120'];
+assert.equal(voteCalculation.titleZh, '修改票数的计算方式');
+assert.equal(voteCalculation.titleEn, 'Changing How Votes Are Calculated');
+
 console.log('Validated reviewed proposal overrides.');
