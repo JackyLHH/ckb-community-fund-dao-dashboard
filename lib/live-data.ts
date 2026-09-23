@@ -16,6 +16,7 @@ import {
 import { proposalOverridesById } from '@/lib/proposal-overrides';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
 import {
+  extractMilestoneBudget,
   extractProposalBudget as extractBudget,
   extractProposalObjective,
 } from '@/lib/digest-activity';
@@ -303,6 +304,18 @@ function elementPieces(element: Element) {
   return value ? [value] : [];
 }
 
+function tableBudgetCell(element: Element) {
+  if (element.tagName !== 'TR') return '';
+  const table = element.closest('table');
+  if (!table) return '';
+  const headers = [...table.querySelectorAll('thead th')]
+    .map((header) => header.textContent?.replace(/\s+/g, ' ').trim() ?? '');
+  const budgetIndex = headers.findIndex((header) => /^(?:budget|amount|payment|预算|金额|支付)$/i.test(header));
+  if (budgetIndex < 0) return '';
+  const cells = [...element.querySelectorAll(':scope > th, :scope > td')];
+  return cells[budgetIndex]?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+}
+
 function parseProposalOverview(cooked: string, fallbackSummary: string): ProposalOverview {
   const objective = extractProposalObjective(cooked, fallbackSummary);
   if (typeof DOMParser === 'undefined') return { objective, milestones: [] };
@@ -311,7 +324,11 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
   const candidates = [...doc.querySelectorAll('h2, h3, h4, h5, h6, p, tr, li')]
     .map((element, order) => ({ element, order, marker: milestoneMarker(element) }))
     .filter((candidate): candidate is { element: Element; order: number; marker: { key: string; title: string } } => Boolean(candidate.marker));
-  const milestonesByKey = new Map<string, ProposalOverview['milestones'][number] & { order: number; score: number }>();
+  const milestonesByKey = new Map<string, ProposalOverview['milestones'][number] & {
+    order: number;
+    score: number;
+    budgetConfidence: number;
+  }>();
   for (const candidate of candidates) {
     const pieces: string[] = [];
     if (candidate.element.tagName === 'TR') pieces.push(...elementPieces(candidate.element));
@@ -326,10 +343,11 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
     }
     const block = pieces.join(' ');
     const source = `${candidate.marker.title} ${block}`;
-    const budget = extractBudget(source)
-      ?? source.match(/(?:^|\s)(\$\s*[\d,.]+(?:\s*(?:USD|USDT))?|[\d,.]+\s*(?:USD|USDT|CKB))\b/i)?.[1]?.replace(/\s+/g, ' ').trim()
-      ?? source.match(/\b(\d+(?:\.\d+)?%\s*(?:of (?:the )?grant|资金|拨款)?)/i)?.[1]?.trim()
-      ?? null;
+    const budgetEvidence = extractMilestoneBudget(
+      candidate.marker.title,
+      pieces,
+      tableBudgetCell(candidate.element),
+    );
     const eta = source.match(/(?:ETA|duration|delivery|timeline|预计|周期|交付时间)\s*[:：-]?\s*([^.;。；]{2,80})/i)?.[1]?.trim()
       ?? source.match(/(?:~\s*Month\s*\d+|weeks?\s*\d+(?:\s*[-–]\s*\d+)?|约第\s*\d+\s*个月)/i)?.[0]?.trim()
       ?? null;
@@ -352,18 +370,30 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
     const item = {
       title,
       description,
-      budget,
+      budget: budgetEvidence.value,
       eta,
       order: candidate.order,
       score: description.length + pieces.length * 30,
+      budgetConfidence: budgetEvidence.confidence,
     };
     const existing = milestonesByKey.get(candidate.marker.key);
-    if (!existing || item.score > existing.score + 60) milestonesByKey.set(candidate.marker.key, item);
+    if (!existing) {
+      milestonesByKey.set(candidate.marker.key, item);
+      continue;
+    }
+    const strongerBudget = item.budgetConfidence > existing.budgetConfidence
+      ? { budget: item.budget, budgetConfidence: item.budgetConfidence }
+      : { budget: existing.budget, budgetConfidence: existing.budgetConfidence };
+    if (item.score > existing.score + 60) {
+      milestonesByKey.set(candidate.marker.key, { ...item, ...strongerBudget });
+    } else if (strongerBudget.budgetConfidence > existing.budgetConfidence) {
+      milestonesByKey.set(candidate.marker.key, { ...existing, ...strongerBudget });
+    }
   }
   const milestones = [...milestonesByKey.values()]
     .sort((a, b) => a.order - b.order)
     .slice(0, 12)
-    .map(({ order: _order, score: _score, ...milestone }) => milestone);
+    .map(({ order: _order, score: _score, budgetConfidence: _budgetConfidence, ...milestone }) => milestone);
 
   return { objective: objective || extractProposalObjective('', fallbackSummary), milestones };
 }

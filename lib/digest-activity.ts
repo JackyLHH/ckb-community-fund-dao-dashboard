@@ -117,10 +117,16 @@ export function extractProposalObjective(cooked = '', fallbackSummary = '') {
   return cleanProposalObjective(selected || fallbackSummary);
 }
 
+const moneyValue = String.raw`(?:USD|USDT|INR)\s*\$?\s*[\d,.]+|\$\s*[\d,.]+(?:\s*(?:USD|USDT))?|[\d,.]+\s*(?:USD|USDT|CKB(?:s)?|U)\b|0\s*(?:CKB)?`;
+
+function normalizedMoney(value?: string) {
+  return value?.replace(/\s+/g, ' ').trim() ?? null;
+}
+
 // Keep the requested-budget value identical across the detail page, proposal
 // directory, email digest, and Telegram digest.
 export function extractProposalBudget(text: string) {
-  const value = String.raw`((?:USD|USDT|INR)\s*\$?\s*[\d,.]+|\$\s*[\d,.]+(?:\s*(?:USD|USDT))?|[\d,.]+\s*(?:USD|USDT|CKB(?:s)?|U)\b|0\s*(?:CKB)?)`;
+  const value = `(${moneyValue})`;
   const labels = [
     String.raw`(?:grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
     String.raw`(?:this proposal requests|we (?:are requesting|request)|our budget is|apply for|the budget for this project is)\s*(?:a grant of|a total budget of|a total of)?\s*${value}`,
@@ -131,6 +137,48 @@ export function extractProposalBudget(text: string) {
     if (match) return match.replace(/\s+/g, ' ').trim();
   }
   return null;
+}
+
+export type MilestoneBudgetEvidence = {
+  value: string | null;
+  confidence: number;
+};
+
+// Milestone descriptions often contain operational amounts such as cell
+// capacity, token rewards, or user subsidies. Only treat an amount as a
+// milestone budget when it comes from a structured Budget column, the
+// milestone title itself, an explicitly labelled budget/payment phrase, or a
+// standalone monetary field.
+export function extractMilestoneBudget(
+  markerTitle: string,
+  pieces: string[],
+  tableBudgetText = '',
+): MilestoneBudgetEvidence {
+  const money = new RegExp(`(${moneyValue})`, 'i');
+  const tableBudget = normalizedMoney(tableBudgetText.match(money)?.[1]);
+  if (tableBudget) return { value: tableBudget, confidence: 4 };
+
+  const titleBudget = normalizedMoney(markerTitle.match(money)?.[1]);
+  if (titleBudget) return { value: titleBudget, confidence: 3 };
+
+  const source = [markerTitle, ...pieces].join(' ');
+  const labelled = source.match(new RegExp(
+    String.raw`(?:budget|amount|payment|grant|funding|预算|金额|支付|拨款)[^$\d]{0,40}(${moneyValue})`,
+    'i',
+  ));
+  const labelledBudget = normalizedMoney(labelled?.[1]);
+  if (labelledBudget) return { value: labelledBudget, confidence: 2 };
+
+  for (const piece of pieces) {
+    const standalone = piece.match(new RegExp(String.raw`^\s*(${moneyValue})\s*$`, 'i'));
+    const standaloneBudget = normalizedMoney(standalone?.[1]);
+    if (standaloneBudget) return { value: standaloneBudget, confidence: 2 };
+  }
+
+  const percentage = source.match(/\b(\d+(?:\.\d+)?%\s*(?:of (?:the )?grant|资金|拨款)?)/i)?.[1]?.trim();
+  return percentage
+    ? { value: percentage, confidence: 1 }
+    : { value: null, confidence: 0 };
 }
 
 const explicitProgressPattern = /(?:\b(?:weekly|bi[\s-]?weekly|monthly|quarterly|annual|yearly|status|progress|project|development|milestone|completion|delivery|final)\s+(?:updates?|reports?)\b|\b(?:week|month|quarter|year|milestone|phase|stage)\s*#?\d+\s*(?:updates?|reports?|completed|complete|delivered)\b|\bq[1-4]\s+(?:updates?|reports?)\b|\b(?:update|report)\s*#\s*\d+\b|周报|双周报|月报|季报|年报|状态更新|(?:项目|工作)?进展(?:更新|报告)|进度(?:更新|报告)|项目更新|里程碑(?:报告|更新|进展)|里程碑\s*[#第]?[一二三四五六七八九十\d]+\s*(?:已完成|完成|已交付)|结项报告|完结报告|完成报告|交付报告)/i;

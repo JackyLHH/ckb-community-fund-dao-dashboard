@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   classifyProgressUpdate,
+  extractMilestoneBudget,
   extractProposalBudget,
   extractProposalObjective,
   isMeaningfulProgressUpdate,
@@ -69,6 +70,27 @@ assert.equal(
   extractProposalBudget('This proposal requests a grant of $3,000 to run three university tours in Kenya.'),
   '$3,000',
   'The digest and proposal detail page must resolve the same requested budget',
+);
+
+const rivetMilestoneTitle = 'Milestone 1 ($2,500): CoTA Onboarding and Sovereign Passport';
+const rivetMilestonePieces = [
+  'CoTA account abstraction integration',
+  'Rivet subsidized CoTA cell creation (approx. 150 CKB per user)',
+];
+assert.deepEqual(
+  extractMilestoneBudget(rivetMilestoneTitle, rivetMilestonePieces, '$2,500'),
+  { value: '$2,500', confidence: 4 },
+  'A structured Budget column must outrank operational amounts in milestone deliverables',
+);
+assert.deepEqual(
+  extractMilestoneBudget(rivetMilestoneTitle, rivetMilestonePieces),
+  { value: '$2,500', confidence: 3 },
+  'A parenthesized amount in the milestone title must be recognized even without preceding whitespace',
+);
+assert.deepEqual(
+  extractMilestoneBudget('Milestone 1: CoTA Onboarding', rivetMilestonePieces),
+  { value: null, confidence: 0 },
+  'An operational CKB amount in ordinary deliverable text must not become the milestone budget',
 );
 
 console.log('Validated daily digest activity classification.');
