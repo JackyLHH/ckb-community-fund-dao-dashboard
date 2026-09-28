@@ -14,6 +14,7 @@ import {
   voteEvidenceByProposalId,
 } from '@/lib/status-evidence';
 import { proposalOverridesById } from '@/lib/proposal-overrides';
+import { mergeLiveTopicEnrichment } from '@/lib/live-data-enrichment';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
 import { translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
 import { translateMissingProposalTitle } from '@/lib/proposal-title-translation';
@@ -530,6 +531,16 @@ async function enrichProposalFromTopic(proposal: Proposal) {
     const cooked = firstPost?.cooked ?? '';
     const text = stripHtml(cooked);
     if (!text) return proposal;
+    const liveFields = {
+      author: firstPost?.username ?? proposal.author,
+      budgetLabel: proposal.budgetLabel ?? extractBudget(text),
+      updatedAt: detail.last_posted_at ?? firstPost?.updated_at ?? proposal.updatedAt,
+    };
+
+    // A missing budget must not cause a reviewed overview or roadmap to be
+    // re-parsed and overwritten. Only generate an overview when none exists.
+    if (proposal.overview?.objective?.trim()) return mergeLiveTopicEnrichment(proposal, liveFields);
+
     const parsed = parseProposalOverview(cooked, text);
     const objective = parsed.objective.trim();
     const sourceIsChinese = /[\u3400-\u9fff]/u.test(objective);
@@ -537,14 +548,7 @@ async function enrichProposalFromTopic(proposal: Proposal) {
       ...parsed,
       ...(sourceIsChinese ? { objectiveZh: objective } : { objectiveEn: objective }),
     };
-    return {
-      ...proposal,
-      summary: objective || proposal.summary,
-      overview,
-      author: firstPost?.username ?? proposal.author,
-      budgetLabel: proposal.budgetLabel ?? extractBudget(text),
-      updatedAt: detail.last_posted_at ?? firstPost?.updated_at ?? proposal.updatedAt,
-    };
+    return mergeLiveTopicEnrichment(proposal, liveFields, overview);
   } catch {
     return proposal;
   }
@@ -588,14 +592,19 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
     .map((topic) => mapCategoryTopic(topic, category.usernames, funded.entries, fetchedAt))
     .map(enrichProposalFromTopic));
   const proposals = (await Promise.all(enrichedProposals.map(async (proposal) => {
-    const proposalOverride = proposalOverridesById[proposal.id];
-    const useHistoricalOverview = !proposalOverride?.overview;
-    const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
-    const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
-    const withOverview = isRecentProposal(withTitle)
-      ? await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview })
-      : withTitle;
-    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
+    try {
+      const proposalOverride = proposalOverridesById[proposal.id];
+      const useHistoricalOverview = !proposalOverride?.overview;
+      const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
+      const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
+      const withOverview = isRecentProposal(withTitle)
+        ? await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview })
+        : withTitle;
+      return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
+    } catch {
+      // One unavailable translation must never make the whole directory fail.
+      return proposal;
+    }
   })))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const usedSlugs = new Set<string>();

@@ -14,6 +14,9 @@ export function useLiveDataset() {
       if (!active) return;
       setData(next);
       setState(next.meta.usedFallback ? 'fallback' : 'live');
+    }).catch(() => {
+      if (!active) return;
+      setState('fallback');
     });
     return () => { active = false; };
   }, []);
@@ -32,6 +35,9 @@ export function useLiveProject(id: string | null, initialProposal?: Proposal) {
       if (!active) return;
       setProposal(next);
       setState(next ? 'live' : 'fallback');
+    }).catch(() => {
+      if (!active) return;
+      setState('fallback');
     });
     return () => { active = false; };
   }, [id]);

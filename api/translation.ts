@@ -2,6 +2,7 @@ const gatewayUrl = 'https://ai-gateway.vercel.sh/v1/chat/completions';
 const translationModel = 'google/gemini-2.5-flash-lite';
 const publicTranslationUrl = 'https://api.mymemory.translated.net/get';
 const maxSourceLength = 1_000;
+const publicQueryByteLimit = 500;
 
 type TargetLocale = 'zh' | 'en';
 type TranslationKind = 'overview' | 'proposal-title' | 'proposal-update' | 'milestone-title' | 'milestone-description';
@@ -103,6 +104,10 @@ async function translateWithPublicService(target: TargetLocale, text: string) {
   return cleanTranslation(result.responseData?.translatedText ?? '') || null;
 }
 
+function exceedsPublicQueryLimit(text: string) {
+  return new TextEncoder().encode(text).length > publicQueryByteLimit;
+}
+
 async function translate(request: Request, body: TranslationRequest) {
   const proposalId = body.proposalId?.trim();
   const target = body.target;
@@ -119,9 +124,31 @@ async function translate(request: Request, body: TranslationRequest) {
   const cached = memoryCache.get(cacheKey);
   if (cached) return json({ ok: true, translation: cached, cached: true }, 200, true);
 
-  const translation = await translateWithAiGateway(request, target, text, kind)
-    ?? await translateWithPublicService(target, text);
-  if (!translation) return json({ ok: false, code: 'empty_translation' }, 502);
+  let translation: string | null = null;
+  try {
+    translation = await translateWithAiGateway(request, target, text, kind);
+  } catch (error) {
+    console.warn('AI Gateway translation request failed', error);
+  }
+
+  const publicQueryTooLong = exceedsPublicQueryLimit(text);
+  if (!translation && !publicQueryTooLong) {
+    try {
+      translation = await translateWithPublicService(target, text);
+    } catch (error) {
+      console.warn('Public translation request failed', error);
+    }
+  }
+
+  // Translation is progressive enhancement. Expected provider limits or
+  // outages return a successful response so callers can safely keep the
+  // reviewed/source-language text instead of escalating into a page error.
+  if (!translation) {
+    return json({
+      ok: false,
+      code: publicQueryTooLong ? 'public_query_too_long' : 'translation_unavailable',
+    });
+  }
   memoryCache.set(cacheKey, translation);
   return json({ ok: true, translation }, 200, true);
 }
