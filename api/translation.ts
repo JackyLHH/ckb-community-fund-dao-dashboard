@@ -2,6 +2,7 @@ const gatewayUrl = 'https://ai-gateway.vercel.sh/v1/chat/completions';
 const translationModel = 'google/gemini-2.5-flash-lite';
 const publicTranslationUrl = 'https://api.mymemory.translated.net/get';
 const maxSourceLength = 1_000;
+const publicQueryByteLimit = 500;
 
 type TargetLocale = 'zh' | 'en';
 type TranslationKind = 'overview' | 'proposal-title' | 'proposal-update' | 'milestone-title' | 'milestone-description';
@@ -92,6 +93,10 @@ async function translateWithAiGateway(
   return cleanTranslation(result.choices?.[0]?.message?.content ?? '') || null;
 }
 
+function exceedsPublicQueryLimit(text: string) {
+  return new TextEncoder().encode(text).length > publicQueryByteLimit;
+}
+
 async function translateWithPublicService(target: TargetLocale, text: string) {
   const url = new URL(publicTranslationUrl);
   url.searchParams.set('q', text);
@@ -120,8 +125,13 @@ async function translate(request: Request, body: TranslationRequest) {
   if (cached) return json({ ok: true, translation: cached, cached: true }, 200, true);
 
   const translation = await translateWithAiGateway(request, target, text, kind)
-    ?? await translateWithPublicService(target, text);
-  if (!translation) return json({ ok: false, code: 'empty_translation' }, 502);
+    ?? (exceedsPublicQueryLimit(text) ? null : await translateWithPublicService(target, text));
+  if (!translation) {
+    if (exceedsPublicQueryLimit(text) && !process.env.AI_GATEWAY_API_KEY) {
+      return json({ ok: false, code: 'public_query_too_long' });
+    }
+    return json({ ok: false, code: 'empty_translation' }, 502);
+  }
   memoryCache.set(cacheKey, translation);
   return json({ ok: true, translation }, 200, true);
 }

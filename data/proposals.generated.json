@@ -1,8 +1,8 @@
 {
   "meta": {
-    "generatedAt": "2026-09-15T15:53:47.804Z",
+    "generatedAt": "2026-09-28T13:27:33.949Z",
     "categoryUrl": "https://talk.nervos.org/c/daos-funding/ckb-community-fund-dao/65",
-    "proposalCount": 70,
+    "proposalCount": 72,
     "methodology": "Discourse category + topic JSON, with evidence-based funded proposal overrides."
   },
   "treasury": {
@@ -15,105 +15,6 @@
   },
   "proposals": [
     {
-      "id": "10712",
-      "slug": "dis-fnn-safeguard-recovery-verification-and-pre-upgrade-qualification-for-fiber-nodes",
-      "title": "FNN Safeguard — Recovery Verification and Pre-Upgrade Qualification for Fiber Nodes",
-      "originalTitle": "[DIS] FNN Safeguard — Recovery Verification and Pre-Upgrade Qualification for Fiber Nodes",
-      "summary": "Proposal summary Proposal type: Budget Proposal Applicant and project owner: Dapps over Apps Project lead: Abdulkareem Oyeneye Technical lead: Michael Dean Funding requested: 8,263,000 CKB — fixed amount Approximate USD reference: $9,800 Reference conversion: $0.001186 per CKB, captured on September",
-      "author": "Dappsoverapps",
-      "originalUrl": "https://talk.nervos.org/t/dis-fnn-safeguard-recovery-verification-and-pre-upgrade-qualification-for-fiber-nodes/10712",
-      "createdAt": "2026-09-15T14:01:10.166Z",
-      "updatedAt": "2026-09-15T14:01:10.362Z",
-      "tags": [],
-      "projectType": "Infrastructure",
-      "budgetLabel": null,
-      "discussion": {
-        "likes": 0,
-        "replies": 0,
-        "views": 10
-      },
-      "voting": null,
-      "funded": false,
-      "fundingNote": null,
-      "updates": [],
-      "status": "discussion",
-      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
-      "sources": [
-        {
-          "label": "Nervos Talk proposal",
-          "url": "https://talk.nervos.org/t/dis-fnn-safeguard-recovery-verification-and-pre-upgrade-qualification-for-fiber-nodes/10712"
-        }
-      ]
-    },
-    {
-      "id": "9879",
-      "slug": "dis-mobile-ready-ckb-light-client-pocket-node-for-android",
-      "title": "Mobile-Ready CKB Light Client (Pocket Node) for Android",
-      "originalTitle": "[DIS] Mobile-Ready CKB Light Client (Pocket Node) for Android",
-      "summary": "Link to VOT page: https://dao.ckb.community/landing?method=share&thread=67494&refer_id=51416 1. Summary This proposal requests a grant to complete and launch Pocket Node , a mobile-first light wallet for Nervos CKB that enables users to securely manage CKB directly from their Android devices. Unlike",
-      "author": "Jnr6",
-      "originalUrl": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879",
-      "createdAt": "2026-01-27T09:25:31.938Z",
-      "updatedAt": "2026-09-14T13:54:31.805Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 344,
-          "name": "light-client",
-          "slug": "light-client"
-        }
-      ],
-      "projectType": "Infrastructure",
-      "budgetLabel": "$15,000 USD",
-      "discussion": {
-        "likes": 284,
-        "replies": 58,
-        "views": 2167
-      },
-      "voting": {
-        "url": "https://dao.ckb.community/landing?method=share&thread=67494&refer_id=51416",
-        "status": "unknown"
-      },
-      "funded": true,
-      "fundingNote": "Milestone 4 尚未拨付。",
-      "updates": [
-        {
-          "title": "从我自己的角度，我会为这个提案提供给最终用户的内容简单做个总结：遵守 Material 3 设计的钱包，类似 CKBull 。支持轻客户端，所以能减少对外部设施的依赖，理论上来讲能提升资产安全性。不过一些 CKBull 已有的功能并未包含在此次提案中，例如对 ",
-          "date": "2026-01-27T22:04:24.676Z",
-          "url": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879/10",
-          "author": "Hanssen"
-        },
-        {
-          "title": "Thank you for the feedback and for recognizing the value of an open-source mobile wallet for the ecosystem. Let me address your sp",
-          "date": "2026-01-28T09:17:19.403Z",
-          "url": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879/12",
-          "author": "Jnr6"
-        }
-      ],
-      "status": "executing",
-      "statusReason": "Milestone 4 尚未拨付。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
-      "sources": [
-        {
-          "label": "Nervos Talk proposal",
-          "url": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879"
-        },
-        {
-          "label": "List of funded proposals",
-          "url": "https://talk.nervos.org/t/list-of-funded-proposals/7793"
-        },
-        {
-          "label": "Metaforo voting page",
-          "url": "https://dao.ckb.community/landing?method=share&thread=67494&refer_id=51416"
-        }
-      ]
-    },
-    {
       "id": "10015",
       "slug": "dis-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1",
       "title": "Decentralized privacy order-book appchain based on CKB L1 - 2026.phase-1",
@@ -122,20 +23,14 @@
       "author": "Lawliet_Chan",
       "originalUrl": "https://talk.nervos.org/t/dis-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1/10015",
       "createdAt": "2026-02-28T04:17:08.724Z",
-      "updatedAt": "2026-09-13T07:45:14.665Z",
-      "tags": [
-        {
-          "id": 2,
-          "name": "appchain",
-          "slug": "appchain"
-        }
-      ],
+      "updatedAt": "2026-09-28T02:38:29.835Z",
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": "$24,000 USD",
       "discussion": {
-        "likes": 164,
+        "likes": 167,
         "replies": 15,
-        "views": 1717
+        "views": 1867
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1-69184",
@@ -165,7 +60,7 @@
       ],
       "status": "executing",
       "statusReason": "目前仅 Milestone 1 已拨付。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -182,6 +77,339 @@
       ]
     },
     {
+      "id": "10736",
+      "slug": "dis-kaze-x-ckb-unitour-continuation-proposal",
+      "title": "Kaze X CKB Unitour Continuation Proposal",
+      "originalTitle": "[DIS] Kaze X CKB Unitour Continuation Proposal",
+      "summary": "1. Title [DIS] Kaze University Tours, Kenya Stage 2 2. Summary This proposal requests a grant of $3,000 to run three university tours in Kenya. Each tour will teach students Bitcoin and CKB basics and get them to create their own self-custodial CKB wallet live, on the spot, using a Passkey instead o",
+      "author": "Dorex45",
+      "originalUrl": "https://talk.nervos.org/t/dis-kaze-x-ckb-unitour-continuation-proposal/10736",
+      "createdAt": "2026-09-22T05:39:35.772Z",
+      "updatedAt": "2026-09-27T15:59:49.319Z",
+      "tags": [],
+      "projectType": "Ecosystem",
+      "budgetLabel": "$3,000",
+      "discussion": {
+        "likes": 40,
+        "replies": 0,
+        "views": 189
+      },
+      "voting": null,
+      "funded": false,
+      "fundingNote": null,
+      "updates": [],
+      "status": "discussion",
+      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-kaze-x-ckb-unitour-continuation-proposal/10736"
+        }
+      ]
+    },
+    {
+      "id": "10712",
+      "slug": "dis-fnn-safeguard-recovery-verification-and-pre-upgrade-qualification-for-fiber-nodes",
+      "title": "FNN Safeguard — Recovery Verification and Pre-Upgrade Qualification for Fiber Nodes",
+      "originalTitle": "[DIS] FNN Safeguard — Recovery Verification and Pre-Upgrade Qualification for Fiber Nodes",
+      "summary": "Proposal summary Proposal type: Budget Proposal Applicant and project owner: Dapps over Apps Project lead: Abdulkareem Oyeneye Technical lead: Michael Dean Funding requested: 8,263,000 CKB — fixed amount Approximate USD reference: $9,800 Reference conversion: $0.001186 per CKB, captured on September",
+      "author": "Dappsoverapps",
+      "originalUrl": "https://talk.nervos.org/t/dis-fnn-safeguard-recovery-verification-and-pre-upgrade-qualification-for-fiber-nodes/10712",
+      "createdAt": "2026-09-15T14:01:10.166Z",
+      "updatedAt": "2026-09-27T01:47:37.327Z",
+      "tags": [],
+      "projectType": "Infrastructure",
+      "budgetLabel": null,
+      "discussion": {
+        "likes": 6,
+        "replies": 1,
+        "views": 141
+      },
+      "voting": null,
+      "funded": false,
+      "fundingNote": null,
+      "updates": [],
+      "status": "discussion",
+      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-fnn-safeguard-recovery-verification-and-pre-upgrade-qualification-for-fiber-nodes/10712"
+        }
+      ]
+    },
+    {
+      "id": "10613",
+      "slug": "dis-vellum-reputation-extension-on-did-ckb",
+      "title": "Vellum: Reputation Extension on did:ckb",
+      "originalTitle": "[DIS] Vellum: Reputation Extension on did:ckb",
+      "summary": "Link to Vote: https://dao.ckb.community/thread/vot-vellum-reputation-extension-on-did-ckb-77380 Context This is a resubmission. The first proposal ( discussion thread ) did not pass the voting stage. The main opposition, once clarified in the thread post-vote, rested on a factual misunderstanding ab",
+      "author": "truthixify",
+      "originalUrl": "https://talk.nervos.org/t/dis-vellum-reputation-extension-on-did-ckb/10613",
+      "createdAt": "2026-08-13T09:49:17.933Z",
+      "updatedAt": "2026-09-26T11:20:16.458Z",
+      "tags": [],
+      "projectType": "Ecosystem",
+      "budgetLabel": "$7,000 USD",
+      "discussion": {
+        "likes": 78,
+        "replies": 4,
+        "views": 486
+      },
+      "voting": {
+        "url": "https://dao.ckb.community/thread/vot-vellum-reputation-extension-on-did-ckb-77380",
+        "status": "unknown"
+      },
+      "funded": false,
+      "fundingNote": null,
+      "updates": [
+        {
+          "title": "Vellum Milestone 1 delivery report Implementation for Vellum’s first grant milestone is complete and ready for community review. M",
+          "date": "2026-09-25T22:06:55.253Z",
+          "url": "https://talk.nervos.org/t/dis-vellum-reputation-extension-on-did-ckb/10613/9",
+          "author": "truthixify"
+        }
+      ],
+      "status": "voting",
+      "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-vellum-reputation-extension-on-did-ckb/10613"
+        },
+        {
+          "label": "Metaforo voting page",
+          "url": "https://dao.ckb.community/thread/vot-vellum-reputation-extension-on-did-ckb-77380"
+        }
+      ]
+    },
+    {
+      "id": "10583",
+      "slug": "dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps",
+      "title": "Pocket Node for iOS: a self-custody CKB light client for Apple and Identity/Signer for CCC web apps",
+      "originalTitle": "[DIS] Pocket Node for iOS: a self-custody CKB light client for Apple and Identity/Signer for CCC web apps",
+      "summary": "Link to VOT page: https://dao.ckb.community/landing?method=share&thread=76502&refer_id=51416 Summary Pocket Node is a self-custody CKB wallet that runs a full Rust light client on the device with no gateway server: the phone verifies the chain itself, holds keys locally, and builds and broadcasts tr",
+      "author": "Jnr6",
+      "originalUrl": "https://talk.nervos.org/t/dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps/10583",
+      "createdAt": "2026-08-06T01:22:50.035Z",
+      "updatedAt": "2026-09-24T13:23:42.735Z",
+      "tags": [],
+      "projectType": "Infrastructure",
+      "budgetLabel": null,
+      "discussion": {
+        "likes": 110,
+        "replies": 15,
+        "views": 718
+      },
+      "voting": {
+        "url": "https://dao.ckb.community/landing?method=share&thread=76502&refer_id=51416",
+        "status": "unknown"
+      },
+      "funded": false,
+      "fundingNote": null,
+      "updates": [
+        {
+          "title": "knmo: That initial work was worth significantly more than porting to Apple platforms is worth I created the misunderstanding, when",
+          "date": "2026-08-08T13:08:58.706Z",
+          "url": "https://talk.nervos.org/t/dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps/10583/13",
+          "author": "Jnr6"
+        }
+      ],
+      "status": "voting",
+      "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps/10583"
+        },
+        {
+          "label": "Metaforo voting page",
+          "url": "https://dao.ckb.community/landing?method=share&thread=76502&refer_id=51416"
+        }
+      ]
+    },
+    {
+      "id": "10522",
+      "slug": "dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial",
+      "title": "CKB Anywhere Card — Tap to Pay via Apple & Google Wallet, Self-Custodial",
+      "originalTitle": "[DIS] CKB Anywhere Card — Tap to Pay via Apple & Google Wallet, Self-Custodial",
+      "summary": "TL;DR What’s New in V2 Thank you to everyone who supported and provided feedback on the original proposal. The feedback was clear: while the core concept was well received, the solution needed native mobile wallet support and a simpler, mobile-first user experience. Over the past few months, we eval",
+      "author": "BuildUnion",
+      "originalUrl": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522",
+      "createdAt": "2026-07-21T13:07:57.353Z",
+      "updatedAt": "2026-09-23T14:24:52.624Z",
+      "tags": [],
+      "projectType": "Infrastructure",
+      "budgetLabel": null,
+      "discussion": {
+        "likes": 76,
+        "replies": 16,
+        "views": 681
+      },
+      "voting": null,
+      "funded": false,
+      "fundingNote": null,
+      "updates": [
+        {
+          "title": "Thanks for taking the time to review the proposal and for the thoughtful feedback. On team background: That’s a fair point. We’ in",
+          "date": "2026-07-22T17:33:06.182Z",
+          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/8",
+          "author": "BuildUnion"
+        },
+        {
+          "title": "BuildUnion: On the payment flow: The merchant doesn’t communicate directly with the wallet. The purchase amount comes through the ",
+          "date": "2026-07-22T18:57:35.636Z",
+          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/10",
+          "author": "neon.bit"
+        },
+        {
+          "title": "Thanks again for the detailed feedback. On the payment flow: The merchant doesn’t communicate directly with the Nervos wallet. The",
+          "date": "2026-07-22T19:34:19.936Z",
+          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/11",
+          "author": "BuildUnion"
+        },
+        {
+          "title": "First of all, thank you for taking the time to provide such detailed and thoughtful answers. I genuinely appreciate that you addre",
+          "date": "2026-07-24T07:34:15.247Z",
+          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/20",
+          "author": "Ruud"
+        }
+      ],
+      "status": "discussion",
+      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522"
+        }
+      ]
+    },
+    {
+      "id": "10739",
+      "slug": "dis-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb",
+      "title": "RIVET: Decentralized GitHub Backup, Timestamping and Restore on CKB",
+      "originalTitle": "[DIS] RIVET: Decentralized GitHub Backup, Timestamping and Restore on CKB",
+      "summary": "2. Summary Rivet is a decentralized developer platform that backs up, timestamps, and restores GitHub history using CKB, IPFS, and Arweave. V1 is live on testnet with CCC wallet onboarding, a functional backup engine, 1 click restore, and public developer profiles. The testnet currently runs on free",
+      "author": "Jedi_dtechmaker",
+      "originalUrl": "https://talk.nervos.org/t/dis-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb/10739",
+      "createdAt": "2026-09-22T15:53:43.356Z",
+      "updatedAt": "2026-09-23T14:22:20.366Z",
+      "tags": [],
+      "projectType": "Ecosystem",
+      "budgetLabel": null,
+      "discussion": {
+        "likes": 51,
+        "replies": 3,
+        "views": 199
+      },
+      "voting": null,
+      "funded": false,
+      "fundingNote": null,
+      "updates": [],
+      "status": "discussion",
+      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb/10739"
+        }
+      ]
+    },
+    {
+      "id": "10364",
+      "slug": "dis-rypto-ckb-content-advocacy-campaign",
+      "title": "Rypto — CKB Content & Advocacy Campaign",
+      "originalTitle": "[DIS] Rypto — CKB Content & Advocacy Campaign",
+      "summary": "[DIS] Rypto — CKB Content & Advocacy Campaign Summary This proposal requests a grant of $4,500 over 4 months to fund a dedicated CKB content and advocacy campaign led by Rypto ( @RyptoCrypto ), a crypto content creator with 30,000+ organic followers across X, YouTube, LinkedIn and CoinMarketCap. The",
+      "author": "Rypto",
+      "originalUrl": "https://talk.nervos.org/t/dis-rypto-ckb-content-advocacy-campaign/10364",
+      "createdAt": "2026-06-10T10:18:32.572Z",
+      "updatedAt": "2026-09-22T10:00:01.531Z",
+      "tags": [],
+      "projectType": "Community & Content",
+      "budgetLabel": "$4,500",
+      "discussion": {
+        "likes": 60,
+        "replies": 1,
+        "views": 418
+      },
+      "voting": null,
+      "funded": false,
+      "fundingNote": null,
+      "updates": [],
+      "status": "discussion",
+      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-rypto-ckb-content-advocacy-campaign/10364"
+        }
+      ]
+    },
+    {
+      "id": "9879",
+      "slug": "dis-mobile-ready-ckb-light-client-pocket-node-for-android",
+      "title": "Mobile-Ready CKB Light Client (Pocket Node) for Android",
+      "originalTitle": "[DIS] Mobile-Ready CKB Light Client (Pocket Node) for Android",
+      "summary": "Link to VOT page: https://dao.ckb.community/landing?method=share&thread=67494&refer_id=51416 1. Summary This proposal requests a grant to complete and launch Pocket Node , a mobile-first light wallet for Nervos CKB that enables users to securely manage CKB directly from their Android devices. Unlike",
+      "author": "Jnr6",
+      "originalUrl": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879",
+      "createdAt": "2026-01-27T09:25:31.938Z",
+      "updatedAt": "2026-09-14T13:54:31.805Z",
+      "tags": [],
+      "projectType": "Infrastructure",
+      "budgetLabel": "$15,000 USD",
+      "discussion": {
+        "likes": 286,
+        "replies": 58,
+        "views": 2280
+      },
+      "voting": {
+        "url": "https://dao.ckb.community/landing?method=share&thread=67494&refer_id=51416",
+        "status": "unknown"
+      },
+      "funded": true,
+      "fundingNote": "Milestone 4 尚未拨付。",
+      "updates": [
+        {
+          "title": "从我自己的角度，我会为这个提案提供给最终用户的内容简单做个总结：遵守 Material 3 设计的钱包，类似 CKBull 。支持轻客户端，所以能减少对外部设施的依赖，理论上来讲能提升资产安全性。不过一些 CKBull 已有的功能并未包含在此次提案中，例如对 ",
+          "date": "2026-01-27T22:04:24.676Z",
+          "url": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879/10",
+          "author": "Hanssen"
+        },
+        {
+          "title": "Thank you for the feedback and for recognizing the value of an open-source mobile wallet for the ecosystem. Let me address your sp",
+          "date": "2026-01-28T09:17:19.403Z",
+          "url": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879/12",
+          "author": "Jnr6"
+        }
+      ],
+      "status": "executing",
+      "statusReason": "Milestone 4 尚未拨付。",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
+      "sources": [
+        {
+          "label": "Nervos Talk proposal",
+          "url": "https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879"
+        },
+        {
+          "label": "List of funded proposals",
+          "url": "https://talk.nervos.org/t/list-of-funded-proposals/7793"
+        },
+        {
+          "label": "Metaforo voting page",
+          "url": "https://dao.ckb.community/landing?method=share&thread=67494&refer_id=51416"
+        }
+      ]
+    },
+    {
       "id": "10685",
       "slug": "dis-bitcoin-renegade-meet-up-and-media-campaign",
       "title": "Bitcoin Renegade Meet Up and Media Campaign",
@@ -191,24 +419,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-bitcoin-renegade-meet-up-and-media-campaign/10685",
       "createdAt": "2026-09-05T23:33:59.683Z",
       "updatedAt": "2026-09-10T20:51:49.874Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 353,
-          "name": "fiber",
-          "slug": "fiber"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": null,
       "discussion": {
         "likes": 21,
         "replies": 4,
-        "views": 244
+        "views": 281
       },
       "voting": null,
       "funded": false,
@@ -216,7 +433,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -234,19 +451,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-fiber-desktop-v1-ground-up-rebuild-and-launch-fnn-desktop-app/10317",
       "createdAt": "2026-05-26T11:02:03.495Z",
       "updatedAt": "2026-09-08T17:17:19.731Z",
-      "tags": [
-        {
-          "id": 353,
-          "name": "fiber",
-          "slug": "fiber"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": "$6,000 USD",
       "discussion": {
         "likes": 165,
         "replies": 19,
-        "views": 1014
+        "views": 1096
       },
       "voting": {
         "url": "https://dao.ckb.community/landing?method=share&thread=vot-fiber-desktop-v1-ground-up-rebuild-and-launch-fnn-desktop-app-72720&refer_id=53125",
@@ -288,7 +499,7 @@
       ],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -310,29 +521,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-fiberlatch-access-open-source-access-control-for-fiber-payments/10414",
       "createdAt": "2026-06-23T13:00:25.375Z",
       "updatedAt": "2026-09-08T12:59:13.448Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        },
-        {
-          "id": 27,
-          "name": "testnet",
-          "slug": "testnet"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": null,
       "discussion": {
         "likes": 47,
         "replies": 1,
-        "views": 417
+        "views": 444
       },
       "voting": {
         "url": "https://dao.ckb.community/landing?method=share&thread=vot-fiberlatch-access-open-source-access-control-for-fiber-payments-74170",
@@ -356,7 +551,7 @@
       ],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -365,102 +560,6 @@
         {
           "label": "Metaforo voting page",
           "url": "https://dao.ckb.community/landing?method=share&thread=vot-fiberlatch-access-open-source-access-control-for-fiber-payments-74170"
-        }
-      ]
-    },
-    {
-      "id": "10583",
-      "slug": "dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps",
-      "title": "Pocket Node for iOS: a self-custody CKB light client for Apple and Identity/Signer for CCC web apps",
-      "originalTitle": "[DIS] Pocket Node for iOS: a self-custody CKB light client for Apple and Identity/Signer for CCC web apps",
-      "summary": "Link to VOT page: https://dao.ckb.community/landing?method=share&thread=76502&refer_id=51416 Summary Pocket Node is a self-custody CKB wallet that runs a full Rust light client on the device with no gateway server: the phone verifies the chain itself, holds keys locally, and builds and broadcasts tr",
-      "author": "Jnr6",
-      "originalUrl": "https://talk.nervos.org/t/dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps/10583",
-      "createdAt": "2026-08-06T01:22:50.035Z",
-      "updatedAt": "2026-09-07T11:48:41.924Z",
-      "tags": [
-        {
-          "id": 385,
-          "name": "Pocket-Node",
-          "slug": "pocket-node"
-        },
-        {
-          "id": 344,
-          "name": "light-client",
-          "slug": "light-client"
-        }
-      ],
-      "projectType": "Infrastructure",
-      "budgetLabel": null,
-      "discussion": {
-        "likes": 98,
-        "replies": 14,
-        "views": 594
-      },
-      "voting": {
-        "url": "https://dao.ckb.community/landing?method=share&thread=76502&refer_id=51416",
-        "status": "unknown"
-      },
-      "funded": false,
-      "fundingNote": null,
-      "updates": [
-        {
-          "title": "knmo: That initial work was worth significantly more than porting to Apple platforms is worth I created the misunderstanding, when",
-          "date": "2026-08-08T13:08:58.706Z",
-          "url": "https://talk.nervos.org/t/dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps/10583/13",
-          "author": "Jnr6"
-        }
-      ],
-      "status": "voting",
-      "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
-      "sources": [
-        {
-          "label": "Nervos Talk proposal",
-          "url": "https://talk.nervos.org/t/dis-pocket-node-for-ios-a-self-custody-ckb-light-client-for-apple-and-identity-signer-for-ccc-web-apps/10583"
-        },
-        {
-          "label": "Metaforo voting page",
-          "url": "https://dao.ckb.community/landing?method=share&thread=76502&refer_id=51416"
-        }
-      ]
-    },
-    {
-      "id": "10613",
-      "slug": "dis-vellum-reputation-extension-on-did-ckb",
-      "title": "Vellum: Reputation Extension on did:ckb",
-      "originalTitle": "[DIS] Vellum: Reputation Extension on did:ckb",
-      "summary": "Link to Vote: https://dao.ckb.community/thread/vot-vellum-reputation-extension-on-did-ckb-77380 Context This is a resubmission. The first proposal ( discussion thread ) did not pass the voting stage. The main opposition, once clarified in the thread post-vote, rested on a factual misunderstanding ab",
-      "author": "truthixify",
-      "originalUrl": "https://talk.nervos.org/t/dis-vellum-reputation-extension-on-did-ckb/10613",
-      "createdAt": "2026-08-13T09:49:17.933Z",
-      "updatedAt": "2026-09-05T14:17:39.624Z",
-      "tags": [],
-      "projectType": "Ecosystem",
-      "budgetLabel": "$7,000 USD",
-      "discussion": {
-        "likes": 71,
-        "replies": 3,
-        "views": 386
-      },
-      "voting": {
-        "url": "https://dao.ckb.community/thread/vot-vellum-reputation-extension-on-did-ckb-77380",
-        "status": "unknown"
-      },
-      "funded": false,
-      "fundingNote": null,
-      "updates": [],
-      "status": "voting",
-      "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
-      "sources": [
-        {
-          "label": "Nervos Talk proposal",
-          "url": "https://talk.nervos.org/t/dis-vellum-reputation-extension-on-did-ckb/10613"
-        },
-        {
-          "label": "Metaforo voting page",
-          "url": "https://dao.ckb.community/thread/vot-vellum-reputation-extension-on-did-ckb-77380"
         }
       ]
     },
@@ -480,7 +579,7 @@
       "discussion": {
         "likes": 15,
         "replies": 0,
-        "views": 150
+        "views": 168
       },
       "voting": null,
       "funded": false,
@@ -488,7 +587,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -512,7 +611,7 @@
       "discussion": {
         "likes": 461,
         "replies": 113,
-        "views": 3569
+        "views": 3793
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-ckb-integration-for-rosen-bridge-66568",
@@ -530,7 +629,7 @@
       ],
       "status": "executing",
       "statusReason": "目前仅 Milestone 1 已拨付。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -562,7 +661,7 @@
       "discussion": {
         "likes": 20,
         "replies": 2,
-        "views": 208
+        "views": 219
       },
       "voting": null,
       "funded": false,
@@ -570,43 +669,11 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
           "url": "https://talk.nervos.org/t/dis-fiber-payjoin-kit-collaborative-channel-funding-privacy-for-the-nervos-fiber-network-res/10604"
-        }
-      ]
-    },
-    {
-      "id": "10364",
-      "slug": "dis-rypto-ckb-content-advocacy-campaign",
-      "title": "Rypto — CKB Content & Advocacy Campaign",
-      "originalTitle": "[DIS] Rypto — CKB Content & Advocacy Campaign",
-      "summary": "[DIS] Rypto — CKB Content & Advocacy Campaign Summary This proposal requests a grant of $4,500 over 4 months to fund a dedicated CKB content and advocacy campaign led by Rypto ( @RyptoCrypto ), a crypto content creator with 30,000+ organic followers across X, YouTube, LinkedIn and CoinMarketCap. The",
-      "author": "Rypto",
-      "originalUrl": "https://talk.nervos.org/t/dis-rypto-ckb-content-advocacy-campaign/10364",
-      "createdAt": "2026-06-10T10:18:32.572Z",
-      "updatedAt": "2026-08-30T11:23:53.787Z",
-      "tags": [],
-      "projectType": "Community & Content",
-      "budgetLabel": "$4,500",
-      "discussion": {
-        "likes": 60,
-        "replies": 0,
-        "views": 368
-      },
-      "voting": null,
-      "funded": false,
-      "fundingNote": null,
-      "updates": [],
-      "status": "discussion",
-      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
-      "sources": [
-        {
-          "label": "Nervos Talk proposal",
-          "url": "https://talk.nervos.org/t/dis-rypto-ckb-content-advocacy-campaign/10364"
         }
       ]
     },
@@ -620,19 +687,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-crowdcell-mainnet-launch-of-trustless-all-or-nothing-crowdfunding-on-ckb/10609",
       "createdAt": "2026-08-12T12:14:40.525Z",
       "updatedAt": "2026-08-12T12:14:40.623Z",
-      "tags": [
-        {
-          "id": 383,
-          "name": "lang-en",
-          "slug": "lang-en"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": "$15,000 USD",
       "discussion": {
-        "likes": 16,
+        "likes": 17,
         "replies": 0,
-        "views": 159
+        "views": 174
       },
       "voting": null,
       "funded": false,
@@ -640,7 +701,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -664,7 +725,7 @@
       "discussion": {
         "likes": 60,
         "replies": 11,
-        "views": 486
+        "views": 528
       },
       "voting": null,
       "funded": false,
@@ -679,68 +740,11 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
           "url": "https://talk.nervos.org/t/dis-fiber-payjoin-kit-collaborative-privacy-for-the-nervos-fiber-network/10296"
-        }
-      ]
-    },
-    {
-      "id": "10522",
-      "slug": "dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial",
-      "title": "CKB Anywhere Card — Tap to Pay via Apple & Google Wallet, Self-Custodial",
-      "originalTitle": "[DIS] CKB Anywhere Card — Tap to Pay via Apple & Google Wallet, Self-Custodial",
-      "summary": "TL;DR What’s New in V2 Thank you to everyone who supported and provided feedback on the original proposal. The feedback was clear: while the core concept was well received, the solution needed native mobile wallet support and a simpler, mobile-first user experience. Over the past few months, we eval",
-      "author": "BuildUnion",
-      "originalUrl": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522",
-      "createdAt": "2026-07-21T13:07:57.353Z",
-      "updatedAt": "2026-07-31T14:57:58.840Z",
-      "tags": [],
-      "projectType": "Infrastructure",
-      "budgetLabel": null,
-      "discussion": {
-        "likes": 70,
-        "replies": 16,
-        "views": 589
-      },
-      "voting": null,
-      "funded": false,
-      "fundingNote": null,
-      "updates": [
-        {
-          "title": "Thanks for taking the time to review the proposal and for the thoughtful feedback. On team background: That’s a fair point. We’ in",
-          "date": "2026-07-22T17:33:06.182Z",
-          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/8",
-          "author": "BuildUnion"
-        },
-        {
-          "title": "BuildUnion: On the payment flow: The merchant doesn’t communicate directly with the wallet. The purchase amount comes through the ",
-          "date": "2026-07-22T18:57:35.636Z",
-          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/10",
-          "author": "neon.bit"
-        },
-        {
-          "title": "Thanks again for the detailed feedback. On the payment flow: The merchant doesn’t communicate directly with the Nervos wallet. The",
-          "date": "2026-07-22T19:34:19.936Z",
-          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/11",
-          "author": "BuildUnion"
-        },
-        {
-          "title": "First of all, thank you for taking the time to provide such detailed and thoughtful answers. I genuinely appreciate that you addre",
-          "date": "2026-07-24T07:34:15.247Z",
-          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522/20",
-          "author": "Ruud"
-        }
-      ],
-      "status": "discussion",
-      "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
-      "sources": [
-        {
-          "label": "Nervos Talk proposal",
-          "url": "https://talk.nervos.org/t/dis-ckb-anywhere-card-tap-to-pay-via-apple-google-wallet-self-custodial/10522"
         }
       ]
     },
@@ -760,7 +764,7 @@
       "discussion": {
         "likes": 110,
         "replies": 11,
-        "views": 1238
+        "views": 1281
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-ickb-dckb-rescuer-funding-proposal-non-coding-expenses-55444",
@@ -778,7 +782,7 @@
       ],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -804,29 +808,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-vellum-reputation-extension-on-did-ckb/10419",
       "createdAt": "2026-06-24T15:00:49.455Z",
       "updatedAt": "2026-07-14T20:17:03.474Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        },
-        {
-          "id": 27,
-          "name": "testnet",
-          "slug": "testnet"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": "$7,000 USD",
       "discussion": {
         "likes": 67,
         "replies": 5,
-        "views": 441
+        "views": 474
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-vellum-reputation-extension-on-did-ckb-74299",
@@ -837,7 +825,7 @@
       "updates": [],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -865,7 +853,7 @@
       "discussion": {
         "likes": 98,
         "replies": 5,
-        "views": 401
+        "views": 422
       },
       "voting": null,
       "funded": false,
@@ -880,7 +868,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -898,19 +886,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-fiber-python-sdk-native-python-library-for-fiber-network-payments/10462",
       "createdAt": "2026-07-04T13:02:35.104Z",
       "updatedAt": "2026-07-10T09:55:48.696Z",
-      "tags": [
-        {
-          "id": 353,
-          "name": "fiber",
-          "slug": "fiber"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": null,
       "discussion": {
         "likes": 11,
         "replies": 0,
-        "views": 140
+        "views": 155
       },
       "voting": null,
       "funded": false,
@@ -925,7 +907,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -943,29 +925,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-luxvoid-protocol-the-first-working-btc-ckb-evm-pipeline-seeking-dao-support-collab-for-production-scaling/10400",
       "createdAt": "2026-06-18T07:52:38.054Z",
       "updatedAt": "2026-07-05T13:46:50.202Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 305,
-          "name": "RGBpp",
-          "slug": "rgbpp"
-        },
-        {
-          "id": 27,
-          "name": "testnet",
-          "slug": "testnet"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": null,
       "discussion": {
         "likes": 44,
         "replies": 7,
-        "views": 538
+        "views": 556
       },
       "voting": null,
       "funded": false,
@@ -986,7 +952,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1010,7 +976,7 @@
       "discussion": {
         "likes": 203,
         "replies": 29,
-        "views": 1754
+        "views": 1883
       },
       "voting": null,
       "funded": true,
@@ -1037,7 +1003,7 @@
       ],
       "status": "executing",
       "statusReason": "Milestone 1、2 已拨付。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1065,7 +1031,7 @@
       "discussion": {
         "likes": 142,
         "replies": 16,
-        "views": 1622
+        "views": 1675
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-ckboost-gamified-community-engagement-platform-proposal-61358",
@@ -1101,7 +1067,7 @@
       ],
       "status": "executing",
       "statusReason": "Milestone 3 尚未拨付。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1133,7 +1099,7 @@
       "discussion": {
         "likes": 146,
         "replies": 25,
-        "views": 571
+        "views": 629
       },
       "voting": null,
       "funded": false,
@@ -1148,7 +1114,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1166,24 +1132,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-quantir-risk-intelligence-for-ckb-ecosystem-and-cross-chain-monitoring/10218",
       "createdAt": "2026-04-30T15:40:30.553Z",
       "updatedAt": "2026-05-08T06:15:15.393Z",
-      "tags": [
-        {
-          "id": 77,
-          "name": "grant-RFC",
-          "slug": "grant-rfc"
-        },
-        {
-          "id": 75,
-          "name": "grants",
-          "slug": "grants"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": ",",
       "discussion": {
         "likes": 17,
         "replies": 4,
-        "views": 239
+        "views": 259
       },
       "voting": null,
       "funded": false,
@@ -1191,7 +1146,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1209,24 +1164,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-cryptomondays-london-x-nervos-ckb-uk-education-ecosystem-series/10179",
       "createdAt": "2026-04-16T10:42:39.572Z",
       "updatedAt": "2026-04-17T14:50:25.829Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 45,
-          "name": "partnership",
-          "slug": "partnership"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": "$39,600",
       "discussion": {
-        "likes": 16,
+        "likes": 17,
         "replies": 0,
-        "views": 209
+        "views": 217
       },
       "voting": null,
       "funded": false,
@@ -1234,7 +1178,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1258,7 +1202,7 @@
       "discussion": {
         "likes": 50,
         "replies": 7,
-        "views": 471
+        "views": 492
       },
       "voting": null,
       "funded": false,
@@ -1266,7 +1210,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1290,7 +1234,7 @@
       "discussion": {
         "likes": 86,
         "replies": 29,
-        "views": 695
+        "views": 759
       },
       "voting": null,
       "funded": false,
@@ -1298,7 +1242,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1322,7 +1266,7 @@
       "discussion": {
         "likes": 37,
         "replies": 8,
-        "views": 323
+        "views": 350
       },
       "voting": null,
       "funded": false,
@@ -1343,7 +1287,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1367,7 +1311,7 @@
       "discussion": {
         "likes": 502,
         "replies": 80,
-        "views": 3734
+        "views": 3883
       },
       "voting": null,
       "funded": true,
@@ -1412,7 +1356,7 @@
       ],
       "status": "paused",
       "statusReason": "提案人决定终止项目，Milestone 2、3 未拨付。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1434,19 +1378,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-rosen-bridge-connecting-ckb-to-cardano-ergo-and-beyond/8539",
       "createdAt": "2024-12-17T18:40:44.176Z",
       "updatedAt": "2026-03-20T11:39:39.428Z",
-      "tags": [
-        {
-          "id": 45,
-          "name": "partnership",
-          "slug": "partnership"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": "$80,000 USD",
       "discussion": {
         "likes": 233,
         "replies": 27,
-        "views": 2338
+        "views": 2398
       },
       "voting": null,
       "funded": false,
@@ -1461,7 +1399,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1485,7 +1423,7 @@
       "discussion": {
         "likes": 4,
         "replies": 0,
-        "views": 211
+        "views": 217
       },
       "voting": null,
       "funded": false,
@@ -1493,7 +1431,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1511,34 +1449,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-spore-studio-ckb-ecosystem-digital-art-platform-development-and-deployment/8918",
       "createdAt": "2025-08-20T19:01:02.615Z",
       "updatedAt": "2025-08-24T12:12:47.460Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 337,
-          "name": "DOB",
-          "slug": "dob"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        },
-        {
-          "id": 286,
-          "name": "spore",
-          "slug": "spore"
-        }
-      ],
+      "tags": [],
       "projectType": "Apps",
       "budgetLabel": "$48,000 USD",
       "discussion": {
         "likes": 160,
         "replies": 49,
-        "views": 842
+        "views": 919
       },
       "voting": null,
       "funded": false,
@@ -1559,7 +1476,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1583,7 +1500,7 @@
       "discussion": {
         "likes": 177,
         "replies": 22,
-        "views": 2175
+        "views": 2241
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-palmyra-rwa-lending-on-nervos-53119",
@@ -1607,7 +1524,7 @@
       ],
       "status": "paused",
       "statusReason": "团队未达到原约定条件与时间表，已向 DAO 退回 656,363 CKB。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1639,7 +1556,7 @@
       "discussion": {
         "likes": 3,
         "replies": 0,
-        "views": 84
+        "views": 85
       },
       "voting": null,
       "funded": false,
@@ -1647,7 +1564,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1671,7 +1588,7 @@
       "discussion": {
         "likes": 12,
         "replies": 7,
-        "views": 349
+        "views": 360
       },
       "voting": null,
       "funded": false,
@@ -1692,7 +1609,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1710,24 +1627,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-making-a-song-about-nervos-network-nervos/8377",
       "createdAt": "2024-10-23T17:55:28.851Z",
       "updatedAt": "2024-10-23T17:55:28.901Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 45,
-          "name": "partnership",
-          "slug": "partnership"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": null,
       "discussion": {
         "likes": 5,
         "replies": 0,
-        "views": 177
+        "views": 179
       },
       "voting": null,
       "funded": false,
@@ -1735,7 +1641,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1753,29 +1659,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-artcells-generative-art-platform-on-rgb-artcells/8188",
       "createdAt": "2024-06-04T06:55:39.020Z",
       "updatedAt": "2024-08-19T00:22:41.323Z",
-      "tags": [
-        {
-          "id": 142,
-          "name": "NFT",
-          "slug": "nft"
-        },
-        {
-          "id": 5,
-          "name": "Nervos-项目动态",
-          "slug": "nervos"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        }
-      ],
+      "tags": [],
       "projectType": "Apps",
       "budgetLabel": null,
       "discussion": {
         "likes": 16,
         "replies": 2,
-        "views": 487
+        "views": 499
       },
       "voting": null,
       "funded": false,
@@ -1783,7 +1673,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1801,24 +1691,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-rgbcat-cat-gamefi-sponsorship-proposal-rgbcat-cat-gamefi/8174",
       "createdAt": "2024-06-01T10:20:33.131Z",
       "updatedAt": "2024-07-05T14:23:04.615Z",
-      "tags": [
-        {
-          "id": 5,
-          "name": "Nervos-项目动态",
-          "slug": "nervos"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        }
-      ],
+      "tags": [],
       "projectType": "Apps",
       "budgetLabel": null,
       "discussion": {
         "likes": 127,
         "replies": 42,
-        "views": 2075
+        "views": 2150
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-rgbcat-cat-gamefi-sponsorship-proposal-rgbcat-cat-gamefi-53237",
@@ -1836,7 +1715,7 @@
       ],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1864,7 +1743,7 @@
       "discussion": {
         "likes": 95,
         "replies": 2,
-        "views": 770
+        "views": 793
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-use-usd-amounts-for-dao-payouts-calculated-on-the-date-of-ckb-payment-53431",
@@ -1888,7 +1767,7 @@
       ],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1910,24 +1789,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-omiga-inscription-protocol-sponsorship-proposal-omiga-ckb/7615",
       "createdAt": "2024-01-03T18:25:08.515Z",
       "updatedAt": "2024-06-21T07:22:10.469Z",
-      "tags": [
-        {
-          "id": 5,
-          "name": "Nervos-项目动态",
-          "slug": "nervos"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": "18,791,558 CKB",
       "discussion": {
         "likes": 170,
         "replies": 73,
-        "views": 3006
+        "views": 3161
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-omiga-inscription-protocol-sponsorship-proposal-omiga-ckb-48580",
@@ -1951,7 +1819,7 @@
       ],
       "status": "executing",
       "statusReason": "Milestone 7、8 尚未拨付。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -1977,34 +1845,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-telmo-talks-a-nervos-talk-show-proposal/7727",
       "createdAt": "2024-02-12T06:47:58.890Z",
       "updatedAt": "2024-05-27T18:46:48.557Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 5,
-          "name": "Nervos-项目动态",
-          "slug": "nervos"
-        },
-        {
-          "id": 136,
-          "name": "abstraction",
-          "slug": "abstraction"
-        },
-        {
-          "id": 75,
-          "name": "grants",
-          "slug": "grants"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": "702,954 CKB",
       "discussion": {
         "likes": 121,
         "replies": 28,
-        "views": 1929
+        "views": 1986
       },
       "voting": null,
       "funded": true,
@@ -2037,7 +1884,7 @@
       ],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2059,24 +1906,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-build-and-distribute-efficient-network-nodes/7594",
       "createdAt": "2023-12-24T12:20:28.307Z",
       "updatedAt": "2024-05-25T12:37:57.807Z",
-      "tags": [
-        {
-          "id": 271,
-          "name": "Node",
-          "slug": "node"
-        },
-        {
-          "id": 280,
-          "name": "decentralisation",
-          "slug": "decentralisation"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": "1,477,429 CKB",
       "discussion": {
         "likes": 172,
         "replies": 13,
-        "views": 3223
+        "views": 3279
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/48231",
@@ -2087,7 +1923,7 @@
       "updates": [],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2113,19 +1949,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-ckb-meta-rule-change-the-amount-of-ckb-applied-for-must-be-included-when-submitting-a-proposal/7943",
       "createdAt": "2024-03-19T02:44:40.593Z",
       "updatedAt": "2024-03-19T02:44:40.640Z",
-      "tags": [
-        {
-          "id": 242,
-          "name": "DIS",
-          "slug": "dis"
-        }
-      ],
+      "tags": [],
       "projectType": "Governance",
       "budgetLabel": null,
       "discussion": {
         "likes": 11,
         "replies": 0,
-        "views": 338
+        "views": 340
       },
       "voting": {
         "url": "https://dao.ckb.community/landing?method=share&thread=51254&post=1970196",
@@ -2136,7 +1966,7 @@
       "updates": [],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2158,24 +1988,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-10-ckb-if-the-price-fluctuates-by-more-than-10-a-recalculation-of-the-ckb-quantity-is-required-at-the-time-of-payment/7849",
       "createdAt": "2024-03-01T10:59:43.024Z",
       "updatedAt": "2024-03-12T06:35:53.619Z",
-      "tags": [
-        {
-          "id": 242,
-          "name": "DIS",
-          "slug": "dis"
-        },
-        {
-          "id": 297,
-          "name": "meta-rule-change",
-          "slug": "meta-rule-change"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": null,
       "discussion": {
         "likes": 43,
         "replies": 2,
-        "views": 641
+        "views": 647
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/51254",
@@ -2186,7 +2005,7 @@
       "updates": [],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2214,7 +2033,7 @@
       "discussion": {
         "likes": 11,
         "replies": 0,
-        "views": 290
+        "views": 292
       },
       "voting": null,
       "funded": false,
@@ -2222,7 +2041,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2240,24 +2059,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-spore-protocol-mainnet-launch-sponsorship-proposal-spore-protocol/7593",
       "createdAt": "2023-12-23T04:04:08.278Z",
       "updatedAt": "2024-01-17T02:00:34.932Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 142,
-          "name": "NFT",
-          "slug": "nft"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": "507,364 CKB",
       "discussion": {
         "likes": 79,
         "replies": 6,
-        "views": 2845
+        "views": 2869
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-spore-protocol-mainnet-launch-sponsorship-proposal-48305",
@@ -2268,7 +2076,7 @@
       "updates": [],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2300,7 +2108,7 @@
       "discussion": {
         "likes": 1,
         "replies": 0,
-        "views": 277
+        "views": 279
       },
       "voting": null,
       "funded": false,
@@ -2308,7 +2116,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2332,7 +2140,7 @@
       "discussion": {
         "likes": 9,
         "replies": 0,
-        "views": 430
+        "views": 432
       },
       "voting": null,
       "funded": false,
@@ -2340,7 +2148,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2358,19 +2166,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-joygift-phase-1-sponsorship-proposal-joygift/7579",
       "createdAt": "2023-12-14T04:24:06.910Z",
       "updatedAt": "2023-12-30T10:54:25.799Z",
-      "tags": [
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": "2,386,635 CKB",
       "discussion": {
         "likes": 87,
         "replies": 7,
-        "views": 1409
+        "views": 1444
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-joygift-phase-1-sponsorship-proposal-joygift-48022",
@@ -2381,7 +2183,7 @@
       "updates": [],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2413,7 +2215,7 @@
       "discussion": {
         "likes": 6,
         "replies": 3,
-        "views": 485
+        "views": 495
       },
       "voting": null,
       "funded": false,
@@ -2421,7 +2223,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2439,34 +2241,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-nervos-land-online-nft-strategy-game-development/7524",
       "createdAt": "2023-11-10T16:34:17.490Z",
       "updatedAt": "2023-11-18T07:08:28.203Z",
-      "tags": [
-        {
-          "id": 238,
-          "name": "DAO",
-          "slug": "dao"
-        },
-        {
-          "id": 142,
-          "name": "NFT",
-          "slug": "nft"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        },
-        {
-          "id": 65,
-          "name": "game",
-          "slug": "game"
-        }
-      ],
+      "tags": [],
       "projectType": "Apps",
       "budgetLabel": null,
       "discussion": {
         "likes": 69,
         "replies": 10,
-        "views": 1548
+        "views": 1563
       },
       "voting": null,
       "funded": false,
@@ -2511,7 +2292,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2529,19 +2310,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-infinity-wallet-nervos-integration/7366",
       "createdAt": "2023-09-15T16:03:25.420Z",
       "updatedAt": "2023-10-18T06:53:38.448Z",
-      "tags": [
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Infrastructure",
       "budgetLabel": null,
       "discussion": {
         "likes": 158,
         "replies": 47,
-        "views": 2780
+        "views": 2856
       },
       "voting": null,
       "funded": false,
@@ -2556,7 +2331,7 @@
       ],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2574,24 +2349,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-nervos-network-es-en-espanol-latam-community-ecosystem-grant-proposal-2023-q4/7449",
       "createdAt": "2023-10-06T21:12:25.403Z",
       "updatedAt": "2023-10-17T20:11:46.227Z",
-      "tags": [
-        {
-          "id": 241,
-          "name": "Discussion",
-          "slug": "discussion"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": null,
       "discussion": {
         "likes": 67,
         "replies": 15,
-        "views": 1767
+        "views": 1812
       },
       "voting": null,
       "funded": false,
@@ -2599,7 +2363,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2623,7 +2387,7 @@
       "discussion": {
         "likes": 53,
         "replies": 3,
-        "views": 1342
+        "views": 1353
       },
       "voting": null,
       "funded": true,
@@ -2631,7 +2395,7 @@
       "updates": [],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2659,7 +2423,7 @@
       "discussion": {
         "likes": 17,
         "replies": 2,
-        "views": 390
+        "views": 396
       },
       "voting": null,
       "funded": false,
@@ -2667,7 +2431,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2685,19 +2449,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-nervos-community-anthem/7317",
       "createdAt": "2023-07-18T19:10:54.411Z",
       "updatedAt": "2023-09-22T12:52:50.782Z",
-      "tags": [
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": "$5,000",
       "discussion": {
         "likes": 30,
         "replies": 7,
-        "views": 1328
+        "views": 1340
       },
       "voting": null,
       "funded": false,
@@ -2705,7 +2463,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2729,7 +2487,7 @@
       "discussion": {
         "likes": 103,
         "replies": 41,
-        "views": 4107
+        "views": 4207
       },
       "voting": null,
       "funded": true,
@@ -2744,7 +2502,7 @@
       ],
       "status": "paused",
       "statusReason": "项目未能继续；首笔款项中的 1,477,398 CKB 已退回。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2766,24 +2524,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-ckbfans-ckbdapps-com-ckbfans-community-grant-proposal-ckbdapps-com/7004",
       "createdAt": "2023-02-07T01:23:12.413Z",
       "updatedAt": "2023-09-07T20:43:33.011Z",
-      "tags": [
-        {
-          "id": 241,
-          "name": "Discussion",
-          "slug": "discussion"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": "1,315,789 CKB",
       "discussion": {
         "likes": 118,
         "replies": 16,
-        "views": 4771
+        "views": 4820
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-ckbfans-ckbdapps-com-ckbfans-community-grant-proposal-ckbdapps-com-44239",
@@ -2794,7 +2541,7 @@
       "updates": [],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2826,7 +2573,7 @@
       "discussion": {
         "likes": 56,
         "replies": 10,
-        "views": 1751
+        "views": 1776
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-meta-rule-change-implement-staged-payments-for-proposals-with-a-budget-exceeding-10-000-10000-44725",
@@ -2856,7 +2603,7 @@
       ],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2884,7 +2631,7 @@
       "discussion": {
         "likes": 16,
         "replies": 1,
-        "views": 715
+        "views": 724
       },
       "voting": null,
       "funded": false,
@@ -2892,7 +2639,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2916,7 +2663,7 @@
       "discussion": {
         "likes": 14,
         "replies": 2,
-        "views": 741
+        "views": 760
       },
       "voting": null,
       "funded": false,
@@ -2924,7 +2671,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2948,7 +2695,7 @@
       "discussion": {
         "likes": 13,
         "replies": 2,
-        "views": 652
+        "views": 662
       },
       "voting": null,
       "funded": false,
@@ -2956,7 +2703,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -2974,24 +2721,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-ckb-textbook-computing-common-knowledge-community-grants-proposal/7201",
       "createdAt": "2023-05-26T19:05:01.932Z",
       "updatedAt": "2023-06-03T16:10:49.505Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": "$165,000.",
       "discussion": {
         "likes": 109,
         "replies": 53,
-        "views": 2549
+        "views": 2697
       },
       "voting": null,
       "funded": false,
@@ -2999,7 +2735,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -3017,29 +2753,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-etherion/7205",
       "createdAt": "2023-05-27T18:11:41.659Z",
       "updatedAt": "2023-05-29T01:25:31.718Z",
-      "tags": [
-        {
-          "id": 52,
-          "name": "CKB",
-          "slug": "52-tag"
-        },
-        {
-          "id": 3,
-          "name": "dapp",
-          "slug": "dapp"
-        },
-        {
-          "id": 27,
-          "name": "testnet",
-          "slug": "testnet"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": null,
       "discussion": {
         "likes": 14,
         "replies": 6,
-        "views": 624
+        "views": 630
       },
       "voting": null,
       "funded": false,
@@ -3047,7 +2767,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -3065,24 +2785,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-nervos-nation-community-grant-proposal/6968",
       "createdAt": "2023-01-25T22:39:13.758Z",
       "updatedAt": "2023-04-24T15:35:17.911Z",
-      "tags": [
-        {
-          "id": 241,
-          "name": "Discussion",
-          "slug": "discussion"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": "10,339,123 CKB",
       "discussion": {
         "likes": 72,
         "replies": 16,
-        "views": 2106
+        "views": 2143
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-nervos-nation-community-grant-proposal-42128",
@@ -3106,7 +2815,7 @@
       ],
       "status": "executing",
       "statusReason": "该项目列于社区维护的已资助提案清单中。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -3138,7 +2847,7 @@
       "discussion": {
         "likes": 22,
         "replies": 2,
-        "views": 723
+        "views": 730
       },
       "voting": null,
       "funded": false,
@@ -3146,7 +2855,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -3164,24 +2873,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-changing-how-votes-are-calculated/7120",
       "createdAt": "2023-03-30T03:25:17.467Z",
       "updatedAt": "2023-04-10T07:46:51.991Z",
-      "tags": [
-        {
-          "id": 242,
-          "name": "DIS",
-          "slug": "dis"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": "0",
       "discussion": {
         "likes": 60,
         "replies": 3,
-        "views": 1190
+        "views": 1200
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-changing-how-votes-are-calculated-43287",
@@ -3192,7 +2890,7 @@
       "updates": [],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -3214,24 +2912,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-consideration-about-incentivizing-voting-process/7069",
       "createdAt": "2023-03-14T13:51:27.953Z",
       "updatedAt": "2023-04-06T04:51:12.506Z",
-      "tags": [
-        {
-          "id": 242,
-          "name": "DIS",
-          "slug": "dis"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Ecosystem",
       "budgetLabel": null,
       "discussion": {
         "likes": 103,
         "replies": 18,
-        "views": 3179
+        "views": 3228
       },
       "voting": null,
       "funded": false,
@@ -3239,7 +2926,7 @@
       "updates": [],
       "status": "discussion",
       "statusReason": "已发现讨论提案；尚未发现可核验的投票或拨款证据。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -3257,24 +2944,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-huntingnft-project-grant-proposal/7065",
       "createdAt": "2023-03-14T03:09:51.017Z",
       "updatedAt": "2023-03-31T06:03:24.032Z",
-      "tags": [
-        {
-          "id": 241,
-          "name": "Discussion",
-          "slug": "discussion"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Apps",
       "budgetLabel": "$74,300",
       "discussion": {
         "likes": 43,
         "replies": 11,
-        "views": 2083
+        "views": 2104
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/vot-huntingnft-project-grant-proposal-42982",
@@ -3285,7 +2961,7 @@
       "updates": [],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",
@@ -3307,24 +2983,13 @@
       "originalUrl": "https://talk.nervos.org/t/dis-complete-onboarding-of-the-br-crypto-community-into-the-nervos-ecosystem/6891",
       "createdAt": "2023-01-17T12:18:00.167Z",
       "updatedAt": "2023-02-14T04:07:04.070Z",
-      "tags": [
-        {
-          "id": 242,
-          "name": "DIS",
-          "slug": "dis"
-        },
-        {
-          "id": 243,
-          "name": "Proposal",
-          "slug": "proposal"
-        }
-      ],
+      "tags": [],
       "projectType": "Community & Content",
       "budgetLabel": null,
       "discussion": {
         "likes": 148,
         "replies": 36,
-        "views": 3771
+        "views": 3843
       },
       "voting": {
         "url": "https://dao.ckb.community/thread/42298",
@@ -3335,7 +3000,7 @@
       "updates": [],
       "status": "voting",
       "statusReason": "原始讨论帖包含 Metaforo 投票链接；投票结果仍需在来源页核验。",
-      "lastVerifiedAt": "2026-09-15T15:53:47.804Z",
+      "lastVerifiedAt": "2026-09-28T13:27:33.949Z",
       "sources": [
         {
           "label": "Nervos Talk proposal",

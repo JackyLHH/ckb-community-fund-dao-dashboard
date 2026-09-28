@@ -530,6 +530,14 @@ async function enrichProposalFromTopic(proposal: Proposal) {
     const cooked = firstPost?.cooked ?? '';
     const text = stripHtml(cooked);
     if (!text) return proposal;
+    const liveFields = {
+      author: firstPost?.username ?? proposal.author,
+      budgetLabel: proposal.budgetLabel ?? extractBudget(text),
+      updatedAt: detail.last_posted_at ?? firstPost?.updated_at ?? proposal.updatedAt,
+    };
+    if (proposalOverridesById[proposal.id]?.overview) {
+      return { ...proposal, ...liveFields };
+    }
     const parsed = parseProposalOverview(cooked, text);
     const objective = parsed.objective.trim();
     const sourceIsChinese = /[\u3400-\u9fff]/u.test(objective);
@@ -539,11 +547,9 @@ async function enrichProposalFromTopic(proposal: Proposal) {
     };
     return {
       ...proposal,
+      ...liveFields,
       summary: objective || proposal.summary,
       overview,
-      author: firstPost?.username ?? proposal.author,
-      budgetLabel: proposal.budgetLabel ?? extractBudget(text),
-      updatedAt: detail.last_posted_at ?? firstPost?.updated_at ?? proposal.updatedAt,
     };
   } catch {
     return proposal;

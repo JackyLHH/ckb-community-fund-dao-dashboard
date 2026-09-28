@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { proposalOverridesById } from '../lib/proposal-overrides.ts';
 
+const rivet = proposalOverridesById['10739'];
+assert.ok(rivet.overview, 'Proposal 10739 must keep a reviewed bilingual overview');
+assert.equal(rivet.overview.milestones.length, 2);
+assert.match(rivet.overview.milestones[1].descriptionEn, /Exact and Attribution restore modes/);
+assert.match(rivet.overview.milestones[1].descriptionZh, /Exact 和 Attribution/);
+
 const kaze = proposalOverridesById['10736'];
 assert.ok(kaze, 'Proposal 10736 must have a reviewed data override');
 assert.equal(kaze.budgetLabel, '$3,000');
