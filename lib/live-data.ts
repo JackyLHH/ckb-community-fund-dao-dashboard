@@ -17,6 +17,7 @@ import { proposalOverridesById } from '@/lib/proposal-overrides';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
 import { translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
 import { translateMissingProposalTitle } from '@/lib/proposal-title-translation';
+import { translateMissingProposalUpdates } from '@/lib/proposal-update-translation';
 import {
   extractMilestoneBudget,
   extractProposalBudget as extractBudget,
@@ -717,8 +718,9 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
     const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
     const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
     const withOverview = await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview });
-    return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
+    const withMilestones = await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
+    return await translateMissingProposalUpdates(withMilestones, fetch);
   } catch {
-    return base;
+    return await translateMissingProposalUpdates(base, fetch);
   }
 }

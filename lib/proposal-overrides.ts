@@ -967,6 +967,22 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
         url: 'https://talk.nervos.org/t/dis-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1/10015/44?u=jackylhh',
         author: 'Lawliet_Chan',
       },
+      {
+        title: '周报 2026.09.21：讨论并增加 Proof of Buying 中的 L1 抗审查攻击方案，并继续开发 Proof of Buying',
+        titleZh: '周报 2026.09.21：讨论并增加 Proof of Buying 中的 L1 抗审查攻击方案，并继续开发 Proof of Buying',
+        titleEn: 'Weekly Report — 2026.09.21: Discussed and added an L1 censorship-resistance design to Proof of Buying and continued Proof of Buying development.',
+        date: '2026-09-21T02:16:34.567Z',
+        url: 'https://talk.nervos.org/t/dis-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1/10015/45?u=jackylhh',
+        author: 'Lawliet_Chan',
+      },
+      {
+        title: '周报 2026.09.28：开发 Proof of Buying 的 CKB 合约和部分前端功能',
+        titleZh: '周报 2026.09.28：开发 Proof of Buying 的 CKB 合约和部分前端功能',
+        titleEn: 'Weekly Report — 2026.09.28: Developed the CKB contract and part of the frontend functionality for Proof of Buying.',
+        date: '2026-09-28T02:38:29.835Z',
+        url: 'https://talk.nervos.org/t/dis-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1/10015/46?u=jackylhh',
+        author: 'Lawliet_Chan',
+      },
     ],
   },
   '10583': {

@@ -19,4 +19,10 @@ const voteCalculation = proposalOverridesById['7120'];
 assert.equal(voteCalculation.titleZh, '修改票数的计算方式');
 assert.equal(voteCalculation.titleEn, 'Changing How Votes Are Calculated');
 
+const invisibookUpdates = proposalOverridesById['10015'].updates ?? [];
+const september21 = invisibookUpdates.find((update) => /\/10015\/45(?:\?|$)/.test(update.url));
+const september28 = invisibookUpdates.find((update) => /\/10015\/46(?:\?|$)/.test(update.url));
+assert.match(september21?.titleEn ?? '', /L1 censorship-resistance/);
+assert.match(september28?.titleEn ?? '', /CKB contract/);
+
 console.log('Validated reviewed proposal overrides.');
