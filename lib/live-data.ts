@@ -568,6 +568,8 @@ async function fetchAllCategoryPages() {
 }
 
 async function fetchChainBalance() {
+  // The CKB Explorer API rejects this GET with 415/406 unless both media-type
+  // headers are present. Keep them here even though the request has no body.
   const response = await fetchJson<{ data?: Array<{ attributes?: { balance?: string } }> }>(balanceEndpoint, {
     headers: { Accept: 'application/vnd.api+json', 'Content-Type': 'application/vnd.api+json' },
   });
