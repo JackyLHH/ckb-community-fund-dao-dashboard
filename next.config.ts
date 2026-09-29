@@ -3,6 +3,9 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   output: 'export',
   async rewrites() {
+    // vinext dev does not read vercel.json. Keep every /live/* source and
+    // destination below synchronized with the matching Vercel rewrites.
+    // scripts/test-live-proxy-config.mjs enforces that contract.
     return [
       {
         source: '/live/nervos/category',
