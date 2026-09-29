@@ -25,14 +25,17 @@ export const metadata: Metadata = {
     description: 'Rules · Funding · Projects · Progress',
     images: ['/og.png'],
   },
+  other: {
+    google: 'notranslate',
+  },
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="zh-CN">
-      <body>
+    <html lang="zh-CN" translate="no" className="notranslate">
+      <body className="notranslate">
         {children}
         <Analytics />
       </body>
