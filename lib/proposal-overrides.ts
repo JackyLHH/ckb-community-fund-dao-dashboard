@@ -983,6 +983,14 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
         url: 'https://talk.nervos.org/t/dis-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1/10015/46?u=jackylhh',
         author: 'Lawliet_Chan',
       },
+      {
+        title: '里程碑 3 已完成：Proof of Buying 代码、检验指南和完整设计文档已发布',
+        titleZh: '里程碑 3 已完成：Proof of Buying 代码、检验指南和完整设计文档已发布',
+        titleEn: 'Milestone 3 completed: the Proof of Buying code, verification guide, and full design document were published.',
+        date: '2026-09-30T02:50:03.738Z',
+        url: 'https://talk.nervos.org/t/dis-decentralized-privacy-order-book-appchain-based-on-ckb-l1-2026-phase-1/10015/47?u=jackylhh',
+        author: 'Lawliet_Chan',
+      },
     ],
   },
   '10583': {
