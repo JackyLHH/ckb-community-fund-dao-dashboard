@@ -1509,6 +1509,14 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
         url: 'https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879/73?u=jackylhh',
         author: 'Jnr6',
       },
+      {
+        title: 'Maintenance update: Pocket Node v1.8.5 released with smarter app locking, multi-wallet sync fixes, and improved Nervos DAO unlocks',
+        titleZh: '维护更新：Pocket Node v1.8.5 发布，改进应用锁定、多钱包同步及 Nervos DAO 解锁体验',
+        titleEn: 'Maintenance update: Pocket Node v1.8.5 released with smarter app locking, multi-wallet sync fixes, and improved Nervos DAO unlocks',
+        date: '2026-09-30T19:22:17.345Z',
+        url: 'https://talk.nervos.org/t/dis-mobile-ready-ckb-light-client-pocket-node-for-android/9879/74?u=jackylhh',
+        author: 'Jnr6',
+      },
     ],
     overview: {
       objective: 'Pocket Node is a mobile-first Android wallet that embeds the official CKB Light Client through JNI, allowing users to manage CKB, verify chain state, and sign transactions locally without relying on a remote RPC server.',
