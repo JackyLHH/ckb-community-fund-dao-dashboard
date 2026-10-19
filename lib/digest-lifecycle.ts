@@ -192,11 +192,16 @@ export function voteLifecycleEvents(topicId: number, vote: {
 
 export function pendingLifecycleEvents(snapshot: LifecycleSnapshot, now = Date.now()) {
   const enabled = Date.parse(snapshot.enabledAt || '');
-  return [...new Map(snapshot.events.filter((event) => {
+  const eligible = [...new Map(snapshot.events.filter((event) => {
     const time = Date.parse(event.occurredAt);
     // Durable events remain available after an outage; per-destination receipts
     // prevent repeats. The rollout baseline prevents historical notification floods.
     return Number.isFinite(time) && time >= enabled && time <= now;
-  }).map((event) => [event.id, event])).values()]
+  }).map((event) => [event.id, event])).values()];
+  const pollKey = (event: LifecycleEvent) => `${event.topicId}:${event.sourceUrl.match(/-(\d+)$/)?.[1] || event.sourceUrl}`;
+  const closed = new Set(eligible.filter((event) => event.kind === 'vote-ended').map(pollKey));
+  // A delayed/retried digest must never invite users to vote in a closed poll.
+  // Keep the complete audit log, but send only the final result in this case.
+  return eligible.filter((event) => event.kind !== 'vote-started' || !closed.has(pollKey(event)))
     .sort((a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt) || a.id.localeCompare(b.id));
 }

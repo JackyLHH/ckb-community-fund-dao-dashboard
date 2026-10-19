@@ -50,9 +50,11 @@ assert.equal(voteLifecycleEvents(999993, { ...vote, totalVotes: undefined }, cre
 assert.equal(voteLifecycleEvents(999993, vote, '2026-10-10T00:00:00Z').length, 0, 'No historical flood on rollout');
 assert.notEqual(events[0].id, voteLifecycleEvents(999993, { ...vote, url: 'https://dao.ckb.community/thread/vot-again-45678' }, createdAt)[0].id);
 assert.equal(events[0].id, voteLifecycleEvents(999993, { ...vote, url: 'https://dao.ckb.community/thread/vot-renamed-title-12345' }, createdAt)[0].id, 'Renaming a poll must not emit a second start notification');
-const snapshot = { version: 1, enabledAt: createdAt, checkedAt: before, discussions: {}, events: [below, below, eligible, ...events] };
+const openEvent = { ...events[0], id: 'vote-started:999993:67890', sourceUrl: 'https://dao.ckb.community/thread/vot-still-open-67890' };
+const snapshot = { version: 1, enabledAt: createdAt, checkedAt: before, discussions: {}, events: [below, below, eligible, openEvent, events[1]] };
 assert.equal(pendingLifecycleEvents(snapshot, deadline + 864000000).length, 4, 'Durable, unique events survive an outage longer than 24 hours');
 assert.equal(pendingLifecycleEvents(snapshot, Date.parse(createdAt)).length, 0, 'No premature day-8 or future events');
+assert.deepEqual(pendingLifecycleEvents({ ...snapshot, events }, deadline + 864000000).map((event) => event.kind), ['vote-ended'], 'Do not invite people to an already closed poll after an outage');
 
 // Bundle the real endpoint and renderers, rather than duplicate template logic.
 const bundled = await build({ entryPoints: [new URL('../api/subscription.ts', import.meta.url).pathname],
@@ -62,7 +64,7 @@ const { GET, digestMessage, telegramDigestMessages } = await import(`data:text/j
 const topic = { id: 999991, slug: 'test', title: '[DIS] Test proposal', posts_count: 1, like_count: 999, created_at: createdAt };
 const topics = [topic, { ...topic, id: 999992 }, { ...topic, id: 999993, created_at: '2026-09-01T00:00:00Z' }];
 const recent = new Date(Date.now() - 3600000).toISOString();
-const liveEvents = [below, eligible, ...events].map((event) => ({ ...event, occurredAt: recent }));
+const liveEvents = [below, eligible, openEvent, events[1]].map((event) => ({ ...event, occurredAt: recent }));
 const item = { topic, proposer: 'Alice', firstPostExcerpt: '', overviewZh: '', overviewEn: '', latestPostAuthor: 'Metaforo', latestPostCreatedAt: recent, latestPostExcerpt: '', newPostCount: 0, lifecycleEvent: liveEvents[3] };
 for (const locale of ['zh', 'en']) {
   const email = digestMessage(locale, [], [item], 'https://ckbcommunityfunddao.xyz/api/unsubscribe?token=test');
