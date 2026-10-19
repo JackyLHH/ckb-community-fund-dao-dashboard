@@ -1,4 +1,5 @@
 import rawDataset from '../data/proposals.generated.json' with { type: 'json' };
+import { cleanProposalTitle } from './proposal-title.js';
 import { proposalCardSummariesById } from './proposal-card-summaries.js';
 import { proposalOverviewTranslationsById } from './proposal-overview-translations.js';
 import { proposalOverridesById } from './proposal-overrides.js';
@@ -224,8 +225,8 @@ export const statusDescriptions: Record<ProposalStatusTag, { zh: string; en: str
     en: 'Metaforo voting is open and the result can still change before closing.',
   },
   'vote-passed': {
-    zh: '当前或最终票数同时满足法定票数与通过比例。',
-    en: 'The current or final tally meets both quorum and approval thresholds.',
+    zh: '投票已结束，最终票数同时满足法定票数与通过比例。',
+    en: 'Voting has closed and the final tally meets both quorum and approval thresholds.',
   },
   executing: {
     zh: '提案已获资助，且仍有工作或里程碑处于执行阶段。',
@@ -246,6 +247,8 @@ export const statusDescriptions: Record<ProposalStatusTag, { zh: string; en: str
 };
 
 export function getProposalStatusTags(proposal: Proposal, now = new Date()): ProposalStatusTag[] {
+  if (proposal.voting?.status === 'active') return ['voting'];
+  if (proposal.voting?.status === 'unknown' && proposal.statusTags?.length === 0) return [];
   if (proposal.statusTags?.length) return proposal.statusTags;
   if (proposal.status === 'paused') return ['ended'];
   if (proposal.status === 'executing') return ['vote-passed', 'executing'];
@@ -313,9 +316,9 @@ export function getTagName(tag: Proposal['tags'][number]) {
 }
 
 export function getProposalTitle(proposal: Proposal, locale: 'zh' | 'en') {
-  return locale === 'en'
+  return cleanProposalTitle(locale === 'en'
     ? proposal.titleEn ?? proposal.titleZh ?? proposal.title
-    : proposal.titleZh ?? proposal.titleEn ?? proposal.title;
+    : proposal.titleZh ?? proposal.titleEn ?? proposal.title);
 }
 
 // Cards and detail pages share the same unabridged, localized objective.

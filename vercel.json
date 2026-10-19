@@ -20,6 +20,10 @@
   ],
   "rewrites": [
     {
+      "source": "/live/metaforo/votes",
+      "destination": "https://raw.githubusercontent.com/JackyLHH/ckb-community-fund-dao-dashboard/main/data/votes.generated.json"
+    },
+    {
       "source": "/api/subscribe",
       "destination": "/api/subscription?action=subscribe"
     },
@@ -65,6 +69,10 @@
           "value": "public, s-maxage=900, stale-while-revalidate=86400"
         }
       ]
+    },
+    {
+      "source": "/live/metaforo/votes",
+      "headers": [{ "key": "Cache-Control", "value": "public, s-maxage=300, stale-while-revalidate=300" }]
     }
   ]
 }

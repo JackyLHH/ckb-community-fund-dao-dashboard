@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cleanProposalTitle as cleanTitle, looksLikeProposal } from '../lib/proposal-title.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outputPath = resolve(here, '../data/proposals.generated.json');
@@ -73,19 +74,8 @@ function stripHtml(input = '') {
   );
 }
 
-function looksLikeProposal(title) {
-  const normalized = title.trim();
-  if (/^\s*(?:\[|\()\s*(?:status\s+update|ann|issue)\s*(?:\]|\))/i.test(normalized)) return false;
-  if (/^\s*(?:\[|\()\s*DIS\s*(?:\]|\))/i.test(normalized)) return true;
-  return /(grant|funding|sponsorship)\s+proposal|资助提案|赞助提案/i.test(normalized);
-}
-
-function cleanTitle(title) {
-  return title
-    .replace(/^\s*(?:\[|\()\s*DIS\s*(?:\]|\))\s*/i, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
+// Shared with live reads and display/translation so full-width markers cannot
+// reappear when a saved snapshot is regenerated.
 
 function classify(title, tags = []) {
   const haystack = `${title} ${tags.join(' ')}`.toLowerCase();

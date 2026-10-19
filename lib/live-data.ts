@@ -24,6 +24,9 @@ import {
   extractProposalBudget as extractBudget,
   extractProposalObjective,
 } from '@/lib/digest-activity';
+import { cleanProposalTitle as cleanTitle, looksLikeProposal } from './proposal-title.js';
+import { resolveVoteLifecycle } from './metaforo-voting';
+import savedVotes from '../data/votes.generated.json';
 
 const categoryEndpoint = '/live/nervos/category';
 const fundedTopicEndpoint = '/live/nervos/topic/7793';
@@ -84,6 +87,8 @@ type FundedEntry = { id: string; budgetLabel: string | null; note: string };
 export type LiveDataState = 'loading' | 'live' | 'fallback';
 
 let datasetPromise: Promise<ProposalDataset> | null = null;
+let datasetExpiresAt = 0;
+let liveVotes: Record<string, ProposalVoting> = savedVotes.votes as Record<string, ProposalVoting>;
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, { ...init, cache: 'no-store' });
@@ -116,17 +121,6 @@ export function stripHtml(input = '') {
       .replace(/\s+/g, ' ')
       .trim(),
   );
-}
-
-function looksLikeProposal(title: string) {
-  const normalized = title.trim();
-  if (/^\s*(?:\[|\()\s*(?:status\s+update|ann|issue)\s*(?:\]|\))/i.test(normalized)) return false;
-  if (/^\s*(?:\[|\()\s*DIS\s*(?:\]|\))/i.test(normalized)) return true;
-  return /(grant|funding|sponsorship)\s+proposal|资助提案|赞助提案/i.test(normalized);
-}
-
-function cleanTitle(title: string) {
-  return title.replace(/^\s*(?:\[|\()\s*DIS\s*(?:\]|\))\s*/i, '').replace(/\s+/g, ' ').trim();
 }
 
 function classify(title: string, tags: Proposal['tags'] = []) {
@@ -215,12 +209,8 @@ function firstPostLikeCount(post: TopicPost | undefined, topic: TopicResponse) {
 
 function buildVoting(id: string, discovered: ProposalVoting | null): ProposalVoting | null {
   if (invalidVotingProposalIds.has(id) || proposalOverridesById[id]?.votingPageNotFound) return null;
-  const voting = voteEvidenceByProposalId[id] ?? discovered;
-  if (voting?.status !== 'active' || !voting.closesAt || Date.now() < new Date(voting.closesAt).getTime()) return voting;
-  const passed = (voting.totalVotes ?? 0) >= (voting.minimumVotes ?? Infinity)
-    && (voting.yesPercent ?? 0) >= (voting.passPercent ?? Infinity);
-  const status: ProposalVoting['status'] = passed ? 'approved' : 'rejected';
-  return { ...voting, status, closed: true };
+  const evidence = voteEvidenceByProposalId[id];
+  return resolveVoteLifecycle(evidence?.closed ? evidence : liveVotes[id] ?? evidence ?? discovered);
 }
 
 function statusTagsFor(
@@ -229,18 +219,20 @@ function statusTagsFor(
   voting: ProposalVoting | null,
   now = new Date(),
 ): ProposalStatusTag[] {
+  if (voting?.status === 'active') return ['voting'];
+  if (voting?.status === 'rejected') return ['vote-failed', 'ended'];
   const overriddenTags = proposalOverridesById[id]?.statusTags;
   if (overriddenTags?.length) return overriddenTags;
   if (completionEvidenceByProposalId[id]) return proposal.funded ? ['vote-passed', 'completed'] : ['completed', 'ended'];
-  if (voting?.status === 'rejected') return ['vote-failed', 'ended'];
   if (proposal.status === 'paused') {
     return voting?.status === 'approved' || proposal.funded ? ['vote-passed', 'ended'] : ['ended'];
   }
-  if (voting?.status === 'active') return ['voting'];
   if (voting?.status === 'approved') return proposal.funded ? ['vote-passed', 'executing'] : ['vote-passed'];
   if (proposal.statusTags?.includes('ended')) return proposal.statusTags;
   if (proposal.funded) return ['vote-passed', 'executing'];
-  if (voting) return ['voting'];
+  // A link is not evidence that a vote is still open. Unknown results carry
+  // no voting label rather than recycling a stale "voting" state.
+  if (voting?.status === 'unknown') return [];
 
   const discussionEndsAt = new Date(proposal.createdAt).getTime() + 7 * 24 * 60 * 60 * 1000;
   if ((proposal.discussion.likes ?? 0) < 30 && now.getTime() > discussionEndsAt) return ['ended'];
@@ -515,7 +507,7 @@ function mapCategoryTopic(
 function needsTopicEnrichment(proposal: Proposal) {
   const age = Date.now() - new Date(proposal.createdAt).getTime();
   const isRecent = Number.isFinite(age) && age >= 0 && age <= 45 * 24 * 60 * 60 * 1_000;
-  return isRecent && (!proposal.budgetLabel || !proposal.overview?.objective?.trim());
+  return isRecent && (!proposal.voting || proposal.voting.status === 'unknown' || !proposal.budgetLabel || !proposal.overview?.objective?.trim());
 }
 
 function isRecentProposal(proposal: Proposal) {
@@ -537,9 +529,14 @@ async function enrichProposalFromTopic(proposal: Proposal) {
       updatedAt: detail.last_posted_at ?? firstPost?.updated_at ?? proposal.updatedAt,
     };
 
+    const votingUrl = extractLinks(cooked).find((url) => /https:\/\/(?:dao\.ckb\.community|(?:www\.)?metaforo\.io)\//i.test(url));
+    const voting = buildVoting(proposal.id, votingUrl ? { url: votingUrl, status: 'unknown' } : proposal.voting);
+    const statusTags = statusTagsFor(proposal.id, proposal, voting);
+    const withVoting = { ...proposal, voting, statusTags, status: primaryStatus(statusTags) };
+
     // A missing budget must not cause a reviewed overview or roadmap to be
     // re-parsed and overwritten. Only generate an overview when none exists.
-    if (proposal.overview?.objective?.trim()) return mergeLiveTopicEnrichment(proposal, liveFields);
+    if (proposal.overview?.objective?.trim()) return mergeLiveTopicEnrichment(withVoting, liveFields);
 
     const parsed = parseProposalOverview(cooked, text);
     const objective = parsed.objective.trim();
@@ -548,7 +545,7 @@ async function enrichProposalFromTopic(proposal: Proposal) {
       ...parsed,
       ...(sourceIsChinese ? { objectiveZh: objective } : { objectiveEn: objective }),
     };
-    return mergeLiveTopicEnrichment(proposal, liveFields, overview);
+    return mergeLiveTopicEnrichment(withVoting, liveFields, overview);
   } catch {
     return proposal;
   }
@@ -584,6 +581,10 @@ async function fetchChainBalance() {
 
 async function buildLiveDataset(): Promise<ProposalDataset> {
   const fetchedAt = new Date().toISOString();
+  try {
+    const latest = await fetchJson<{ version?: number; votes?: Record<string, ProposalVoting> }>('/live/metaforo/votes');
+    if (latest.version === 1 && latest.votes) liveVotes = { ...liveVotes, ...latest.votes };
+  } catch { /* Keep the committed last verified vote snapshot on upstream failure. */ }
   const [category, fundedTopic, chainBalance] = await Promise.all([
     fetchAllCategoryPages(),
     fetchJson<TopicResponse>(fundedTopicEndpoint),
@@ -647,6 +648,10 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
 }
 
 export function loadLiveDataset() {
+  if (Date.now() >= datasetExpiresAt) {
+    datasetPromise = null;
+    datasetExpiresAt = Date.now() + 5 * 60 * 1000;
+  }
   datasetPromise ??= buildLiveDataset().catch(() => ({
     ...fallbackDataset,
     meta: { ...fallbackDataset.meta, isLive: false, usedFallback: true },

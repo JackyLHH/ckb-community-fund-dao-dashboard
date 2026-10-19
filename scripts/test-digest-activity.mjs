@@ -54,6 +54,19 @@ assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate('Biweekly report
 assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate('Q3 quarterly report'), 'en'), 'Published a quarterly update.');
 assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate('Project completion report'), 'zh'), '发布了结项报告');
 
+const kireaRevision = `<p>Thanks, Arthur. These are important points, and I agree both need to be explicitly covered in the hardening scope. Milestone 1 is now updated to cover both:</p><ul><li>Enforcing the loan’s validation rules on every collateral spend, so the collateral cannot be moved in a way that bypasses the corresponding loan’s release conditions.</li><li>Verifying the actual net disbursement and repayment amounts, with tests for both paths, including cases where output balances could give a misleading result.</li></ul><p>Appreciate you taking the time to review and flag these.</p>`;
+assert.deepEqual(classifyProgressUpdate(kireaRevision), { kind: 'revision' });
+assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate(kireaRevision), 'zh'), '更新了提案内容');
+assert.equal(progressUpdateCategoryLabel(classifyProgressUpdate(kireaRevision), 'en'), 'Updated the proposal scope.');
+assert.equal(isMeaningfulProgressUpdate(kireaRevision), false, 'Scope changes in feedback replies are not delivery reports');
+assert.notEqual(classifyProgressUpdate('Milestone 1 现已更新，补充抵押品验证规则。').kind, 'milestone');
+assert.notEqual(classifyProgressUpdate('We will publish the Milestone 1 completion report next week.').kind, 'milestone');
+assert.notEqual(classifyProgressUpdate('Milestone 1 is not complete. The design review was completed.').kind, 'milestone');
+assert.deepEqual(classifyProgressUpdate('milestone.3 已完成'), { kind: 'milestone', milestone: '3', completion: true });
+assert.equal(classifyProgressUpdate('<h2>Weekly update</h2><p>We are working on Milestone 1.</p>').kind, 'weekly');
+assert.equal(classifyProgressUpdate('<h2>Monthly report</h2><p>Milestone 1 is mentioned in our plan.</p>').kind, 'monthly');
+assert.deepEqual(classifyProgressUpdate('Milestone 2 report: testing continues. Another project is complete.'), { kind: 'milestone', milestone: '2', completion: false });
+
 const kazeFirstPost = `
   <ol>
     <li><p>Title [DIS] Kaze University Tours, Kenya Stage 2</p></li>

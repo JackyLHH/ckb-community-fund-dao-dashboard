@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { cleanProposalTitle, looksLikeProposal } from '../lib/proposal-title.js';
 import { proposalOverridesById } from '../lib/proposal-overrides.ts';
 import {
   applyPersistedTitleTranslation,
@@ -7,6 +8,15 @@ import {
 } from '../lib/proposal-title-translation.ts';
 
 const dataset = JSON.parse(fs.readFileSync(new URL('../data/proposals.generated.json', import.meta.url), 'utf8'));
+const kireaSource = '[DIS] Kirea Finance: Native RWA Lending Infrastructure for CKB |【DIS】Kirea Finance：面向 CKB 的原生 RWA 借贷基础设施';
+assert.equal(cleanProposalTitle(kireaSource), 'Kirea Finance: Native RWA Lending Infrastructure for CKB | Kirea Finance：面向 CKB 的原生 RWA 借贷基础设施');
+assert.equal(cleanProposalTitle('【 dis 】 [ DIS ] Test (DIS)'), 'Test');
+assert.equal(looksLikeProposal('【DIS】新提案'), true);
+assert.equal(looksLikeProposal('[Status Update] A progress report'), false);
+const kirea = await translateMissingProposalTitle({ id: '10809', title: kireaSource }, async () => { throw new Error('Bilingual source does not need translation'); });
+assert.equal(kirea.titleEn, 'Kirea Finance: Native RWA Lending Infrastructure for CKB');
+assert.equal(kirea.titleZh, 'Kirea Finance：面向 CKB 的原生 RWA 借贷基础设施');
+assert.equal(applyPersistedTitleTranslation({ id: '99996', title: 'Source', titleEn: '[DIS] Human title', titleZh: '【DIS】人工标题' }).titleZh, '人工标题');
 const backfill = JSON.parse(fs.readFileSync(new URL('../data/proposal-title-translations.json', import.meta.url), 'utf8'));
 
 const expectedIds = new Set(dataset.proposals.map((proposal) => String(proposal.id)));

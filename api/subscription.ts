@@ -7,6 +7,7 @@ import {
   type Proposal,
 } from '../lib/proposals.js';
 import { proposalOverridesById } from '../lib/proposal-overrides.js';
+import { cleanProposalTitle, looksLikeProposal } from '../lib/proposal-title.js';
 import { proposalOverviewTranslationsById } from '../lib/proposal-overview-translations.js';
 import {
   classifyProgressUpdate,
@@ -378,8 +379,8 @@ function digestTime(locale: Locale, value?: string | Date) {
 function localizedTitle(item: DigestTopic, locale: Locale) {
   const override = proposalOverridesById[String(item.topic.id)];
   const title = locale === 'en' ? override?.titleEn : override?.titleZh;
-  if (title?.trim()) return title.trim();
-  return item.proposal ? getProposalTitle(item.proposal, locale) : item.topic.title.replace(/^\s*[[(]\s*DIS\s*[\])]?\s*/i, '').trim();
+  if (title?.trim()) return cleanProposalTitle(title);
+  return item.proposal ? getProposalTitle(item.proposal, locale) : cleanProposalTitle(item.topic.title);
 }
 
 function localizedOverview(item: DigestTopic, locale: Locale) {
@@ -529,9 +530,7 @@ async function sendTelegramDigest(locale: Locale, newTopics: DigestTopic[], upda
 }
 
 function isProposal(title: string) {
-  const value = title.trim();
-  if (/^\s*(?:\[|\()\s*(?:status\s+update|ann|issue)\s*(?:\]|\))/i.test(value)) return false;
-  return /^\s*(?:\[|\()\s*DIS\s*(?:\]|\))/i.test(value) || /(grant|funding|sponsorship)\s+proposal|资助提案|赞助提案/i.test(value);
+  return looksLikeProposal(title);
 }
 
 async function forumTopics() {

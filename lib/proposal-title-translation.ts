@@ -1,4 +1,5 @@
 import type { Proposal } from '@/lib/proposals';
+import { cleanProposalTitle } from './proposal-title.js';
 import rawTranslations from '../data/proposal-title-translations.json' with { type: 'json' };
 
 type TargetLocale = 'zh' | 'en';
@@ -13,7 +14,7 @@ function containsChinese(value: string) {
 }
 
 function normalizeSourceTitle(value: string) {
-  return value.replace(/^\s*\[DIS\]\s*/i, '').replace(/\s+/g, ' ').trim();
+  return cleanProposalTitle(value);
 }
 
 function splitBilingualTitle(source: string) {
@@ -44,8 +45,8 @@ function localizedTitlePair(proposal: Proposal, useHistorical = true) {
   const sourcePair = sourceLanguagePair(source);
   const historical = matchingHistorical(proposal.id, source, useHistorical);
   return {
-    zh: proposal.titleZh?.trim() || sourcePair.zh || historical?.zh?.trim() || '',
-    en: proposal.titleEn?.trim() || sourcePair.en || historical?.en?.trim() || '',
+    zh: cleanProposalTitle(proposal.titleZh || sourcePair.zh || historical?.zh || ''),
+    en: cleanProposalTitle(proposal.titleEn || sourcePair.en || historical?.en || ''),
   };
 }
 
@@ -55,7 +56,7 @@ function cacheKey(proposalId: string, target: TargetLocale, source: string) {
     hash ^= source.charCodeAt(index);
     hash = Math.imul(hash, 16777619);
   }
-  return `proposal-title-translation:v1:${proposalId}:${target}:${(hash >>> 0).toString(36)}`;
+  return `proposal-title-translation:v2:${proposalId}:${target}:${(hash >>> 0).toString(36)}`;
 }
 
 function readBrowserCache(key: string) {
@@ -130,7 +131,7 @@ export async function translateMissingProposalTitle(
   const target: TargetLocale | null = pair.en && !pair.zh ? 'zh' : pair.zh && !pair.en ? 'en' : null;
   const source = target === 'zh' ? pair.en : target === 'en' ? pair.zh : '';
   if (!target || !source) return withHistorical;
-  const translation = await requestTranslation(proposal.id, target, source, fetcher);
+  const translation = cleanProposalTitle(await requestTranslation(proposal.id, target, source, fetcher) || '');
   if (!translation) return withHistorical;
   return {
     ...withHistorical,

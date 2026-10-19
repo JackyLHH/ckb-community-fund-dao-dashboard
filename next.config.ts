@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     // scripts/test-live-proxy-config.mjs enforces that contract.
     return [
       {
+        source: '/live/metaforo/votes',
+        destination: 'https://raw.githubusercontent.com/JackyLHH/ckb-community-fund-dao-dashboard/main/data/votes.generated.json',
+      },
+      {
         source: '/live/nervos/category',
         destination: 'https://talk.nervos.org/c/daos-funding/ckb-community-fund-dao/65.json',
       },

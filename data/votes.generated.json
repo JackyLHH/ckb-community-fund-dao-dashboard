@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "votes": {
+    "10739": {
+      "url": "https://dao.ckb.community/thread/vot-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb-80044",
+      "status": "approved",
+      "totalVotes": 244888704,
+      "minimumVotes": 11718750,
+      "yesPercent": 52.82,
+      "passPercent": 51,
+      "closed": true,
+      "verifiedAt": "2026-10-19T00:00:00.000Z"
+    }
+  }
+}

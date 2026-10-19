@@ -22,6 +22,14 @@ npm test
 
 The sync script reads the public Nervos Talk Discourse JSON endpoints and combines them with evidence-based overrides from the funded proposal list. Review override notes before publishing a new snapshot. Missing or conflicting values must stay visibly unverified.
 
+### Automatic vote results
+
+`.github/workflows/sync-votes.yml` checks the public Metaforo Poll directory approximately every 30 minutes (GitHub may delay scheduled jobs). It matches each vote to its `[DIS]` source link and reads the rendered quorum card in Chromium, since the unauthenticated thread JSON endpoint is unreliable. Active votes remain active even when their provisional tally meets the thresholds; passed/rejected is published only after observing “Voting Closed”, checking both quorum and approval percentage.
+
+Results are committed to `data/votes.generated.json` and loaded by both the directory and detail pages through `/live/metaforo/votes`, with a five-minute CDN cache. Open pages refresh every five minutes and when focused. Closed human-reviewed evidence, including committee recounts, takes priority. Failed reads preserve the previous snapshot and fail the workflow visibly; observations of an active poll older than two hours become unverified instead of continuing to claim voting is open. A newly discovered link alone never establishes an active or final result.
+
+Display titles, translated titles, data sync, email, and Telegram all use `lib/proposal-title.js` to remove `[DIS]` and `【DIS】` markers. The digest classifier requires actual report/completion evidence next to a milestone number; proposal-scope revisions and review acknowledgements do not qualify as milestone reports or delivery updates.
+
 ## Deployment
 
 The project exports a static build to `dist/client` and includes `vercel.json`. Set `NEXT_PUBLIC_SITE_URL` to the final trusted origin so canonical metadata, Open Graph fields, sitemap, and robots use the correct URL.

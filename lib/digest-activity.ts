@@ -23,7 +23,7 @@ export type DigestActivityPost = {
 
 export type ProgressUpdateCategory =
   | { kind: 'milestone'; milestone: string; completion: boolean }
-  | { kind: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'annual' | 'completion' | 'status' | 'delivery' | 'progress' | 'general' };
+  | { kind: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'annual' | 'completion' | 'status' | 'delivery' | 'progress' | 'revision' | 'general' };
 
 export function timestamp(value?: string) {
   if (!value) return Number.NaN;
@@ -185,13 +185,22 @@ const explicitProgressPattern = /(?:\b(?:weekly|bi[\s-]?weekly|monthly|quarterly
 
 export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {
   const text = stripForumHtml(cooked);
-  const milestone = text.match(/\bmilestone\s*(?:#|no\.?\s*)?([0-9]+(?:\.[0-9]+)?|[ivxlcdm]+)\b/i)
-    ?? text.match(/里程碑\s*(?:#|第)?\s*([0-9一二三四五六七八九十]+)(?:\s*个)?/i);
+  // A mention of a milestone (or a change to its planned scope) is not a
+  // report. Require an adjacent report/completion statement and keep the
+  // completion check local to that statement, not the rest of the post.
+  if (isProposalScopeRevision(text)) return { kind: 'revision' };
+  if (/^(?:[^\n]{0,80}[:：]\s*)?(?:bi[\s-]?weekly(?:\s+(?:update|report))?\b|双周报)/i.test(text)) return { kind: 'biweekly' };
+  if (/^(?:[^\n]{0,80}[:：]\s*)?(?:weekly(?:\s+(?:update|report))?|周报)/i.test(text)) return { kind: 'weekly' };
+  const milestone = text.split('\n')
+    .filter((line) => !/\b(?:will|planned|upcoming|draft|not\s+(?:yet|complete|completed)|plan(?:ning)?\s+to|hope\s+to|expect\s+to)\b|计划|尚未|未完成|将于/i.test(line))
+    .map((line) => line.match(/\bmilestone\s*(?:[.#:]|no\.?)?\s*([0-9]+(?:\.[0-9]+)?|[ivxlcdm]+)\s*(?:(completion|delivery)\s+reports?\b|reports?\b|(?:is|has been)\s+(?:now\s+)?(complete|completed|delivered)\b|[—:–-]\s*(completion\s+report|report)\b|已完成|已交付)/i)
+      ?? line.match(/里程碑\s*(?:#|第)?\s*([0-9一二三四五六七八九十]+)\s*(?:的)?\s*(完成报告|交付报告|报告|已完成|已交付)/i))
+    .find(Boolean);
   if (milestone?.[1]) {
     return {
       kind: 'milestone',
       milestone: milestone[1].toUpperCase(),
-      completion: /\b(?:completion|completed|complete|final)\b|(?:已完成|完成报告|完结|结项|已交付)/i.test(text),
+      completion: /\b(?:completion|completed|complete|delivered)\b|(?:已完成|完成报告|已交付)/i.test(milestone[0]),
     };
   }
   if (/\bbi[\s-]?weekly\b|双周报/i.test(text)) return { kind: 'biweekly' };
@@ -223,6 +232,7 @@ export function progressUpdateCategoryLabel(category: ProgressUpdateCategory, lo
     status: { zh: '发布了状态更新', en: 'Published a status update.' },
     delivery: { zh: '发布了交付报告', en: 'Published a delivery report.' },
     progress: { zh: '发布了项目进展更新', en: 'Published a progress update.' },
+    revision: { zh: '更新了提案内容', en: 'Updated the proposal scope.' },
     general: { zh: '发布了提案进展更新', en: 'Published a proposal update.' },
   } as const;
   return labels[category.kind][locale];
@@ -230,6 +240,7 @@ export function progressUpdateCategoryLabel(category: ProgressUpdateCategory, lo
 
 export function isMeaningfulProgressUpdate(cooked = '') {
   const text = stripForumHtml(cooked);
+  if (isProposalScopeRevision(text)) return false;
   if (explicitProgressPattern.test(text)) return true;
   if (text.length < 160) return false;
 
@@ -240,6 +251,13 @@ export function isMeaningfulProgressUpdate(cooked = '') {
     /href=["']https?:\/\//i.test(cooked) || /<(?:ul|ol|img|pre|code)\b/i.test(cooked),
   ].filter(Boolean).length;
   return signals >= 3;
+}
+
+export function isProposalScopeRevision(text: string) {
+  // Evidence of an actual delivered report wins over a passing scope note.
+  const reportHeading = /^(?:[^\n]{0,90}[:：]\s*)?(?:(?:weekly|bi[ -]?weekly|monthly|quarterly|annual|status|progress|completion)\s+(?:report|update)|milestone\s*[.#:]?\s*\d+\s+(?:completion\s+)?report|周报|双周报|月报|季报|年报|里程碑\s*\d+\s*(?:完成)?报告)/im;
+  if (reportHeading.test(text)) return false;
+  return /\b(?:milestone\s*[.#:]?\s*\d+|proposal|scope|acceptance criteria)\s+(?:(?:is|has been|was)\s+)?(?:now\s+)?(?:updated|revised|amended|expanded)\s+to\s+(?:cover|include|address|clarify)\b|\b(?:updated|revised|amended|expanded)\s+(?:(?:the|our)\s+)?(?:proposal|scope|milestone\s*\d+)\s+to\s+(?:cover|include|address|clarify)\b|里程碑\s*\d+\s*(?:现已|已经|已)?\s*(?:更新|修改|调整)|(?:修改|调整|修订)(?:了)?(?:提案|里程碑|验收标准|范围)/i.test(text);
 }
 
 export function progressUpdatePosts(

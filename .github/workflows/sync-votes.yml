@@ -1,0 +1,40 @@
+name: Sync Metaforo votes
+on:
+  schedule:
+    - cron: '17,47 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: sync-metaforo-votes
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser runtime
+        run: |
+          npm install --prefix "$RUNNER_TEMP/vote-sync" --no-package-lock --ignore-scripts playwright@1.56.1
+          "$RUNNER_TEMP/vote-sync/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Read public vote cards
+        id: collect
+        continue-on-error: true
+        run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/vote-sync/node_modules/playwright/index.mjs" node --experimental-strip-types scripts/sync-votes.mjs
+      - name: Save observed results
+        run: |
+          if ! git diff --quiet -- data/votes.generated.json; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add data/votes.generated.json
+            git commit -m 'Sync public Metaforo vote results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Report incomplete observations
+        if: steps.collect.outcome == 'failure'
+        run: exit 1

@@ -29,6 +29,16 @@ function closedVote(
 // than a stable, unauthenticated JSON endpoint. The snapshot is deliberately
 // small, dated, and linked back to the public page so every override is auditable.
 export const voteEvidenceByProposalId: Record<string, ProposalVoting> = {
+  '10739': {
+    url: 'https://dao.ckb.community/thread/vot-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb-80044',
+    status: 'approved',
+    totalVotes: 244_888_704,
+    minimumVotes: 11_718_750,
+    yesPercent: 52.82,
+    passPercent: 51,
+    closed: true,
+    verifiedAt: '2026-10-19T00:00:00.000Z',
+  },
   '6968': {
     url: 'https://dao.ckb.community/thread/vot-nervos-nation-community-grant-proposal-42128',
     status: 'approved',

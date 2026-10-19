@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import { parseMetaforoVoteCard, resolveVoteLifecycle, sourceProposalId } from '../lib/metaforo-voting.ts';
+import { voteEvidenceByProposalId } from '../lib/status-evidence.ts';
+
+const text = '[VOT] RIVET Total Votes: 244,888,704 · Voting Closed Yes 52.82% (129,338,247) No 47.18% (115,550,457) quorum 244,888,704/ 11,718,750 Minimum number of votes 52.82%/ 51% Votes required to pass approved!';
+const url = voteEvidenceByProposalId['10739'].url;
+const now = new Date('2026-10-19T00:00:00Z');
+const closed = parseMetaforoVoteCard(text, url, now);
+assert.equal(closed.status, 'approved');
+assert.equal(closed.totalVotes, 244888704);
+assert.equal(closed.yesPercent, 52.82);
+assert.equal(closed.minimumVotes, 11718750);
+assert.deepEqual(closed, voteEvidenceByProposalId['10739']);
+assert.equal(parseMetaforoVoteCard(text.replace(' · Voting Closed', ''), url, now).status, 'active', 'Passing provisional votes must remain active');
+assert.equal(parseMetaforoVoteCard(text.replaceAll('52.82%', '50.00%'), url, now).status, 'rejected');
+assert.equal(parseMetaforoVoteCard(text.replace('11,718,750', '300,000,000'), url, now).status, 'rejected');
+assert.throws(() => parseMetaforoVoteCard('Total Votes: 244,888,704', url), /incomplete/);
+assert.throws(() => parseMetaforoVoteCard(text.replace('quorum 244,888,704', 'quorum 1'), url), /inconsistent/);
+const active = { ...closed, status: 'active', closed: false, closesAt: '2026-10-20T00:00:00Z' };
+assert.equal(resolveVoteLifecycle(active, now.getTime()).status, 'active');
+assert.equal(resolveVoteLifecycle(active, Date.parse('2026-10-20T00:00:01Z')).status, 'unknown', 'An expired provisional tally is not a verified final result');
+assert.equal(resolveVoteLifecycle({ ...active, closesAt: undefined }, now.getTime() + 3 * 3600000).status, 'unknown', 'Stale active votes must not remain active indefinitely');
+assert.equal(sourceProposalId('https://talk.nervos.org/t/example/10687 https://talk.nervos.org/t/dis-kaze-proposal/10736'), '10736');
+assert.equal(sourceProposalId('https://talk.nervos.org/t/dis-a/1 https://talk.nervos.org/t/dis-b/2'), null);
+console.log('Validated Metaforo quorum parsing, final-result lifecycle, and proposal matching.');
