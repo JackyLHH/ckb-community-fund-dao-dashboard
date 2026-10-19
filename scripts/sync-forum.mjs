@@ -2,6 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cleanProposalTitle as cleanTitle, looksLikeProposal } from '../lib/proposal-title.js';
+import { selectForumProgressUpdates } from '../lib/proposal-update-title.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outputPath = resolve(here, '../data/proposals.generated.json');
@@ -152,17 +153,22 @@ async function enrichTopic(topic) {
   )?.[1];
   const status = explicitStatus ?? (funded ? 'executing' : votingUrl ? 'voting' : 'discussion');
 
-  const updates = (detail?.post_stream?.posts ?? [])
-    .filter((post) => post.post_number > 1 && /status update|milestone|progress update|进展|里程碑/i.test(stripHtml(post.cooked)))
-    .slice(-6)
-    .map((post) => ({
-      title: stripHtml(post.cooked).slice(0, 130),
-      date: post.created_at,
-      url: `${baseUrl}/t/${topic.slug}/${topic.id}/${post.post_number}`,
-      author: post.username,
-    }));
-
   const author = firstPost?.username ?? topic.posters?.[0]?.user_id?.toString() ?? 'Unknown';
+  // Use the same source-author checks and heading extraction as live reads.
+  // Keep the complete report set rather than silently dropping older entries.
+  const posts = new Map((detail?.post_stream?.posts ?? []).map((post) => [post.post_number, post]));
+  const highest = detail?.highest_post_number ?? detail?.posts_count ?? 1;
+  for (let anchor = 21; anchor <= highest; anchor += 20) {
+    if (posts.has(anchor)) continue;
+    try {
+      const window = await fetchJson(`${baseUrl}/t/${topic.id}/${anchor}.json`);
+      for (const post of window.post_stream?.posts ?? []) posts.set(post.post_number, post);
+    } catch (error) {
+      console.warn(`Could not enrich updates ${topic.id}/${anchor}: ${error.message}`);
+    }
+    await sleep(250);
+  }
+  const updates = selectForumProgressUpdates([...posts.values()], author, String(topic.id), topic.slug);
   const budgetLabel = funded?.[1] ?? extractBudget(text);
   const statusReason = funded
     ? funded[2] ?? '该项目列于社区维护的已资助提案清单中。'

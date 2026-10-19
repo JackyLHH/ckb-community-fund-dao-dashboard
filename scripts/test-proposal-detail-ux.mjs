@@ -62,7 +62,11 @@ const bundled = await build({
     import { renderToStaticMarkup } from 'react-dom/server';
     import { LiveProjectDetail } from './components/live-project-detail.tsx';
     import { proposals } from './lib/proposals.ts';
+    import { isManualProposalUpdate } from './lib/proposal-update-title.ts';
     export const realProposal = proposals.find((proposal) => proposal.id === '9879');
+    export const manualNoteProposal = proposals.find((proposal) => proposal.id === '7069');
+    export const historicalProposals = proposals;
+    export { isManualProposalUpdate };
     if (!realProposal) throw new Error('The reviewed Pocket Node fixture is missing');
     export const render = (proposal = realProposal, hook = {}, props = {}) => {
       globalThis.__detailHook = { proposal, state: 'live', error: null, ...hook };
@@ -87,6 +91,12 @@ const compiled = { exports: {} };
 new Script(`(function(require, module, exports) { ${bundled.outputFiles[0].text}\n})`).runInThisContext()(createRequire(new URL('../package.json', import.meta.url)), compiled, compiled.exports);
 const realProposal = compiled.exports.realProposal;
 assert.ok(realProposal.overview?.milestones.length > 0 && realProposal.updates.length > 0, 'The real fixture exercises reviewed bilingual milestones and updates');
+const manualNoteProposal = compiled.exports.manualNoteProposal;
+assert.ok(manualNoteProposal?.progressNoteZh && manualNoteProposal?.progressNoteEn, 'The historical rule-amendment fixture exercises both complete reviewed notes');
+const historicalManualProposals = compiled.exports.historicalProposals.filter((proposal) => proposal.progressNoteZh || proposal.progressNoteEn || proposal.updates.some((update) => compiled.exports.isManualProposalUpdate(proposal.id, update)));
+const historicalManualRows = historicalManualProposals.reduce((count, proposal) => count + proposal.updates.filter((update) => compiled.exports.isManualProposalUpdate(proposal.id, update)).length, 0);
+const historicalManualNotes = historicalManualProposals.filter((proposal) => proposal.progressNoteZh || proposal.progressNoteEn).length;
+assert.ok(historicalManualRows > 0 && historicalManualNotes > 0, 'The complete historical audit exercises reviewed rows and standalone notes');
 
 function elementWithAttribute(html, attribute, value) {
   const condition = value === undefined ? `${attribute}(?:="[^"]*")?(?=[\\s>])` : `${attribute}="${value}"`;
@@ -127,10 +137,11 @@ const longTitles = {
 const longUpdate = {
   title: longTitles.en, titleZh: longTitles.zh, titleEn: longTitles.en,
   date: '2026-10-19T06:53:51.132Z', author: realProposal.author,
-  url: 'https://talk.nervos.org/t/pocket-node/9879/999',
+  url: 'https://talk.nervos.org/t/pocket-node/9879/999', source: 'forum',
 };
-const undatedUpdate = { title: 'Undated maintenance update', titleEn: 'Undated maintenance update', titleZh: '日期未核验的维护更新', url: 'https://talk.nervos.org/t/pocket-node/9879/998', author: realProposal.author };
-const longProposal = { ...realProposal, updates: [undatedUpdate, ...realProposal.updates, longUpdate] };
+const longManualUpdate = { ...longUpdate, url: 'https://talk.nervos.org/t/pocket-node/9879/997', source: 'manual' };
+const undatedUpdate = { title: 'Undated maintenance update', titleEn: 'Undated maintenance update', titleZh: '日期未核验的维护更新', url: 'https://talk.nervos.org/t/pocket-node/9879/998', author: realProposal.author, source: 'forum' };
+const longProposal = { ...realProposal, updates: [undatedUpdate, ...realProposal.updates, longUpdate, longManualUpdate] };
 const renderWarnings = [];
 const previousConsoleError = console.error;
 try {
@@ -156,6 +167,7 @@ try {
       assert.doesNotMatch(html, /<nav\b|On this page|本页导航|href="#(?:overview|milestones|governance|voting|updates|sources)"/, 'No redundant in-page navigation returns');
       assert.ok(budget.includes(escapeHtml(proposal.budgetLabel)), 'Requested budget moves into the overview unchanged');
       assert.ok(textContent(overview).includes(locale === 'en' ? 'Milestone structure' : '里程碑结构'), 'Budget and milestone structure remain in the overview');
+      assert.doesNotMatch(overview, /These are planned deliverables|Listing a stage does not establish completion|以下是提案的计划交付内容|列出阶段不代表已完成/, 'Milestone cards omit the redundant planned-deliverables explainer');
 
       const milestoneHeadings = elementsWithAttribute(overview, 'data-milestone-heading');
       assert.equal(milestoneHeadings.length, proposal.overview.milestones.length);
@@ -178,8 +190,16 @@ try {
         assert.ok(row.includes(`href="${escapeHtml(update.url)}"`), 'Update link points to the real public source');
         assert.match(row, /target="_blank"/);
         assert.ok(row.includes(escapeHtml(localized(update, 'title', locale))), 'Full localized source title remains in HTML, including titles over 150 characters');
-        assert.match(row, /line-clamp-1/, 'Only visual one-line clamping shortens long update titles');
-        assert.doesNotMatch(row, /line-clamp-[2-9]/, 'Update content never expands to multiple visible lines');
+        const manual = compiled.exports.isManualProposalUpdate(proposal.id, update);
+        const title = elementWithAttribute(row, 'data-proposal-update-title');
+        assert.match(row, new RegExp(`data-update-origin="${manual ? 'manual' : 'forum'}"`));
+        if (manual) {
+          assert.doesNotMatch(title, /line-clamp|truncate|text-ellipsis/, 'Reviewed update text remains fully visible without visual truncation');
+          assert.match(title, /whitespace-pre-line/, 'Reviewed update text preserves meaningful line breaks and wraps naturally');
+        } else {
+          assert.match(title, /line-clamp-1/, 'Automatic source-report titles retain the compact one-line layout');
+          assert.doesNotMatch(title, /line-clamp-[2-9]/);
+        }
         assert.ok(row.includes(`title="${escapeHtml(localized(update, 'title', locale))}"`), 'Hover text preserves the complete localized title');
         assert.doesNotMatch(row, /更新者：|By |<p\b/, 'Update rows omit the redundant author line');
         assert.match(row, /lucide-external-link/, 'Each update retains its external-link affordance');
@@ -190,6 +210,7 @@ try {
         } else assert.ok(textContent(row).includes(locale === 'en' ? 'Date unverified' : '日期待核验'));
       }
       assert.deepEqual([...sidebar.matchAll(/<section\b[^>]*aria-labelledby="([^"]+)"/g)].map((match) => match[1]), ['discussion-title', 'vote-title', 'sources-title'], 'Sidebar order is discussion, voting, then verification in DOM as well as visually');
+      assert.doesNotMatch(sidebar, /当前赞数并非七天截止时的赞数|The current like count is not a seven-day cutoff snapshot/, 'The discussion card omits the redundant cutoff explanation');
       assert.doesNotMatch(sources, /Record read:|记录读取时间|Sources may have different update times|这不代表每个来源都在同一时间更新/);
       assert.ok(textContent(sources).includes(locale === 'en' ? 'Requested, approved, and disbursed amounts are different.' : '申请、批准和实际拨付是不同概念。'), 'The meaningful evidence/conflict warning is preserved');
       for (const source of proposal.sources) assert.ok(sources.includes(`href="${escapeHtml(source.url)}"`));
@@ -217,7 +238,7 @@ try {
     const emptyOverview = elementWithAttribute(emptyHtml, 'id', 'overview');
     assert.ok(textContent(elementWithAttribute(emptyOverview, 'data-detail-budget')).includes(locale === 'en' ? 'Not clearly stated' : '原帖未明确标注'));
     assert.doesNotMatch(emptyOverview, /id="milestones"|data-milestone-heading/);
-    assert.ok(textContent(emptyOverview).includes(locale === 'en' ? 'The source does not explicitly break down milestones.' : '原始提案未明确拆分里程碑'));
+    assert.doesNotMatch(emptyOverview, /The source does not explicitly break down milestones|Only verifiable objectives and budget are shown|原始提案未明确拆分里程碑|此处仅展示可从来源核验的目标与预算/, 'The overview omits the no-milestones explanation while retaining its structure value');
     assert.ok(textContent(elementWithAttribute(emptyHtml, 'id', 'updates')).includes(locale === 'en' ? 'No verifiable progress or completion report' : '尚未发现提案人发布的可核验进展或完结报告'));
     assert.ok(textContent(elementWithAttribute(emptyHtml, 'id', 'voting')).includes(locale === 'en' ? 'No corresponding voting page was found.' : '未找到对应投票页。'));
     const unverifiedVote = elementWithAttribute(compiled.exports.render({ ...emptyProposal, votingPageNotFound: false }), 'id', 'voting');
@@ -232,13 +253,36 @@ try {
       const notes = elementWithAttribute(compiled.exports.render(noteProposal), 'id', 'updates');
       const note = elementWithAttribute(notes, 'data-progress-note');
       assert.match(note, /href="https:\/\/explorer\.nervos\.org\/transaction\/0x123"/);
-      assert.match(note, /class="[^"]*\bline-clamp-1\b/);
-      assert.match(note, /focus-within:line-clamp-none/, 'A keyboard-focused inline link reveals its surrounding note');
+      assert.doesNotMatch(note, /line-clamp|truncate|text-ellipsis/, 'Manual notes are always readable in full, not only on hover or keyboard focus');
+      assert.match(note, /whitespace-pre-line/, 'Manual notes wrap naturally and preserve meaningful paragraphs');
       const expectedText = (locale === 'en' ? noteProposal.progressNoteEn : noteProposal.progressNoteZh).replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-      assert.equal(textContent(note.replace(/<[^>]*>/g, '')), expectedText, 'Visual clamping does not truncate the complete localized manual note');
+      assert.equal(textContent(note.replace(/<[^>]*>/g, '')), expectedText, 'The complete localized manual note remains visible');
       assert.ok(note.includes(`title="${escapeHtml(expectedText)}"`), 'Full hover text uses link labels, not Markdown or raw destination URLs');
       assert.ok(textContent(notes).includes(locale === 'en' ? 'were returned.' : '已退还'));
       assert.doesNotMatch(notes, /No verifiable progress|尚未发现提案人/, 'An explicit reviewed progress note replaces the generic absence message');
+    }
+    const historicalNotes = elementWithAttribute(compiled.exports.render(manualNoteProposal), 'data-progress-note');
+    assert.doesNotMatch(historicalNotes, /line-clamp|truncate|text-ellipsis/, 'The historical proposal 7069 displays its complete reviewed rule amendment');
+    assert.equal(textContent(historicalNotes), textContent(escapeHtml(locale === 'en' ? manualNoteProposal.progressNoteEn : manualNoteProposal.progressNoteZh)));
+    assert.ok(textContent(historicalNotes).includes(locale === 'en' ? 'Any airdropping of assets to DAO voters is prohibited' : '禁止向 DAO 投票者'), 'The protected rule itself is not shortened to an ellipsis');
+    for (const proposal of historicalManualProposals) {
+      const historicalPanel = elementWithAttribute(compiled.exports.render(proposal), 'id', 'updates');
+      const sourceRows = elementsWithAttribute(historicalPanel, 'data-proposal-update');
+      for (const [index, update] of sortDetailUpdates(proposal.updates).entries()) {
+        if (!compiled.exports.isManualProposalUpdate(proposal.id, update)) continue;
+        const row = sourceRows[index];
+        const title = elementWithAttribute(row, 'data-proposal-update-title');
+        assert.equal(textContent(title), textContent(escapeHtml(localized(update, 'title', locale))), `The complete ${locale} reviewed title is preserved: ${proposal.id} ${update.url}`);
+        assert.doesNotMatch(title, /line-clamp|truncate|text-ellipsis/, `Historical reviewed text is not visually shortened: ${proposal.id} ${update.url}`);
+        assert.ok(row.includes(`href="${escapeHtml(update.url)}"`), 'Historical review keeps its original source URL');
+      }
+      const progressNote = locale === 'en' ? proposal.progressNoteEn ?? proposal.progressNoteZh : proposal.progressNoteZh ?? proposal.progressNoteEn;
+      if (progressNote) {
+        const note = elementWithAttribute(historicalPanel, 'data-progress-note');
+        const expectedNote = progressNote.replace(/\[((?:\\.|[^\]])+)\]\((https?:\/\/[^)]+)\)/g, (_match, label) => label.replaceAll('\\[', '[').replaceAll('\\]', ']')).replace(/\s+/g, ' ').trim();
+        assert.equal(textContent(note.replace(/<[^>]*>/g, '')), expectedNote, `The complete ${locale} reviewed progress note is visible: ${proposal.id}`);
+        assert.doesNotMatch(note, /line-clamp|truncate|text-ellipsis/, `Historical progress notes are not visually shortened: ${proposal.id}`);
+      }
     }
 
     for (const [status, expectedZh, expectedEn] of [
@@ -253,6 +297,10 @@ try {
       assert.ok(textContent(vote).includes(locale === 'en' ? expectedEn : expectedZh));
       assert.match(vote, /244,888,704/);
       assert.match(vote, /52\.82%/);
+      const tally = elementWithAttribute(vote, 'data-vote-tally');
+      assert.doesNotMatch(tally, /grid-cols-2|grid-cols-\[|grid-template-columns/, 'Vote total and approval occupy full-width stacked rows');
+      assert.match(elementWithAttribute(tally, 'data-vote-weight'), /whitespace-nowrap/, 'The CKB vote total is not split across lines');
+      assert.doesNotMatch(vote, /按 CKB 权重计算，并非参与投票的人数|CKB-weighted votes, not the number of people voting/, 'The requested redundant vote explanation is removed');
       assert.match(vote, /href="https:\/\/dao\.ckb\.community\/thread\/test-vote-123"/);
       assert.ok(textContent(vote).includes(locale === 'en' ? 'Voting data verified:' : '投票数据核验时间：'), 'Only the unnecessary source-card timestamp is removed');
       if (status === 'active') assert.ok(textContent(vote).includes(locale === 'en' ? 'Voting is still open.' : '投票尚未结束'));
@@ -298,3 +346,4 @@ try {
 }
 assert.deepEqual(renderWarnings, [], 'All bilingual detail SSR branches render without React warnings');
 console.log('Detail layout: bilingual dark hero, overview budget, aligned allocations, complete source-update rows, ordered evidence sidebar, and resilient loading/voting/error states pass.');
+console.log(`Historical reviewed text: ${historicalManualRows} update rows and ${historicalManualNotes} progress notes preserve their complete contents in both languages.`);

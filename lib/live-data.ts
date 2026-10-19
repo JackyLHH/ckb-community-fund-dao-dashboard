@@ -29,6 +29,7 @@ import { mergeVoteSnapshots, resolveVoteLifecycle } from './metaforo-voting';
 import { executionStatusTags } from './proposal-lifecycle';
 import savedVotes from '../data/votes.generated.json';
 import { PublicSourceError, resolveDetailSource, type ProjectReadResult } from './live-project-result';
+import { isManualProposalUpdate, selectForumProgressUpdates } from './proposal-update-title';
 
 const categoryEndpoint = '/live/nervos/category';
 const fundedTopicEndpoint = '/live/nervos/topic/7793';
@@ -142,12 +143,6 @@ function extractLinks(html = '') {
     .filter((url) => /^https?:\/\//.test(url));
 }
 
-function stripQuotedContent(html = '') {
-  return html
-    .replace(/<aside\b[^>]*class=["'][^"']*\bquote\b[^"']*["'][^>]*>[\s\S]*?<\/aside>/gi, ' ')
-    .replace(/<blockquote\b[^>]*>[\s\S]*?<\/blockquote>/gi, ' ');
-}
-
 function sameUsername(left: string, right: string) {
   return left.trim().toLocaleLowerCase() === right.trim().toLocaleLowerCase();
 }
@@ -159,20 +154,6 @@ function canonicalUpdateUrl(value: string) {
   } catch {
     return value;
   }
-}
-
-function selectProposalProgressUpdates(posts: TopicPost[], proposer: string, id: string, slug: string) {
-  return posts
-    .filter((post) => post.post_number > 1 && sameUsername(post.username, proposer))
-    .map((post) => ({ post, text: stripHtml(stripQuotedContent(post.cooked ?? '')) }))
-    .filter(({ text }) => isProposalProgressUpdate(text))
-    .sort((a, b) => a.post.post_number - b.post.post_number)
-    .map(({ post, text }) => ({
-      title: text.length > 240 ? `${text.slice(0, 240).trim()}…` : text,
-      date: post.created_at,
-      url: `${forumBase}/t/${slug}/${id}/${post.post_number}`,
-      author: post.username,
-    }));
 }
 
 async function loadAllTopicPosts(id: string, detail: TopicResponse) {
@@ -493,7 +474,9 @@ function mapCategoryTopic(
     voting,
     funded,
     fundingNote: fundedEntry?.note ?? fallback?.fundingNote ?? null,
-    updates: (fallback?.updates ?? []).filter((update) => sameUsername(update.author, author) && isProposalProgressUpdate(update.title)),
+    updates: (fallback?.updates ?? []).filter((update) =>
+      (sameUsername(update.author, author) || proposalOverride?.allowNonAuthorUpdates)
+      && (isManualProposalUpdate(id, update) || update.source === 'forum' || isProposalProgressUpdate(update.title))),
     status: primaryStatus(statusTags),
     statusTags,
     statusReason: statusReasonZh(statusTags),
@@ -710,10 +693,12 @@ export async function loadLiveProjectWithState(id: string, options: { forceRefre
     const proposer = firstPost?.username ?? base.author;
     const selectedUpdates = proposalOverride?.useOnlyOverrideUpdates
       ? []
-      : selectProposalProgressUpdates(posts, proposer, id, detail.slug ?? base.slug);
+      : selectForumProgressUpdates(posts, proposer, id, detail.slug ?? base.slug);
     const updates = [...new Map([
       ...selectedUpdates,
-      ...(proposalOverride?.updates ?? []).filter((update) => proposalOverride?.allowNonAuthorUpdates || sameUsername(update.author, proposer)),
+      ...(proposalOverride?.updates ?? [])
+        .filter((update) => proposalOverride?.allowNonAuthorUpdates || sameUsername(update.author, proposer))
+        .map((update) => ({ ...update, source: 'manual' as const })),
     ].map((update) => [canonicalUpdateUrl(update.url), update])).values()]
       .sort((a, b) => new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime());
     const discoveredVoting: ProposalVoting | null = votingUrl ? { url: votingUrl, status: 'unknown' } : base.voting;

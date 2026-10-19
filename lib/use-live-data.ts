@@ -7,7 +7,9 @@ import { reviewedDetailCache, validProposalId } from '@/lib/proposal-detail-ux';
 import { proposalOverridesById } from '@/lib/proposal-overrides';
 
 const detailMemory = new Map<string, Proposal>();
-const detailCacheKey = (id: string) => `ckb-proposal-detail:v1:${id}`;
+// v2 discards the previous heading+body excerpts. Translation caches already
+// include the exact new source title, so they invalidate independently.
+const detailCacheKey = (id: string) => `ckb-proposal-detail:v2:${id}`;
 
 function readDetailCache(id: string) {
   const currentRecord = dataset.proposals.find((entry) => entry.id === id);

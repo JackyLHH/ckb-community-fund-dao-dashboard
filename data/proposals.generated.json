@@ -274,16 +274,18 @@
           "author": "ebubedev"
         },
         {
-          "title": "Milestone 1 complete: Fiber Studio is ready for early testing Hi everyone, Following up on my Fiber Studio + new repo update - Mil",
+          "title": "Milestone 1 complete: Fiber Studio is ready for early testing",
           "date": "2026-06-23T16:42:33.147Z",
           "url": "https://talk.nervos.org/t/dis-fiber-desktop-v1-ground-up-rebuild-and-launch-fnn-desktop-app/10317/18",
-          "author": "ebubedev"
+          "author": "ebubedev",
+          "source": "forum"
         },
         {
-          "title": "Milestone 2 complete: Wallet, Peers & Channels are live Hi everyone, Following up on the Milestone 1 update — Milestone 2 is done.",
+          "title": "Milestone 2 complete: Wallet, Peers & Channels are live",
           "date": "2026-07-05T12:14:38.758Z",
           "url": "https://talk.nervos.org/t/dis-fiber-desktop-v1-ground-up-rebuild-and-launch-fnn-desktop-app/10317/19",
-          "author": "ebubedev"
+          "author": "ebubedev",
+          "source": "forum"
         }
       ],
       "status": "voting",
@@ -342,16 +344,18 @@
       "fundingNote": null,
       "updates": [
         {
-          "title": "FiberLatch Access — Weeks 1–2 Progress Update Hi everyone, Here is the first progress update for FiberLatch Access since the propo",
+          "title": "FiberLatch Access — Weeks 1–2 Progress Update",
           "date": "2026-07-26T12:12:05.903Z",
           "url": "https://talk.nervos.org/t/dis-fiberlatch-access-open-source-access-control-for-fiber-payments/10414/4",
-          "author": "Ticoworld"
+          "author": "Ticoworld",
+          "source": "forum"
         },
         {
-          "title": "FiberLatch Access — Weeks 3–4 Progress Update Weeks 3–4 implementation is now complete. This phase focused on the two main impleme",
+          "title": "FiberLatch Access — Weeks 3–4 Progress Update",
           "date": "2026-08-09T13:06:29.855Z",
           "url": "https://talk.nervos.org/t/dis-fiberlatch-access-open-source-access-control-for-fiber-payments/10414/5",
-          "author": "Ticoworld"
+          "author": "Ticoworld",
+          "source": "forum"
         }
       ],
       "status": "voting",
