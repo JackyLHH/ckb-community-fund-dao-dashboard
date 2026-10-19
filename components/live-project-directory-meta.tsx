@@ -7,7 +7,7 @@ import { useLiveDataset } from '@/lib/use-live-data';
 import { useLocale } from '@/lib/use-locale';
 
 export function LiveProjectStats() {
-  const { data, state } = useLiveDataset();
+  const { data } = useLiveDataset();
   const { t } = useLocale();
   const items = [
     { key: 'all', count: data.proposals.length, zh: '全部提案', en: 'All proposals', query: '' },
@@ -23,7 +23,6 @@ export function LiveProjectStats() {
           <div><p className={`font-mono text-2xl font-semibold tabular-nums ${item.key === 'all' ? 'text-[#c8ff67]' : 'text-white'}`}>{item.count}</p><p className="mt-1 text-xs font-medium text-white/80"><I18nText zh={item.zh} en={item.en} /></p></div><ArrowRight className="size-4 shrink-0 text-white/65 transition group-hover:translate-x-0.5 group-hover:text-[#7fe0bc]" aria-hidden="true" />
         </a>)}
       </div>
-      <p className="mt-3 text-xs leading-5 text-white/75"><I18nText zh="全站概况：资助、类型和阶段是不同维度，数量可能重叠。点击数字可筛选。" en="Whole-directory overview. Funding, type, and stage overlap; these counts are not additive. Select a count to filter." />{state === 'loading' && <> <I18nText zh="正在显示缓存记录，实时数据读取中。" en="Showing cached records while live data loads." /></>}{state === 'fallback' && <> <I18nText zh="来源暂不可用，当前为最近可用记录。" en="The source is unavailable; these are the latest available records." /></>}</p>
     </div>
   );
 }

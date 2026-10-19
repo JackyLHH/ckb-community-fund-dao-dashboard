@@ -31,7 +31,7 @@ export function ProjectCard({ proposal, compact = false }: { proposal: Proposal;
         <h2 id={titleId} className={`mt-2 break-words font-bold leading-snug tracking-[-.015em] transition group-hover:text-primary ${compact ? 'text-lg' : 'line-clamp-3 text-xl'}`}>
           {getProposalTitle(proposal, locale)}
         </h2>
-        <p className={`mt-3 text-sm leading-6 text-muted-foreground ${compact ? 'line-clamp-2' : 'line-clamp-6'}`}>{getProposalOverview(proposal, locale)}</p>
+        <p className={`mt-3 text-sm leading-6 text-muted-foreground ${compact ? 'line-clamp-1' : 'line-clamp-3'}`}>{getProposalOverview(proposal, locale)}</p>
         {compact && <p className="mt-3 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"><UserRound className="size-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{proposal.author}</span></p>}
       </div>
 
@@ -47,7 +47,7 @@ export function ProjectCard({ proposal, compact = false }: { proposal: Proposal;
         </div>
         <div className={`mt-4 flex gap-2 text-xs leading-5 text-muted-foreground ${compact ? 'flex-col' : 'flex-wrap items-start justify-between'}`}>
           {!compact && <span className="inline-flex min-w-0 max-w-full items-center gap-1.5"><UserRound className="size-3.5 shrink-0" aria-hidden="true" /><span className="break-all">{proposal.author}</span></span>}
-          <span className="inline-flex items-start gap-1.5" title={t('论坛最近活动，可能包含社区回复，并不一定是提案人的进展报告', 'Latest forum activity may include community replies, not just proposer progress reports')}><CalendarDays className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" /><span>{t('更新于 ', 'Updated ')}<time dateTime={proposal.updatedAt}>{formatDate(proposal.updatedAt, locale === 'en' ? 'en-US' : 'zh-CN')}</time></span></span>
+          <span className="inline-flex items-start gap-1.5"><CalendarDays className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" /><span>{t('更新于 ', 'Updated ')}<time dateTime={proposal.updatedAt}>{formatDate(proposal.updatedAt, locale === 'en' ? 'en-US' : 'zh-CN')}</time></span></span>
         </div>
       </div>
     </Link>
