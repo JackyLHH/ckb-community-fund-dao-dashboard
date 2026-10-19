@@ -65,6 +65,23 @@ const localizedText = (html, locale) => html
   .replace(/\s+/g, ' ')
   .trim();
 const cardLinks = (html) => [...html.matchAll(/<a\b[^>]*aria-labelledby="(?:featured|activity)-title-[^"]+"[^>]*>[\s\S]*?<\/a>/g)].map(([card]) => card);
+const directChildren = (html, marker) => {
+  const opening = html.match(new RegExp(`<([a-z][\\w-]*)\\b[^>]*\\b${marker}(?:="[^"]*")?[^>]*>`));
+  assert.ok(opening, `The ${marker} container is present`);
+  const elements = [];
+  const voidElements = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+  const tags = /<\/?([a-z][\w-]*)\b[^>]*>/g;
+  tags.lastIndex = opening.index + opening[0].length;
+  let depth = 1;
+  let tag;
+  while (depth && (tag = tags.exec(html))) {
+    if (tag[0].startsWith('</')) { depth -= 1; continue; }
+    if (depth === 1) elements.push(tag[0]);
+    if (!voidElements.has(tag[1]) && !tag[0].endsWith('/>')) depth += 1;
+  }
+  assert.equal(depth, 0, `The ${marker} container closes normally`);
+  return { opening: opening[0], elements };
+};
 
 try {
   for (const locale of ['zh', 'en']) {
@@ -110,6 +127,13 @@ try {
 
     const footer = render('SiteFooter');
     assert.match(footer, /<section\b[^>]*id="subscribe"[^>]*aria-labelledby="proposal-updates-title"/, 'Homepage subscription anchor and accessible heading remain available');
+    const subscriptionLayout = directChildren(footer, 'data-subscription-layout');
+    assert.match(subscriptionLayout.opening, /data-subscription-layout="three-column"/);
+    assert.match(subscriptionLayout.opening, /lg:grid-cols-\[\.9fr_1\.4fr_1fr\]/, 'Desktop gives the introduction, email, and Telegram their own balanced columns');
+    assert.equal(subscriptionLayout.elements.length, 3, 'All three subscription columns are direct grid children, without a nested two-panel column');
+    assert.match(subscriptionLayout.elements[0], /data-subscription-intro/);
+    assert.match(subscriptionLayout.elements[1], /data-subscription-channel="email"/);
+    assert.match(subscriptionLayout.elements[2], /data-subscription-channel="telegram"/);
     const channelPanels = [...footer.matchAll(/<(?:div|section)\b[^>]*data-subscription-channel="(email|telegram)"[^>]*>/g)];
     assert.deepEqual(channelPanels.map(([, channel]) => channel), ['email', 'telegram'], 'Email and Telegram remain distinct, clearly ordered subscription panels');
     for (const [panel] of channelPanels) {
@@ -130,16 +154,31 @@ try {
     assert.equal([...footer.matchAll(/<button\b[^>]*type="submit"/g)].length, 1, 'There is one unambiguous email subscription action');
     const emailInput = footer.match(/<input\b[^>]*id="subscription-email"[^>]*>/)?.[0];
     const emailSubmit = footer.match(/<button\b[^>]*type="submit"[^>]*>/)?.[0];
-    assert.match(emailInput, /\bw-full\b/, 'The email field has its own full-width row');
-    assert.match(emailSubmit, /\bw-full\b/, 'The email action no longer squeezes the input into the same row');
+    const emailRow = directChildren(footer, 'data-subscription-form-row');
+    assert.match(emailRow.opening, /\bflex\b/);
+    assert.match(emailRow.opening, /\bflex-col\b/, 'Small screens may stack the form controls instead of squeezing their touch targets');
+    assert.match(emailRow.opening, /min-\[420px\]:flex-row/, 'The subscription button moves to the right of the email field when there is enough viewport width');
+    assert.deepEqual(emailRow.elements.filter((element) => /id="subscription-email"|type="submit"/.test(element)), [emailInput, emailSubmit], 'The email field and submit button share the same row container, in that order');
+    assert.match(emailInput, /\bmin-w-0\b/);
+    assert.match(emailInput, /\bmin-h-12\b/, 'The stacked mobile email field keeps its full touch-target height instead of shrinking under flex sizing');
+    assert.match(emailInput, /\bflex-1\b/, 'The email field takes the available space without overflowing its grid column');
+    assert.match(emailSubmit, /\bshrink-0\b/, 'The subscription action remains legible beside the input');
     assert.match(footer, /<output\b[^>]*id="subscription-feedback"[^>]*aria-live="polite"[^>]*aria-atomic="true"/, 'Subscription results still announce accessibly');
     assert.match(footer, /id="subscription-help"/);
     assert.match(footer, /href="\/subscription"/, 'Existing subscriber management remains available');
+    const subscriptionMeta = directChildren(footer, 'data-subscription-meta');
+    assert.match(subscriptionMeta.opening, /\bgrid\b/);
+    assert.match(subscriptionMeta.opening, /min-\[480px\]:grid-cols-2/, 'Confirmation help and subscription management sit beside each other on wider screens');
+    assert.equal(subscriptionMeta.elements.length, 2, 'Help and management share one metadata row without a separate full-width action');
+    assert.match(subscriptionMeta.elements[0], /id="subscription-help"/);
+    assert.match(subscriptionMeta.elements[1], /href="\/subscription"/);
     for (const channel of ['zh', 'en']) {
       assert.match(footer, new RegExp(`<a\\b[^>]*href="/api/telegram\\?locale=${channel}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"`), 'Both language channels retain their existing safe redirect routes');
     }
     assert.match(footer, /16:00/, 'The 16:00 Beijing daily delivery schedule is unchanged');
     assert.ok(localizedText(footer, locale).includes(locale === 'en' ? 'Email confirmation is required; unsubscribe at any time.' : '需要邮件确认，可随时取消订阅。'), 'The privacy and confirmation explanation remains localized');
+    assert.ok(localizedText(footer, locale).includes(locale === 'en' ? 'Manage a subscription or follow selected proposals' : '管理已有订阅或只关注部分提案'), 'The existing management action retains its full bilingual label');
+    assert.doesNotMatch(footer, /仅用于提案动态。|Only for proposal updates\./, 'The redundant prefix is removed in both languages');
     assert.doesNotMatch(footer, /#229ed9|#8cdaff/, 'Telegram uses the shared green-neutral palette instead of a separate blue accent');
 
     globalThis.__uiTestProposals = compiled.exports.homepageProposals;

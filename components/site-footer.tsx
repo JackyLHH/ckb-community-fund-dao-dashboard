@@ -113,41 +113,41 @@ function NewsletterSubscription() {
   const coolingDown = remaining > 0 && email.trim().toLowerCase() === sentEmail;
   return (
     <section id="subscribe" aria-labelledby="proposal-updates-title">
-      <div className="mx-auto grid max-w-7xl items-start gap-8 px-5 py-12 sm:py-16 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:px-8">
-        <div>
+      <div data-subscription-layout="three-column" className="mx-auto grid max-w-7xl items-start gap-6 px-5 py-12 sm:py-16 lg:grid-cols-[.9fr_1.4fr_1fr] lg:px-8">
+        <div data-subscription-intro>
           <span className="grid size-11 place-items-center rounded-xl bg-[#c8ff67] text-[#0b0f0e]"><Mail className="size-5" aria-hidden="true" /></span>
           <h2 id="proposal-updates-title" className="mt-5 text-3xl font-bold tracking-[-.025em]">{t('订阅每日提案更新', 'Subscribe to daily proposal updates')}</h2>
           <p className="mt-3 max-w-xl text-sm leading-7 text-white/80">{t('每天北京时间 16:00 汇总新提案、提案人进展和治理动态；没有变化时不发送邮件。', 'One digest at 16:00 Beijing time (UTC+8), covering new proposals, proposer updates and governance events. No changes means no email.')}</p>
           <DigestPreview />
         </div>
-        <div className="grid min-w-0 gap-4 sm:gap-5">
-          <section data-subscription-channel="email" aria-labelledby="email-subscription-title" className="min-w-0 rounded-3xl border border-white/15 bg-white/[.04] p-5 sm:p-6">
-            <h3 id="email-subscription-title" className="flex items-center gap-3 text-base font-bold"><span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#c8ff67]/10 text-[#c8ff67]"><Mail className="size-4" aria-hidden="true" /></span>{t('邮件订阅', 'Email subscription')}</h3>
+        <section data-subscription-channel="email" aria-labelledby="email-subscription-title" className="h-full min-w-0 rounded-3xl border border-white/15 bg-white/[.04] p-5">
+          <h3 id="email-subscription-title" className="flex items-center gap-3 text-base font-bold"><span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#c8ff67]/10 text-[#c8ff67]"><Mail className="size-4" aria-hidden="true" /></span>{t('邮件订阅', 'Email subscription')}</h3>
           <form onSubmit={subscribe} className="mt-5">
             <label className="sr-only" htmlFor="subscription-email">{t('邮箱地址', 'Email address')}</label>
-            <div className="grid gap-3">
-              <input id="subscription-email" type="email" inputMode="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" aria-describedby="subscription-help subscription-feedback" aria-invalid={state === 'error' && errorCode === 'invalid_email'} className="h-12 w-full min-w-0 rounded-xl border border-white/25 bg-white/[.04] px-4 text-base text-white placeholder:text-white/55 focus:border-[#c8ff67] focus:outline-none focus:ring-2 focus:ring-[#c8ff67]/40" />
+            <div data-subscription-form-row className="flex min-w-0 flex-col gap-2 min-[420px]:flex-row">
+              <input id="subscription-email" type="email" inputMode="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" aria-describedby="subscription-help subscription-feedback" aria-invalid={state === 'error' && errorCode === 'invalid_email'} className="h-12 min-h-12 min-w-0 flex-1 rounded-xl border border-white/25 bg-white/[.04] px-4 text-base text-white placeholder:text-white/55 focus:border-[#c8ff67] focus:outline-none focus:ring-2 focus:ring-[#c8ff67]/40" />
               <input name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-              <button type="submit" disabled={state === 'submitting' || coolingDown} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#c8ff67] px-5 py-3 text-sm font-bold text-[#0b0f0e] transition hover:bg-[#b9ed60] disabled:cursor-not-allowed disabled:opacity-65">
+              <button type="submit" disabled={state === 'submitting' || coolingDown} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#c8ff67] px-4 py-3 text-sm font-bold text-[#0b0f0e] transition hover:bg-[#b9ed60] disabled:cursor-not-allowed disabled:opacity-65">
                 {state === 'submitting' ? t('发送中…', 'Sending…') : coolingDown ? t(`${remaining} 秒后可重发`, `Resend in ${remaining}s`) : state === 'confirmation_sent' ? t('重发确认邮件', 'Resend confirmation') : t('订阅更新', 'Subscribe')}{state !== 'submitting' && !coolingDown && <ArrowRight className="size-4" aria-hidden="true" />}
               </button>
             </div>
           </form>
-          <p id="subscription-help" className="mt-4 text-xs leading-6 text-white/65">{t('仅用于提案动态。需要邮件确认，可随时取消订阅。', 'Only for proposal updates. Email confirmation is required; unsubscribe at any time.')}</p>
+          <div data-subscription-meta className="mt-3 grid items-center gap-x-4 gap-y-1 min-[480px]:grid-cols-2">
+            <p id="subscription-help" className="text-xs leading-6 text-white/65">{t('需要邮件确认，可随时取消订阅。', 'Email confirmation is required; unsubscribe at any time.')}</p>
+            <StaticLink href="/subscription" className="inline-flex min-h-11 items-center text-xs font-semibold leading-6 text-white/80 underline underline-offset-4 hover:text-white">{t('管理已有订阅或只关注部分提案', 'Manage a subscription or follow selected proposals')}</StaticLink>
+          </div>
           <output id="subscription-feedback" className="block" aria-live="polite" aria-atomic="true">
             {feedback[state] && <span className={`mt-4 flex items-start gap-2 text-sm leading-6 ${state === 'error' ? 'text-[#ffb6bd]' : 'text-[#c8ff67]'}`}>{state !== 'error' && <CheckCircle2 className="mt-1 size-4 shrink-0" aria-hidden="true" />}{feedback[state]}</span>}
           </output>
-          <StaticLink href="/subscription" className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold leading-6 text-white/80 underline underline-offset-4 hover:text-white">{t('管理已有订阅或只关注部分提案', 'Manage a subscription or follow selected proposals')}</StaticLink>
-          </section>
-          <section data-subscription-channel="telegram" aria-labelledby="telegram-subscription-title" className="min-w-0 rounded-3xl border border-white/15 bg-white/[.04] p-5 sm:p-6">
-            <h3 id="telegram-subscription-title" className="flex items-center gap-3 text-base font-bold"><span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#c8ff67]/10 text-[#c8ff67]"><Send className="size-4" aria-hidden="true" /></span>{t('通过 Telegram 接收更新', 'Get updates on Telegram')}</h3>
-            <p className="mt-3 text-sm leading-6 text-white/65">{t('选择频道语言，接收同一份全站每日汇总。', 'Choose a language for the same all-proposal daily digest.')}</p>
-            <div className="mt-5 grid gap-3 min-[360px]:grid-cols-2">
-              <a href="/api/telegram?locale=zh" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/25 px-3 py-2 text-sm font-semibold transition hover:border-[#c8ff67]/50 hover:bg-white/[.06]">{t('加入中文频道', 'Chinese channel')}<ExternalLink className="size-3.5 shrink-0" aria-hidden="true" /></a>
-              <a href="/api/telegram?locale=en" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/25 px-3 py-2 text-sm font-semibold transition hover:border-[#c8ff67]/50 hover:bg-white/[.06]">{t('加入英文频道', 'English channel')}<ExternalLink className="size-3.5 shrink-0" aria-hidden="true" /></a>
-            </div>
-          </section>
-        </div>
+        </section>
+        <section data-subscription-channel="telegram" aria-labelledby="telegram-subscription-title" className="h-full min-w-0 rounded-3xl border border-white/15 bg-white/[.04] p-5">
+          <h3 id="telegram-subscription-title" className="flex items-center gap-3 text-base font-bold"><span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#c8ff67]/10 text-[#c8ff67]"><Send className="size-4" aria-hidden="true" /></span>{t('通过 Telegram 接收更新', 'Get updates on Telegram')}</h3>
+          <p className="mt-3 text-sm leading-6 text-white/65">{t('选择频道语言，接收同一份全站每日汇总。', 'Choose a language for the same all-proposal daily digest.')}</p>
+          <div className="mt-5 grid gap-3 min-[360px]:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <a href="/api/telegram?locale=zh" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-white/25 px-2 py-2 text-sm font-semibold transition hover:border-[#c8ff67]/50 hover:bg-white/[.06]">{t('加入中文频道', 'Chinese channel')}<ExternalLink className="size-3.5 shrink-0" aria-hidden="true" /></a>
+            <a href="/api/telegram?locale=en" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-white/25 px-2 py-2 text-sm font-semibold transition hover:border-[#c8ff67]/50 hover:bg-white/[.06]">{t('加入英文频道', 'English channel')}<ExternalLink className="size-3.5 shrink-0" aria-hidden="true" /></a>
+          </div>
+        </section>
       </div>
     </section>
   );
