@@ -25,7 +25,7 @@ import {
   extractProposalObjective,
 } from '@/lib/digest-activity';
 import { cleanProposalTitle as cleanTitle, looksLikeProposal } from './proposal-title.js';
-import { resolveVoteLifecycle } from './metaforo-voting';
+import { mergeVoteSnapshots, resolveVoteLifecycle } from './metaforo-voting';
 import { executionStatusTags } from './proposal-lifecycle';
 import savedVotes from '../data/votes.generated.json';
 import { PublicSourceError, resolveDetailSource, type ProjectReadResult } from './live-project-result';
@@ -595,7 +595,7 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
   const fetchedAt = new Date().toISOString();
   try {
     const latest = await fetchJson<{ version?: number; votes?: Record<string, ProposalVoting> }>('/live/metaforo/votes');
-    if (latest.version === 1 && latest.votes) liveVotes = { ...liveVotes, ...latest.votes };
+    if (latest.version === 1 && latest.votes) liveVotes = mergeVoteSnapshots(liveVotes, latest.votes);
   } catch { /* Keep the committed last verified vote snapshot on upstream failure. */ }
   const [category, fundedTopic, chainBalance] = await Promise.all([
     fetchAllCategoryPages(),

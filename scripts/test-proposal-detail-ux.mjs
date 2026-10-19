@@ -181,12 +181,12 @@ try {
         assert.match(row, /line-clamp-1/, 'Only visual one-line clamping shortens long update titles');
         assert.doesNotMatch(row, /line-clamp-[2-9]/, 'Update content never expands to multiple visible lines');
         assert.ok(row.includes(`title="${escapeHtml(localized(update, 'title', locale))}"`), 'Hover text preserves the complete localized title');
-        assert.ok(textContent(row).includes(update.author), 'Update author remains in the link row');
+        assert.doesNotMatch(row, /更新者：|By |<p\b/, 'Update rows omit the redundant author line');
         assert.match(row, /lucide-external-link/, 'Each update retains its external-link affordance');
         assert.doesNotMatch(row, /View this update|查看本次更新|Published a weekly update|发布了周报/, 'Do not add redundant category/action prose to the full-title link row');
         if (update.date) {
           assert.ok(row.includes(`<time dateTime="${update.date}"`));
-          assert.ok(row.indexOf('<time ') < row.indexOf(escapeHtml(localized(update, 'title', locale))), 'Publication date precedes title and author');
+          assert.ok(row.indexOf('<time ') < row.indexOf(escapeHtml(localized(update, 'title', locale))), 'Publication date precedes the full localized title');
         } else assert.ok(textContent(row).includes(locale === 'en' ? 'Date unverified' : '日期待核验'));
       }
       assert.deepEqual([...sidebar.matchAll(/<section\b[^>]*aria-labelledby="([^"]+)"/g)].map((match) => match[1]), ['discussion-title', 'vote-title', 'sources-title'], 'Sidebar order is discussion, voting, then verification in DOM as well as visually');
@@ -196,6 +196,7 @@ try {
       const governance = elementWithAttribute(html, 'id', 'governance');
       const governanceSteps = elementsWithAttribute(governance, 'data-governance-step');
       assert.equal(governanceSteps.length, 3, 'Discussion, voting, and execution remain distinct stages');
+      assert.doesNotMatch(governance, /空心圆|圆点：|勾：|横线：|Open circle:|Dot: in progress|Check: stage complete|Dash: ended|<svg\b|class="sr-only"|>—</, 'Governance has no redundant stage symbols or their legend');
       for (const [index, step] of governanceSteps.entries()) {
         assert.match(step, new RegExp(`data-governance-step="${index + 1}"`));
         const number = elementWithAttribute(step, 'data-governance-number');
@@ -207,7 +208,7 @@ try {
         assert.match(step, /<h3\b/);
         assert.ok(textContent(step).includes(label));
         assert.ok(step.indexOf('data-governance-number') < step.indexOf(label), 'Each step number precedes its localized stage label');
-        assert.match(step, /class="sr-only"/, 'Status remains understandable without relying on icons');
+        assert.match(step, /<p\b[^>]*>[^<]+<\/p>/, 'Each stage keeps its visible textual explanation rather than an icon or hidden duplicate');
       }
     }
 

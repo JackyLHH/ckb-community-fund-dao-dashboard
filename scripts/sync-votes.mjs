@@ -46,8 +46,12 @@ try {
         const card = tab.locator('.poll-card-style').filter({ hasText: 'quorum' });
         await card.waitFor({ state: 'visible', timeout: 45_000 });
         await card.getByText('Votes required to pass', { exact: true }).waitFor({ state: 'visible', timeout: 20_000 });
+        if (thread.poll_status === 'on') {
+          await card.getByText(/Voting ends in\s+\d/i).waitFor({ state: 'visible', timeout: 20_000 });
+        }
         const vote = parseMetaforoVoteCard(await card.innerText(), url);
         if ((thread.poll_status === 'expire') !== vote.closed) throw new Error('Directory/card closure mismatch; retry next run');
+        if (!vote.closed && !vote.closesAt) throw new Error('Voting deadline unavailable; retain the previous verified snapshot');
         const previous = next.votes[id]?.url === url ? next.votes[id] : undefined;
         vote.openedAt = previous?.openedAt || new Date(thread.updated_at).toISOString();
         if (vote.closed && (previous?.status === 'active' || Date.parse(vote.openedAt) >= enabledAt)) {

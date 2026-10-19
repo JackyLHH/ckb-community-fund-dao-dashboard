@@ -42,9 +42,8 @@ export function ProjectCard({ proposal, compact = false }: { proposal: Proposal;
         {compact ? <div className="flex items-start justify-between gap-3">
           <ProposalStatusTags proposal={proposal} compact />
           <ArrowRight className="mt-1 size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
-        </div> : <div data-proposal-header="card" className="flex items-start justify-between gap-3">
-          <span data-proposal-field="type" className="inline-flex max-w-[46%] shrink-0 rounded-full border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold leading-4 text-muted-foreground"><I18nText zh={projectTypeLabels[proposal.projectType] ?? proposal.projectType} en={proposal.projectType} /></span>
-          <div data-proposal-field="status" className="min-w-0 flex-1 [&>div]:justify-end"><ProposalStatusTags proposal={proposal} compact /></div>
+        </div> : <div data-proposal-header="card" className="flex min-w-0 items-start gap-3">
+          <div data-proposal-field="status" className="min-w-0"><ProposalStatusTags proposal={proposal} compact /></div>
         </div>}
         <h2 id={titleId} className={`break-words font-bold leading-snug tracking-[-.015em] transition group-hover:text-primary ${compact ? 'mt-2 text-lg' : 'mt-4 line-clamp-3 text-xl'}`}>
           {getProposalTitle(proposal, locale)}
@@ -63,7 +62,10 @@ export function ProjectCard({ proposal, compact = false }: { proposal: Proposal;
       ) : (
       <div className="mt-auto min-w-0 pt-6">
         <div data-proposal-field="budget" className="min-w-0 border-t border-border pt-4">
-          <p className="text-xs text-muted-foreground"><I18nText zh="申请预算" en="Requested budget" /></p>
+          <div data-proposal-budget-heading="card" className="flex min-w-0 items-start justify-between gap-3 text-xs text-muted-foreground">
+            <p><I18nText zh="申请预算" en="Requested budget" /></p>
+            <span data-proposal-field="type" className="min-w-0 text-right font-semibold"><I18nText zh={projectTypeLabels[proposal.projectType] ?? proposal.projectType} en={proposal.projectType} /></span>
+          </div>
           <p className="mt-1 break-words font-mono text-sm font-semibold tabular-nums">{proposal.budgetLabel ?? <I18nText zh="待核验" en="To verify" />}</p>
         </div>
         <div data-proposal-metadata="card" className="mt-3 flex min-w-0 items-center gap-x-2 overflow-x-auto whitespace-nowrap text-xs leading-5 text-muted-foreground">

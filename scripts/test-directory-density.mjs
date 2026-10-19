@@ -141,10 +141,19 @@ try {
           assert.doesNotMatch(card, /data-proposal-header="card"/, 'Card-only header changes never affect compact mode');
         } else {
           const header = elementWithAttribute(card, 'data-proposal-header', 'card');
-          assert.deepEqual([...header.matchAll(/data-proposal-field="([^"]+)"/g)].map((match) => match[1]), ['type', 'status'], 'The type is top-left and statuses follow on the right');
-          assert.ok(visibleText(header, locale).includes(type), 'Card type labels are in the header');
-          assert.match(header, /\[&amp;&gt;div\]:justify-end/, 'Status badges align to the right, including wrapped badges');
+          assert.deepEqual([...header.matchAll(/data-proposal-field="([^"]+)"/g)].map((match) => match[1]), ['status'], 'Only proposal statuses occupy the top-left header');
+          assert.ok(!visibleText(header, locale).includes(type), 'The proposal type does not repeat in the card header');
+          assert.doesNotMatch(header, /\bjustify-end\b|\bjustify-between\b/, 'Wrapped status badges remain left-aligned');
           assert.doesNotMatch(card, /lucide-arrow-right/, 'Card mode removes the decorative arrow');
+          const budgetSection = elementWithAttribute(card, 'data-proposal-field', 'budget');
+          const budgetHeading = elementWithAttribute(budgetSection, 'data-proposal-budget-heading', 'card');
+          const cardType = elementWithAttribute(budgetHeading, 'data-proposal-field', 'type');
+          assert.match(budgetHeading, /\bflex\b[^\"]*\bjustify-between\b/, 'The requested-budget label and proposal type share a row');
+          assertOrder(visibleText(budgetHeading, locale), [locale === 'en' ? 'Requested budget' : '申请预算', type], 'The proposal type follows the requested-budget label');
+          assert.match(cardType, /\btext-right\b/, 'The plain proposal type aligns to the right');
+          assert.doesNotMatch(cardType, /\b(?:rounded[\w-]*|border[\w/-]*|bg-[\w/-]+)\b/, 'The proposal type has no pill, border, or gray background');
+          assert.equal((card.match(/data-proposal-field="type"/g) ?? []).length, 1, 'Each card displays its proposal type once');
+          assert.ok(visibleText(budgetSection, locale).endsWith(budget), 'The requested amount stays below the budget-heading row');
           const summary = card.match(/<p class="([^"]*text-sm leading-6[^"]*)">([^<]+)<\/p>/);
           assert.ok(summary, 'Cards preserve the proposal overview');
           assert.match(summary[1], /\bline-clamp-3\b/);
@@ -179,4 +188,4 @@ try {
     assert.equal(visibleText(compactBoundary, locale), locale === 'en' ? 'Updated Oct 18, 2026' : '更新于 2026年10月18日', 'Compact-mode UTC date behavior stays unchanged');
   }
 } finally { delete globalThis.__densityLocale; }
-console.log('Directory density: bilingual three-line cards with type/status headers and one-line icon metadata, Beijing card dates, resilient long/missing data, and unchanged compact rows.');
+console.log('Directory density: bilingual three-line cards with top-left statuses, plain right-aligned budget-row types, one-line icon metadata, Beijing card dates, resilient long/missing data, and unchanged compact rows.');
