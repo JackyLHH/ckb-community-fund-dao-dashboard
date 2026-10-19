@@ -29,6 +29,8 @@ export type ProposalVoting = {
   passPercent?: number;
   closed?: boolean;
   closesAt?: string;
+  openedAt?: string;
+  closedAt?: string;
   verifiedAt?: string;
   noteZh?: string;
   noteEn?: string;

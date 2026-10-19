@@ -5,6 +5,8 @@ import { voteEvidenceByProposalId } from '../lib/status-evidence.ts';
 const output = new URL('../data/votes.generated.json', import.meta.url);
 const saved = JSON.parse(await readFile(output, 'utf8'));
 const next = structuredClone(saved);
+const lifecycle = JSON.parse(await readFile(new URL('../data/lifecycle.generated.json', import.meta.url), 'utf8'));
+const enabledAt = Date.parse(lifecycle.enabledAt || new Date().toISOString());
 const domain = 'https://dao.ckb.community';
 const knownByThread = new Map(Object.entries({ ...saved.votes, ...voteEvidenceByProposalId })
   .map(([id, vote]) => [vote.url.match(/-(\d+)$/)?.[1], { id, vote }]));
@@ -46,7 +48,13 @@ try {
         await card.getByText('Votes required to pass', { exact: true }).waitFor({ state: 'visible', timeout: 20_000 });
         const vote = parseMetaforoVoteCard(await card.innerText(), url);
         if ((thread.poll_status === 'expire') !== vote.closed) throw new Error('Directory/card closure mismatch; retry next run');
-        const previous = next.votes[id];
+        const previous = next.votes[id]?.url === url ? next.votes[id] : undefined;
+        vote.openedAt = previous?.openedAt || new Date(thread.updated_at).toISOString();
+        if (vote.closed && (previous?.status === 'active' || Date.parse(vote.openedAt) >= enabledAt)) {
+          // The public card does not expose a reliable historical close time.
+          // Retain the first *observed* closure, never the latest recheck time.
+          vote.closedAt = previous?.closedAt || vote.verifiedAt;
+        }
         // Refresh active observations so stale-data detection remains useful;
         // closed results are written once and no longer polled.
         if (JSON.stringify(previous) !== JSON.stringify(vote)) next.votes[id] = vote;

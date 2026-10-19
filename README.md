@@ -52,6 +52,22 @@ The production cron calls `/api/cron/digest` at `08:00 UTC` (`16:00` China Stand
 
 Digest activity is limited to the preceding 24 hours. A new proposal must be a newly created proposal topic in the category. A progress update must be a new reply from the original proposal author and must either use a recognizable update/report heading (for example, weekly, monthly, milestone, status, delivery, or completion report) or contain multiple concrete delivery signals. Ordinary community replies, likes, bumps, formatting-only timestamp differences, and historical topics missing from state do not trigger a digest. The topic cursor is still advanced when non-qualifying replies appear, so the same discussion activity is not reconsidered on later days.
 
+### Discussion and voting notifications
+
+The existing bilingual update cards also include these lifecycle events:
+
+- **Discussion ends:** after seven full days (168 hours), report the original first post's likes received within that window. Fewer than 30 means it does not advance to voting; 30 or more means it can advance **after verification**, not that voting has started or funding has been approved.
+- **Voting starts:** link directly to the actual Metaforo voting page and invite participation.
+- **Voting ends:** report the final voting weight, approval percentage, and passed/not-passed outcome. A provisional tally never establishes a final result.
+
+`scripts/sync-lifecycle.mjs` runs alongside the approximately half-hourly vote observer. It reads first-post reaction timestamps, the complete chronological like-user list (with pagination), and public like activity when needed to fill an ambiguous timestamp. Truncated, inconsistent, or inaccessible evidence is deferred and makes the workflow fail visibly; the program never substitutes whole-topic likes or the current unfiltered count. Incomplete observations retain their last verified timestamps for retry. The daily digest also checks discussions that expired after the last observation, with a bounded verification time budget.
+
+`data/lifecycle.generated.json` is the durable public event log. Its first successful initialization sets the rollout baseline: old discussion deadlines and old closed votes are not replayed. Vote closure time is the first observation of the closed card when an exact source closure timestamp is unavailable. Events are delivered in the next scheduled **16:00 Beijing time** digest after detection, not as immediate messages; events detected after the cutoff go into a later digest. Scheduled GitHub jobs can be delayed by GitHub.
+
+Apply `supabase/migrations/20261019_digest_lifecycle.sql` before deploying this feature. The server-only `digest_delivery_receipts` table provides a short exclusive cron lease and per-event receipts for each subscriber and Telegram language channel. Successful destinations are not retried; failed lifecycle deliveries remain eligible in a later digest, even after 24 hours, without inflating the new day's counts for recipients who already received them. New subscribers do not receive the entire historical event log. Resend also receives a stable idempotency key. As with any external message service, a process failure after provider acceptance but before recording a receipt cannot provide a universal exactly-once guarantee (Telegram has no provider idempotency key).
+
+Run `npm test` (including the offline lifecycle integration tests) before publishing. Tests render the real email/Telegram templates and simulate the endpoint with stubbed services; they never send real subscription messages.
+
 Telegram delivery uses one Bot API token in Vercel:
 
 ```text

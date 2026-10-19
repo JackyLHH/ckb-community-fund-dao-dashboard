@@ -25,16 +25,22 @@ jobs:
         id: collect
         continue-on-error: true
         run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/vote-sync/node_modules/playwright/index.mjs" node --experimental-strip-types scripts/sync-votes.mjs
+      - name: Observe discussion and voting events
+        id: lifecycle
+        if: always()
+        continue-on-error: true
+        run: node --experimental-strip-types scripts/sync-lifecycle.mjs
       - name: Save observed results
+        if: always()
         run: |
-          if ! git diff --quiet -- data/votes.generated.json; then
+          if ! git diff --quiet -- data/votes.generated.json data/lifecycle.generated.json; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add data/votes.generated.json
+            git add data/votes.generated.json data/lifecycle.generated.json
             git commit -m 'Sync public Metaforo vote results'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
       - name: Report incomplete observations
-        if: steps.collect.outcome == 'failure'
+        if: steps.collect.outcome == 'failure' || steps.lifecycle.outcome == 'failure'
         run: exit 1

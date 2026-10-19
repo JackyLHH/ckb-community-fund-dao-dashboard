@@ -9,6 +9,7 @@ import {
 import { proposalOverridesById } from '../lib/proposal-overrides.js';
 import { cleanProposalTitle, looksLikeProposal } from '../lib/proposal-title.js';
 import { proposalOverviewTranslationsById } from '../lib/proposal-overview-translations.js';
+import { discussionDeadline, lifecycleLabel, lifecycleStatus, pendingLifecycleEvents, readDiscussionEvidence, type LifecycleEvent, type LifecycleSnapshot } from '../lib/digest-lifecycle.js';
 import {
   classifyProgressUpdate,
   DIGEST_LOOKBACK_MS,
@@ -35,6 +36,7 @@ type Subscriber = {
   status: string;
   confirmation_token: string;
   unsubscribe_token: string;
+  confirmed_at?: string;
 };
 type Topic = {
   id: number;
@@ -76,6 +78,7 @@ type DigestTopic = {
   latestPostNumber?: number;
   newPostCount: number;
   updateCategory?: ProgressUpdateCategory;
+  lifecycleEvent?: LifecycleEvent;
 };
 type EmailMessage = {
   subject: string;
@@ -133,10 +136,11 @@ async function db<T>(
   return (text ? JSON.parse(text) : undefined) as T;
 }
 
-async function sendEmail(to: string, message: EmailMessage) {
+async function sendEmail(to: string, message: EmailMessage, idempotencyKey?: string) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
-    headers: { Authorization: `Bearer ${requiredEnv('RESEND_API_KEY')}`, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${requiredEnv('RESEND_API_KEY')}`, 'Content-Type': 'application/json',
+      ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}) },
     body: JSON.stringify({
       from: process.env.EMAIL_FROM ?? 'CKB Community Fund DAO <updates@mail.ckbcommunityfunddao.xyz>',
       to: [to],
@@ -392,8 +396,22 @@ function localizedOverview(item: DigestTopic, locale: Locale) {
 }
 
 function localizedStatus(item: DigestTopic, locale: Locale) {
+  if (item.lifecycleEvent) {
+    const tags = lifecycleStatus(item.lifecycleEvent);
+    return tags.length ? tags.map((tag) => statusMeta[tag][locale]).join(' · ')
+      : locale === 'en' ? 'Awaiting verification' : '待核验';
+  }
   const tags = item.proposal ? getProposalStatusTags(item.proposal) : ['discussion'] as const;
   return tags.map((tag) => statusMeta[tag][locale]).join(' · ');
+}
+
+function updateLabel(item: DigestTopic, locale: Locale) {
+  return item.lifecycleEvent ? lifecycleLabel(item.lifecycleEvent, locale)
+    : progressUpdateCategoryLabel(item.updateCategory ?? { kind: 'general' }, locale);
+}
+
+function updateUrl(item: DigestTopic) {
+  return item.lifecycleEvent?.sourceUrl ?? topicUrl(item.topic, item.latestPostNumber);
 }
 
 function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: DigestTopic[], unsubscribeUrl: string) {
@@ -427,8 +445,8 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
     const metadata = en
       ? `Updated by ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}`
       : `由 ${item.latestPostAuthor} 更新${postedAt ? ` · ${postedAt}` : ''}`;
-    const updateCategory = progressUpdateCategoryLabel(item.updateCategory ?? { kind: 'general' }, locale);
-    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'Proposal update' : '提案进展'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:8px 0;color:#7a847f;font-size:12px">${esc(metadata)}</p><p style="margin:12px 0 0;color:#0b0f0e;font-size:14px;font-weight:bold;line-height:1.6">${esc(updateCategory)}</p><p style="margin:16px 0 0"><a href="${topicUrl(item.topic, item.latestPostNumber)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View this update' : '查看本次更新'}</a> <a href="${proposalUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Proposal record →' : '提案记录 →'}</a></p></li>`;
+    const updateCategory = updateLabel(item, locale);
+    return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'Proposal update' : '提案进展'} · ${esc(status)}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:8px 0;color:#7a847f;font-size:12px">${esc(metadata)}</p><p style="margin:12px 0 0;color:#0b0f0e;font-size:14px;font-weight:bold;line-height:1.6">${esc(updateCategory)}</p><p style="margin:16px 0 0"><a href="${esc(updateUrl(item))}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View this update' : '查看本次更新'}</a> <a href="${proposalUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Proposal record →' : '提案记录 →'}</a></p></li>`;
   };
   const section = (title: string, items: DigestTopic[], render: (item: DigestTopic) => string) => items.length
     ? `<h2 style="margin:30px 0 12px;font-size:19px">${title}</h2><ul style="padding:0;margin:0">${items.map(render).join('')}</ul>`
@@ -443,8 +461,8 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
     const title = localizedTitle(item, locale);
     if (updated) {
       const postedAt = digestTime(locale, item.latestPostCreatedAt);
-      const updateCategory = progressUpdateCategoryLabel(item.updateCategory ?? { kind: 'general' }, locale);
-      return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}\n${updateCategory}\n${en ? 'View this update' : '查看本次更新'}: ${topicUrl(item.topic, item.latestPostNumber)}`;
+      const updateCategory = updateLabel(item, locale);
+      return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}\n${updateCategory}\n${en ? 'View this update' : '查看本次更新'}: ${updateUrl(item)}`;
     }
     return `${title}\n${en ? 'Proposer' : '提案人'}: ${item.proposer}\n${en ? 'Budget' : '预算'}: ${item.budget ?? (en ? 'Not stated' : '未标明')}\n${localizedOverview(item, locale)}\n${proposalUrl(item.topic)}`;
   };
@@ -480,8 +498,8 @@ function telegramDigestMessages(locale: Locale, newTopics: DigestTopic[], update
   };
   const updateBlock = (item: DigestTopic, index: number) => {
     const title = localizedTitle(item, locale);
-    const updateCategory = progressUpdateCategoryLabel(item.updateCategory ?? { kind: 'general' }, locale);
-    return `${index + 1}. <a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- ${esc(updateCategory)}\n\n<a href="${esc(topicUrl(item.topic, item.latestPostNumber))}">${en ? 'Read this update →' : '阅读本次更新 →'}</a>`;
+    const updateCategory = updateLabel(item, locale);
+    return `${index + 1}. <a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- ${esc(updateCategory)}\n\n<a href="${esc(updateUrl(item))}">${en ? 'Read this update →' : '阅读本次更新 →'}</a>`;
   };
   const messages: string[] = [];
   let current = header;
@@ -678,10 +696,100 @@ async function handleResendWebhook(request: Request) {
   return json({ ok: true });
 }
 
+async function lifecycleDigestTopics(topics: Topic[]): Promise<DigestTopic[]> {
+  // Read the current committed event log, not a potentially old deployment's
+  // bundled snapshot. No proposal reply is required for these events to appear.
+  const response = await fetch('https://raw.githubusercontent.com/JackyLHH/ckb-community-fund-dao-dashboard/main/data/lifecycle.generated.json', {
+    cache: 'no-store', signal: AbortSignal.timeout(10_000),
+  });
+  if (!response.ok) throw new Error(`Lifecycle source ${response.status}`);
+  const snapshot = await response.json() as LifecycleSnapshot;
+  if (snapshot.version !== 1 || !Array.isArray(snapshot.events)) throw new Error('Invalid lifecycle source');
+  const events = pendingLifecycleEvents(snapshot);
+  const existing = new Set(events.map((event) => event.id));
+  const enabled = Date.parse(snapshot.enabledAt || '');
+  const now = Date.now();
+  const due = topics.filter((topic) => discussionDeadline(topic.created_at) >= enabled
+    && discussionDeadline(topic.created_at) <= now && !existing.has(`discussion-ended:${topic.id}`));
+  // Catch a discussion that expired between the last scheduled observation and
+  // the 16:00 digest. Bound the extra work to leave time for actual delivery.
+  const budgetEnd = now + 12_000;
+  for (let offset = 0; offset < due.length && Date.now() < budgetEnd; offset += 4) {
+    const observed = await Promise.allSettled(due.slice(offset, offset + 4).map(async (topic): Promise<LifecycleEvent> => {
+      const evidence = await readDiscussionEvidence(topic, snapshot.discussions[String(topic.id)], async (path) => {
+        const remaining = budgetEnd - Date.now();
+        if (remaining <= 0) throw new Error('Discussion verification time budget exceeded');
+        const result = await fetch(`${forumBaseUrl}${path}`, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(Math.min(5_000, remaining)) });
+        if (!result.ok) throw new Error(`Discussion source ${result.status}`);
+        return result.json();
+      }, now);
+      if (evidence.likes === null) throw new Error('Unverified discussion deadline');
+      return { id: `discussion-ended:${topic.id}`, topicId: topic.id, kind: 'discussion-ended', likes: evidence.likes,
+        occurredAt: new Date(discussionDeadline(topic.created_at)).toISOString(), sourceUrl: topicUrl(topic, 1) };
+    }));
+    for (const result of observed) {
+      if (result.status === 'fulfilled') events.push(result.value);
+      else console.error('Discussion deadline verification deferred', result.reason);
+    }
+  }
+  const byId = new Map(topics.map((topic) => [topic.id, topic]));
+  return events.flatMap((event) => {
+    const topic = byId.get(event.topicId);
+    if (!topic) return [];
+    const proposal = proposalById.get(String(topic.id));
+    return [{
+      topic, proposal, proposer: proposal?.author ?? 'Unknown', budget: null,
+      firstPostExcerpt: '', overviewZh: '', overviewEn: '',
+      latestPostAuthor: event.kind === 'discussion-ended' ? 'Nervos Talk' : 'Metaforo',
+      latestPostCreatedAt: event.occurredAt, latestPostExcerpt: '', newPostCount: 0, lifecycleEvent: event,
+    }];
+  });
+}
+
+function lifecycleReceiptKey(destination: string, item: DigestTopic) {
+  return `lifecycle:${destination}:${item.lifecycleEvent!.id}`;
+}
+
+async function undeliveredLifecycle(destination: string, items: DigestTopic[], confirmedAt?: string) {
+  const joined = Date.parse(confirmedAt || '');
+  const eligible = items.filter((item) => !Number.isFinite(joined)
+    || Date.parse(item.lifecycleEvent!.occurredAt) >= joined - DIGEST_LOOKBACK_MS);
+  if (!eligible.length) return [];
+  const sent = new Set<string>();
+  for (let offset = 0; offset < eligible.length; offset += 100) {
+    const keys = eligible.slice(offset, offset + 100).map((item) => JSON.stringify(lifecycleReceiptKey(destination, item)));
+    const receipts = await db<Array<{ key: string }>>('digest_delivery_receipts',
+      `select=key&status=eq.sent&key=in.${encodeURIComponent(`(${keys.join(',')})`)}`);
+    receipts.forEach((row) => sent.add(row.key));
+  }
+  return eligible.filter((item) => !sent.has(lifecycleReceiptKey(destination, item)));
+}
+
+async function saveLifecycleReceipts(destination: string, items: DigestTopic[]) {
+  if (!items.length) return;
+  const now = new Date().toISOString();
+  await db<void>('digest_delivery_receipts', 'on_conflict=key', {
+    method: 'POST', prefer: 'resolution=merge-duplicates,return=minimal',
+    body: items.map((item) => ({ key: lifecycleReceiptKey(destination, item), status: 'sent', lease_until: now, sent_at: now })),
+  });
+}
+
+async function digestIdempotencyKey(destination: string, fresh: DigestTopic[], updates: DigestTopic[]) {
+  const ids = [...fresh.map((item) => `new:${item.topic.id}`),
+    ...updates.map((item) => item.lifecycleEvent?.id ?? `post:${item.topic.id}:${item.latestPostNumber}`)].sort();
+  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${destination}|${ids.join('|')}`));
+  return `digest-${[...new Uint8Array(hash)].map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
 async function digest(request: Request) {
   if (!process.env.CRON_SECRET || request.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) return json({ ok: false }, 401);
   let runId = '';
+  let locked = false;
   try {
+    locked = await db<boolean>('rpc/claim_digest_delivery', '', {
+      method: 'POST', body: { p_key: 'daily-digest-lock', p_lease_seconds: 300 },
+    });
+    if (!locked) return json({ ok: true, skipped: 'already_running', sent: 0 });
     const run = await db<Array<{ id: string }>>('digest_runs', 'select=id', {
       method: 'POST', body: { status: 'running' }, prefer: 'return=representation',
     });
@@ -702,31 +810,51 @@ async function digest(request: Request) {
       const old = byId.get(topic.id);
       return Boolean(old && topicChanged(topic, old));
     });
-    const [freshDigestTopics, progressTopicGroups] = await Promise.all([
+    const [freshDigestTopics, progressTopicGroups, lifecycleTopics] = await Promise.all([
       Promise.all(fresh.map((topic) => buildDigestTopic(topic))),
       Promise.all(changed.map((topic) => buildProgressDigestTopics(topic, byId.get(topic.id)!, cutoffMs))),
+      lifecycleDigestTopics(topics),
     ]);
     const updatedDigestTopics = progressTopicGroups.flat();
-    if (!freshDigestTopics.length && !updatedDigestTopics.length) {
+    if (!freshDigestTopics.length && !updatedDigestTopics.length && !lifecycleTopics.length) {
       await saveStates(topics);
       if (runId) await db<void>('digest_runs', `id=eq.${runId}`, { method: 'PATCH', body: { status: 'no_changes', completed_at: new Date().toISOString() } });
       return json({ ok: true, changes: 0, sent: 0 });
     }
     const subscribers = await db<Subscriber[]>('email_subscribers', 'select=*&status=eq.confirmed');
+    const pendingEventIds = new Set<string>();
     let sent = 0;
     let failed = 0;
     for (let offset = 0; offset < subscribers.length; offset += 10) {
       const chunk = subscribers.slice(offset, offset + 10);
       const results = await Promise.allSettled(chunk.map(async (subscriber) => {
         const unsubscribeUrl = `${siteUrl()}/api/unsubscribe?token=${subscriber.unsubscribe_token}`;
-        await sendEmail(subscriber.email, digestMessage(subscriber.locale, freshDigestTopics, updatedDigestTopics, unsubscribeUrl));
+        const destination = `email:${subscriber.id}`;
+        const lifecycle = await undeliveredLifecycle(destination, lifecycleTopics, subscriber.confirmed_at);
+        lifecycle.forEach((item) => pendingEventIds.add(item.lifecycleEvent!.id));
+        const updates = [...updatedDigestTopics, ...lifecycle];
+        if (!freshDigestTopics.length && !updates.length) return false;
+        await sendEmail(subscriber.email, digestMessage(subscriber.locale, freshDigestTopics, updates, unsubscribeUrl),
+          await digestIdempotencyKey(destination, freshDigestTopics, updates));
+        await saveLifecycleReceipts(destination, lifecycle);
         await db<void>('email_subscribers', `id=eq.${subscriber.id}`, { method: 'PATCH', body: { last_sent_at: new Date().toISOString() } });
+        return true;
       }));
-      results.forEach((result) => result.status === 'fulfilled' ? sent += 1 : failed += 1);
+      results.forEach((result) => { if (result.status === 'rejected') failed += 1; else if (result.value) sent += 1; });
     }
+    const deliverTelegram = async (locale: Locale): Promise<TelegramDelivery> => {
+      const destination = `telegram:${locale}`;
+      const lifecycle = await undeliveredLifecycle(destination, lifecycleTopics);
+      lifecycle.forEach((item) => pendingEventIds.add(item.lifecycleEvent!.id));
+      const updates = [...updatedDigestTopics, ...lifecycle];
+      if (!freshDigestTopics.length && !updates.length) return { configured: true, locale, messagesSent: 0, messageIds: [] };
+      const result = await sendTelegramDigest(locale, freshDigestTopics, updates);
+      if (result.configured) await saveLifecycleReceipts(destination, lifecycle);
+      return result;
+    };
     const telegramResults = await Promise.allSettled([
-      sendTelegramDigest('zh', freshDigestTopics, updatedDigestTopics),
-      sendTelegramDigest('en', freshDigestTopics, updatedDigestTopics),
+      deliverTelegram('zh'),
+      deliverTelegram('en'),
     ]);
     const telegramDeliveries = telegramResults
       .filter((result): result is PromiseFulfilledResult<TelegramDelivery> => result.status === 'fulfilled')
@@ -741,10 +869,10 @@ async function digest(request: Request) {
     if (runId) await db<void>('digest_runs', `id=eq.${runId}`, {
       method: 'PATCH',
       body: {
-        status: failed || telegramFailed ? 'partial' : 'completed',
+        status: failed || telegramFailed ? 'partial' : sent || telegramMessages ? 'completed' : 'no_changes',
         completed_at: new Date().toISOString(),
         new_proposals: freshDigestTopics.length,
-        updated_proposals: updatedDigestTopics.length,
+        updated_proposals: updatedDigestTopics.length + pendingEventIds.size,
         recipients: sent,
         error_message: [failed ? `${failed} email delivery failure(s)` : '', ...deliveryErrors].filter(Boolean).join('; ').slice(0, 500) || null,
       },
@@ -753,7 +881,8 @@ async function digest(request: Request) {
     return json({
       ok: !partial,
       newProposals: freshDigestTopics.length,
-      updatedProposals: updatedDigestTopics.length,
+      updatedProposals: updatedDigestTopics.length + pendingEventIds.size,
+      lifecycleEvents: pendingEventIds.size,
       email: { sent, failed },
       telegram: { configuredLocales: telegramConfigured, messagesSent: telegramMessages, failed: telegramFailed },
     }, partial ? 207 : 200);
@@ -761,6 +890,10 @@ async function digest(request: Request) {
     console.error('Daily digest failed', error);
     if (runId) await db<void>('digest_runs', `id=eq.${runId}`, { method: 'PATCH', body: { status: 'failed', completed_at: new Date().toISOString(), error_message: error instanceof Error ? error.message.slice(0, 500) : 'Unknown error' } }).catch(() => undefined);
     return json({ ok: false }, 500);
+  } finally {
+    if (locked) await db<void>('digest_delivery_receipts', 'key=eq.daily-digest-lock', {
+      method: 'PATCH', body: { lease_until: new Date(0).toISOString() },
+    }).catch((error) => console.error('Digest lock release failed', error));
   }
 }
 
