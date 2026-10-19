@@ -119,7 +119,8 @@ try {
   const first = await GET(request());
   assert.equal(first.status, 200); assert.equal(emails.length, 2); assert.equal(telegram.length, 2);
   assert.equal(receipts.size, 16, 'Four events are receipted independently for two subscribers and two channels');
-  assert.match(emails[0].subject, /4 条进展更新/); assert.match(emails[1].subject, /4 proposal updates/);
+  assert.match(emails.find((message) => message.to[0] === 'zh@example.test').subject, /4 条进展更新/);
+  assert.match(emails.find((message) => message.to[0] === 'en@example.test').subject, /4 proposal updates/);
   const repeated = await GET(request());
   assert.equal((await repeated.json()).updatedProposals, 0, 'Old receipted events must not inflate daily statistics');
   assert.equal(emails.length, 2, 'Delivered events must not be sent again the next day');
@@ -136,7 +137,7 @@ try {
   const catchUp = await GET(request());
   assert.equal(catchUp.status, 200);
   assert.equal((await catchUp.json()).updatedProposals, 4, 'A deadline after the latest background scan must be checked by the daily digest itself');
-  assert.ok(emails.at(-2).html.includes('0 个赞，未达到 30'));
+  assert.ok(emails.findLast((message) => message.to[0] === 'zh@example.test').html.includes('0 个赞，未达到 30'));
   omitDiscussion = false;
   lease = true;
   assert.equal((await (await GET(request())).json()).skipped, 'already_running');
