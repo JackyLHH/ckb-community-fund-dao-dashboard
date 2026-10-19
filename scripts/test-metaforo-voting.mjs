@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { parseMetaforoVoteCard, resolveVoteLifecycle, sourceProposalId } from '../lib/metaforo-voting.ts';
 import { voteEvidenceByProposalId } from '../lib/status-evidence.ts';
+import { executionStatusTags } from '../lib/proposal-lifecycle.ts';
 
 const text = '[VOT] RIVET Total Votes: 244,888,704 · Voting Closed Yes 52.82% (129,338,247) No 47.18% (115,550,457) quorum 244,888,704/ 11,718,750 Minimum number of votes 52.82%/ 51% Votes required to pass approved!';
 const url = voteEvidenceByProposalId['10739'].url;
@@ -11,6 +12,15 @@ assert.equal(closed.totalVotes, 244888704);
 assert.equal(closed.yesPercent, 52.82);
 assert.equal(closed.minimumVotes, 11718750);
 assert.deepEqual(closed, voteEvidenceByProposalId['10739']);
+assert.deepEqual(executionStatusTags(['vote-passed'], closed.status === 'approved'), ['vote-passed', 'executing'], 'Rivet must enter execution immediately after approval without waiting for the funded list');
+assert.deepEqual(executionStatusTags(['discussion'], true), ['vote-passed', 'executing'], 'Future newly approved proposals enter execution automatically');
+assert.deepEqual(executionStatusTags(['vote-passed', 'completed'], true), ['vote-passed', 'completed']);
+assert.deepEqual(executionStatusTags(['vote-passed', 'ended'], true), ['vote-passed', 'ended']);
+assert.deepEqual(executionStatusTags(['vote-passed', 'executing', 'completed'], true), ['vote-passed', 'completed'], 'Completion replaces execution');
+assert.deepEqual(executionStatusTags(['vote-passed', 'executing', 'ended'], true), ['vote-passed', 'ended'], 'Termination replaces execution');
+assert.deepEqual(executionStatusTags(['ended'], true), ['ended'], 'Reviewed historical closures must not be reopened');
+assert.deepEqual(executionStatusTags(['voting']), ['voting'], 'Open votes do not enter execution');
+assert.deepEqual(executionStatusTags(['vote-failed', 'ended']), ['vote-failed', 'ended']);
 assert.equal(parseMetaforoVoteCard(text.replace(' · Voting Closed', ''), url, now).status, 'active', 'Passing provisional votes must remain active');
 assert.equal(parseMetaforoVoteCard(text.replaceAll('52.82%', '50.00%'), url, now).status, 'rejected');
 assert.equal(parseMetaforoVoteCard(text.replace('11,718,750', '300,000,000'), url, now).status, 'rejected');

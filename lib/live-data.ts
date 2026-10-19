@@ -26,6 +26,7 @@ import {
 } from '@/lib/digest-activity';
 import { cleanProposalTitle as cleanTitle, looksLikeProposal } from './proposal-title.js';
 import { resolveVoteLifecycle } from './metaforo-voting';
+import { executionStatusTags } from './proposal-lifecycle';
 import savedVotes from '../data/votes.generated.json';
 
 const categoryEndpoint = '/live/nervos/category';
@@ -219,6 +220,15 @@ function statusTagsFor(
   voting: ProposalVoting | null,
   now = new Date(),
 ): ProposalStatusTag[] {
+  return executionStatusTags(baseStatusTagsFor(id, proposal, voting, now), voting?.status === 'approved');
+}
+
+function baseStatusTagsFor(
+  id: string,
+  proposal: Pick<Proposal, 'createdAt' | 'discussion' | 'funded' | 'status' | 'statusTags'>,
+  voting: ProposalVoting | null,
+  now = new Date(),
+): ProposalStatusTag[] {
   if (voting?.status === 'active') return ['voting'];
   if (voting?.status === 'rejected') return ['vote-failed', 'ended'];
   const overriddenTags = proposalOverridesById[id]?.statusTags;
@@ -227,8 +237,9 @@ function statusTagsFor(
   if (proposal.status === 'paused') {
     return voting?.status === 'approved' || proposal.funded ? ['vote-passed', 'ended'] : ['ended'];
   }
-  if (voting?.status === 'approved') return proposal.funded ? ['vote-passed', 'executing'] : ['vote-passed'];
+  if (proposal.statusTags?.includes('completed')) return proposal.statusTags;
   if (proposal.statusTags?.includes('ended')) return proposal.statusTags;
+  if (voting?.status === 'approved') return ['vote-passed', 'executing'];
   if (proposal.funded) return ['vote-passed', 'executing'];
   // A link is not evidence that a vote is still open. Unknown results carry
   // no voting label rather than recycling a stale "voting" state.
@@ -246,7 +257,7 @@ function primaryStatus(tags: ProposalStatusTag[]) {
 function statusReasonZh(tags: ProposalStatusTag[]) {
   if (tags.includes('completed')) return '公开交付报告或里程碑证据表明提案承诺的工作已经全部完成。';
   if (tags.includes('vote-failed')) return 'Metaforo 结果显示提案未达到通过比例或法定票数要求，投票未通过。';
-  if (tags.includes('executing')) return '提案已通过投票并出现在已资助清单中，目前仍处于执行阶段。';
+  if (tags.includes('executing')) return '提案已通过投票，目前仍处于执行阶段，尚无完成或终止记录。';
   if (tags.includes('voting')) return '投票正在进行，最终结果尚未确定。';
   if (tags.includes('vote-passed')) return 'Metaforo 结果显示提案投票通过。';
   if (tags.includes('ended')) return '提案首帖未在 7 天内达到 30 个赞，或公开证据表明项目已终止、退款或结束。';

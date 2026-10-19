@@ -1,5 +1,6 @@
 import rawDataset from '../data/proposals.generated.json' with { type: 'json' };
 import { cleanProposalTitle } from './proposal-title.js';
+import { executionStatusTags } from './proposal-lifecycle.js';
 import { proposalCardSummariesById } from './proposal-card-summaries.js';
 import { proposalOverviewTranslationsById } from './proposal-overview-translations.js';
 import { proposalOverridesById } from './proposal-overrides.js';
@@ -229,8 +230,8 @@ export const statusDescriptions: Record<ProposalStatusTag, { zh: string; en: str
     en: 'Voting has closed and the final tally meets both quorum and approval thresholds.',
   },
   executing: {
-    zh: '提案已获资助，且仍有工作或里程碑处于执行阶段。',
-    en: 'The proposal was funded and still has work or milestones in progress.',
+    zh: '提案已通过投票，尚无全部完成或终止的记录，处于执行阶段。',
+    en: 'The proposal passed voting and remains in execution until completion or termination is recorded.',
   },
   'vote-failed': {
     zh: '最终投票未达到通过比例或法定票数要求。',
@@ -247,6 +248,10 @@ export const statusDescriptions: Record<ProposalStatusTag, { zh: string; en: str
 };
 
 export function getProposalStatusTags(proposal: Proposal, now = new Date()): ProposalStatusTag[] {
+  return executionStatusTags(baseProposalStatusTags(proposal, now), proposal.voting?.status === 'approved');
+}
+
+function baseProposalStatusTags(proposal: Proposal, now: Date): ProposalStatusTag[] {
   if (proposal.voting?.status === 'active') return ['voting'];
   if (proposal.voting?.status === 'unknown' && proposal.statusTags?.length === 0) return [];
   if (proposal.statusTags?.length) return proposal.statusTags;
@@ -273,8 +278,8 @@ export function getStatusExplanation(proposal: Proposal, locale: 'zh' | 'en') {
     ? 'The vote did not meet its approval or quorum requirement, so the proposal is closed.'
     : '投票未达到通过比例或法定票数要求，因此提案已结束。';
   if (tags.includes('executing')) return locale === 'en'
-    ? 'The proposal passed voting, appears in the funded list, and still has work or milestones in progress.'
-    : '提案已通过投票并列入资助清单，目前仍有工作或里程碑在执行。';
+    ? 'The proposal passed voting and remains in execution until completion or termination is recorded.'
+    : '提案已通过投票，尚无全部完成或终止的记录，处于执行阶段。';
   if (tags.includes('voting')) return locale === 'en'
     ? 'Voting is currently open. The result remains unsettled until the voting period closes.'
     : '投票正在进行，最终结果要到投票期结束后才能确定。';

@@ -28,6 +28,8 @@ The sync script reads the public Nervos Talk Discourse JSON endpoints and combin
 
 Results are committed to `data/votes.generated.json` and loaded by both the directory and detail pages through `/live/metaforo/votes`, with a five-minute CDN cache. Open pages refresh every five minutes and when focused. Closed human-reviewed evidence, including committee recounts, takes priority. Failed reads preserve the previous snapshot and fail the workflow visibly; observations of an active poll older than two hours become unverified instead of continuing to claim voting is open. A newly discovered link alone never establishes an active or final result.
 
+Once final voting approval is confirmed, a proposal displays both `Vote passed` and `In progress`, even if the funded list has not yet been updated. Recorded `Completed` or `Ended` evidence replaces `In progress` and prevents automatic reactivation. The directory, detail page, filters, and digest status labels share this rule.
+
 Display titles, translated titles, data sync, email, and Telegram all use `lib/proposal-title.js` to remove `[DIS]` and `【DIS】` markers. The digest classifier requires actual report/completion evidence next to a milestone number; proposal-scope revisions and review acknowledgements do not qualify as milestone reports or delivery updates.
 
 ## Deployment
