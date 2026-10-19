@@ -18,6 +18,13 @@ export type TreasurySpendingEntry = {
   recipients: TreasuryRecipient[];
 };
 
+/** Exact treasury balance immediately after each confirmed address transaction. */
+export type TreasuryBalanceEntry = {
+  txHash: string;
+  timestamp: string;
+  balanceShannons: string;
+};
+
 export type TreasurySpendingHistory = {
   version: 1;
   address: string;
@@ -26,6 +33,12 @@ export type TreasurySpendingHistory = {
   sourceUrl: string;
   transactionsScanned: number;
   entries: TreasurySpendingEntry[];
+  balances: TreasuryBalanceEntry[];
+};
+
+/** Existing version-1 expenditure-only files are upgraded by a full ledger scan. */
+type SavedTreasurySpendingHistory = Omit<TreasurySpendingHistory, 'balances'> & {
+  balances?: TreasuryBalanceEntry[];
 };
 
 type ExplorerCell = {
@@ -158,7 +171,8 @@ function sameTransaction(a: TreasuryTransaction, b: TreasuryTransaction): boolea
 }
 
 /**
- * Rebuild the complete address ledger, then retain only external outflows.
+ * Rebuild the complete address ledger, retaining every post-transaction balance
+ * and classifying external outflows separately.
  * Change outputs, deposits, refunds and transaction fees are not expenditure.
  * Mixed-input/typed transactions fail closed: external funding cannot safely be
  * attributed to this treasury without additional review.
@@ -167,7 +181,7 @@ export function buildTreasurySpendingHistory(
   pages: TreasuryTransactionPage[],
   reference: TreasuryAddressReference,
   generatedAt: string,
-  previous?: TreasurySpendingHistory,
+  previous?: SavedTreasurySpendingHistory,
 ): TreasurySpendingHistory {
   if (reference.address !== TREASURY_ADDRESS || pages.length === 0) throw new Error('Unsupported treasury ledger');
   if (!Number.isFinite(new Date(generatedAt).getTime())) throw new Error('Invalid spending verification time');
@@ -187,13 +201,28 @@ export function buildTreasurySpendingHistory(
     }
   }
   if (unique.size !== first.total) throw new Error('Missing or duplicate-only transaction pages');
+  // Explorer record IDs are not a documented in-block execution order. Without
+  // a verified transaction index, refuse ambiguous post-transaction balances.
+  const transactionBlocks = new Set<string>();
+  for (const transaction of unique.values()) {
+    if (transactionBlocks.has(transaction.blockNumber)) {
+      throw new Error('Multiple treasury transactions in the same block need verified transaction order; manual review required');
+    }
+    transactionBlocks.add(transaction.blockNumber);
+  }
   const transactions = [...unique.values()].sort((a, b) => {
     const blockDifference = BigInt(a.blockNumber) - BigInt(b.blockNumber);
     if (blockDifference !== BigInt(0)) return blockDifference < BigInt(0) ? -1 : 1;
     const idDifference = BigInt(a.id) - BigInt(b.id);
     return idDifference < BigInt(0) ? -1 : idDifference > BigInt(0) ? 1 : 0;
   });
+  for (let index = 1; index < transactions.length; index += 1) {
+    if (transactions[index].timestamp < transactions[index - 1].timestamp) {
+      throw new Error('Treasury block timestamps regress in canonical order; time-series display needs manual review');
+    }
+  }
   const entries: TreasurySpendingEntry[] = [];
+  const balances: TreasuryBalanceEntry[] = [];
   let balance = BigInt(0);
   for (const transaction of transactions) {
     const ownInputs = transaction.inputs.filter((cell) => cell.address === TREASURY_ADDRESS);
@@ -209,6 +238,11 @@ export function buildTreasurySpendingHistory(
     if (fee < BigInt(0)) throw new Error('Transaction outputs exceed inputs');
     balance += sum(ownOutputs) - sum(ownInputs);
     if (balance < BigInt(0)) throw new Error('Transaction history is incomplete or out of order');
+    balances.push({
+      txHash: transaction.txHash,
+      timestamp: transaction.timestamp,
+      balanceShannons: balance.toString(),
+    });
     if (ownInputs.length === 0) continue;
     const external = transaction.outputs.filter((cell) => cell.address !== TREASURY_ADDRESS);
     if (external.some((cell) => cell.cellType !== 'normal' || (cell.typeScript != null && cell.typeScript !== ''))) {
@@ -240,8 +274,22 @@ export function buildTreasurySpendingHistory(
     if (previous.entries.some((entry) => JSON.stringify(nextByHash.get(entry.txHash)) !== JSON.stringify(entry))) {
       throw new Error('A previously verified expenditure changed or disappeared; manual review required');
     }
-    // Inflows alone do not add expenditure points or create daily/no-op commits.
-    if (JSON.stringify(previous.entries) === JSON.stringify(entries) && previous.sourceUrl === TREASURY_SPENDING_URL) return previous;
+    if (previous.balances !== undefined) {
+      if (!Array.isArray(previous.balances)
+        || previous.balances.length !== previous.transactionsScanned
+        || new Set(previous.balances.map((entry) => entry.txHash)).size !== previous.balances.length) {
+        throw new Error('Unsupported saved treasury balance history');
+      }
+      const nextBalancesByHash = new Map(balances.map((entry) => [entry.txHash, entry]));
+      if (previous.balances.some((entry) => JSON.stringify(nextBalancesByHash.get(entry.txHash)) !== JSON.stringify(entry))) {
+        throw new Error('A previously verified treasury balance changed or disappeared; manual review required');
+      }
+      // Deposits/refunds create balance points even when expenditure is unchanged.
+      // Unchanged complete scans retain their verification time and avoid commits.
+      if (JSON.stringify(previous.entries) === JSON.stringify(entries)
+        && JSON.stringify(previous.balances) === JSON.stringify(balances)
+        && previous.sourceUrl === TREASURY_SPENDING_URL) return previous as TreasurySpendingHistory;
+    }
   }
   return {
     version: 1,
@@ -251,5 +299,6 @@ export function buildTreasurySpendingHistory(
     sourceUrl: TREASURY_SPENDING_URL,
     transactionsScanned: unique.size,
     entries,
+    balances,
   };
 }

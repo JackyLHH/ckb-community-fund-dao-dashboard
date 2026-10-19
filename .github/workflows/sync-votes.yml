@@ -30,7 +30,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: node --experimental-strip-types scripts/sync-lifecycle.mjs
-      - name: Verify all historical treasury expenditures
+      - name: Verify all historical treasury balances and expenditures
         id: treasury
         if: always()
         continue-on-error: true
@@ -42,7 +42,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add data/votes.generated.json data/lifecycle.generated.json data/treasury-spending.generated.json
-            git commit -m 'Sync public votes, lifecycle events and treasury expenditures'
+            git commit -m 'Sync public votes, lifecycle events and treasury history'
             git pull --rebase origin main
             git push origin HEAD:main
           fi

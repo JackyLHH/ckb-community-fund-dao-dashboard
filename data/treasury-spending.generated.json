@@ -1,7 +1,7 @@
 {
   "version": 1,
   "address": "ckb1qyqnrg4jfx82g29l44q6d93jnrm5ytcp0d8sjfev2q",
-  "generatedAt": "2026-10-19T06:57:55.493Z",
+  "generatedAt": "2026-10-19T07:20:34.938Z",
   "complete": true,
   "sourceUrl": "https://mainnet-api.explorer.nervos.org/api/v1/address_transactions/ckb1qyqnrg4jfx82g29l44q6d93jnrm5ytcp0d8sjfev2q",
   "transactionsScanned": 58,
@@ -649,6 +649,298 @@
           "amountCkb": "1666667"
         }
       ]
+    }
+  ],
+  "balances": [
+    {
+      "txHash": "0x77ef83629fdc12a21f202dfdf586c80e7ba7b893cb5e5d5f784e013ab838d110",
+      "timestamp": "2022-12-21T07:22:09.891Z",
+      "balanceShannons": "20000000000"
+    },
+    {
+      "txHash": "0xdf0ccd375c90a60cdf63912cd376227ea4799fb9103e98258e9bcc0b52fa3cad",
+      "timestamp": "2022-12-21T07:22:11.035Z",
+      "balanceShannons": "120000000000"
+    },
+    {
+      "txHash": "0xd0d1203c89d6eb95923d56daa2095c722e48fa99efcb9c849603731520549583",
+      "timestamp": "2022-12-22T06:22:33.309Z",
+      "balanceShannons": "69999999355"
+    },
+    {
+      "txHash": "0x7dfd83a685f988e6d35f15c333051f31119c5247c2e05635cd711609e2cd9bbb",
+      "timestamp": "2022-12-22T07:02:46.773Z",
+      "balanceShannons": "63799998762"
+    },
+    {
+      "txHash": "0x23ffb84cb170f741776ffd2c7629c7ff1c9e15b3ff7765068ea67750e05a8cfc",
+      "timestamp": "2022-12-22T08:53:30.030Z",
+      "balanceShannons": "38799998169"
+    },
+    {
+      "txHash": "0xa4b6eadca90fef14b56140306ae1a5ff68724c6ee841bcaa19dbea818472af2b",
+      "timestamp": "2022-12-22T08:58:04.093Z",
+      "balanceShannons": "14299997576"
+    },
+    {
+      "txHash": "0x415357296a028949e5e43ae5ef971af29e7bfcc01179ced085778ffabd52dddd",
+      "timestamp": "2022-12-22T12:47:36.375Z",
+      "balanceShannons": "0"
+    },
+    {
+      "txHash": "0xb7cec23d2cf2ebdf94a7896b2ed4bd59266d22b0504d527ede5c7fd4826cd699",
+      "timestamp": "2022-12-24T00:32:00.794Z",
+      "balanceShannons": "2300000000000000"
+    },
+    {
+      "txHash": "0x3061bb9bd10043ee4a946ab371d3caa0d6e29ec4af0530f494f5f4e896c33f40",
+      "timestamp": "2022-12-24T13:02:42.588Z",
+      "balanceShannons": "4600000000000000"
+    },
+    {
+      "txHash": "0xf71604a250f66fbf2a9e30cba05f428da161ab9d05f2f692867296a9fc3207c8",
+      "timestamp": "2022-12-25T00:25:35.035Z",
+      "balanceShannons": "6900000000000000"
+    },
+    {
+      "txHash": "0x479a342831d911a0a30f3eb03f7865a3ab5d248c5ffd198450c027c4f41c991b",
+      "timestamp": "2022-12-26T01:51:08.805Z",
+      "balanceShannons": "9200000099999508"
+    },
+    {
+      "txHash": "0x385df3eb222e79217fe983c983b37b56b59f6ae62b2d52f54ed38c1da8422344",
+      "timestamp": "2022-12-26T06:15:24.528Z",
+      "balanceShannons": "11500000109999153"
+    },
+    {
+      "txHash": "0xdf981199c2753ca1683a920f880f43fa199162c8676ab34334b7745f95c48d8b",
+      "timestamp": "2022-12-26T09:47:03.407Z",
+      "balanceShannons": "13800000110008798"
+    },
+    {
+      "txHash": "0x8205f8cc1331035b14d8649b5ac7be34315928ff194c10c9e83bfde2b8693166",
+      "timestamp": "2022-12-28T03:03:14.348Z",
+      "balanceShannons": "27600000110008798"
+    },
+    {
+      "txHash": "0x036588e50750d3fb69a25fa9e982dad852d9c3392a0fa8e47c84be7118cad5a8",
+      "timestamp": "2023-02-13T05:29:23.285Z",
+      "balanceShannons": "26566087810008205"
+    },
+    {
+      "txHash": "0x86da2aa2877deb615dd7ebfe23076c35e268a97e8346200907c4a6314b12c19a",
+      "timestamp": "2023-05-06T04:49:05.596Z",
+      "balanceShannons": "26555254210007612"
+    },
+    {
+      "txHash": "0x91a771c8839f01c3089f3cf6c580bf8d6d35fbbe552a893f98f612a195a604ae",
+      "timestamp": "2023-05-26T02:57:53.772Z",
+      "balanceShannons": "26423675310007019"
+    },
+    {
+      "txHash": "0x6346c982acb2c728167c29a502ef7c6076c56e1a1cc7be0d13073c7988f45e3c",
+      "timestamp": "2023-06-27T01:13:42.351Z",
+      "balanceShannons": "26263675310006426"
+    },
+    {
+      "txHash": "0xdbf4402021c46af3f329c3bccc9d8bda17bea57f7a007709deaf91219233a228",
+      "timestamp": "2023-07-11T17:42:52.171Z",
+      "balanceShannons": "26411415109854906"
+    },
+    {
+      "txHash": "0xba424c49fd8285159f160c747be907884cbf6231c1043ca33721870e994e2c21",
+      "timestamp": "2023-12-30T06:40:48.485Z",
+      "balanceShannons": "26172751609854261"
+    },
+    {
+      "txHash": "0xfac06dbb4c3e92cd51a39fbc8046948362a2a78dc18990c1339c8c758e54ce5f",
+      "timestamp": "2024-01-09T02:22:06.185Z",
+      "balanceShannons": "26025008709853668"
+    },
+    {
+      "txHash": "0x786d425fdb07d4acbef323fa6b2899e840cee3e9456b5f1c50d67ed2189766bd",
+      "timestamp": "2024-01-16T03:52:09.107Z",
+      "balanceShannons": "25974272309853075"
+    },
+    {
+      "txHash": "0xa3a60650a3d9a611a02182a085c9371fea0eeeb2e3e40ed86e0bc397089643b3",
+      "timestamp": "2024-01-19T03:13:31.902Z",
+      "balanceShannons": "25692398936045023"
+    },
+    {
+      "txHash": "0x6fb972048691bedc813355972b4856878df1b783dcef1a6b74b1c3d752de203f",
+      "timestamp": "2024-01-21T06:19:23.662Z",
+      "balanceShannons": "25410525562236961"
+    },
+    {
+      "txHash": "0xb9baf4ec0268a5361886281816d68271a1222983f93491f37e08780f7686f9fe",
+      "timestamp": "2024-02-05T04:41:05.101Z",
+      "balanceShannons": "25354150887474876"
+    },
+    {
+      "txHash": "0x70834d95bb2e4dc3c9aa90ac38436848f2905ec4007b21d4b20699489798d8c8",
+      "timestamp": "2024-02-28T07:01:23.740Z",
+      "balanceShannons": "25278984654454231"
+    },
+    {
+      "txHash": "0x09b6c890badf5478745b7df4b0bd2b91bac97fd2483067d8d7867e259d587567",
+      "timestamp": "2024-02-29T08:31:25.664Z",
+      "balanceShannons": "25208689254453638"
+    },
+    {
+      "txHash": "0x00825003fae1f0b00fbe2171736452056ca68dd995e3a22470ceaeb966131c63",
+      "timestamp": "2024-06-21T05:30:31.836Z",
+      "balanceShannons": "25149019823053043"
+    },
+    {
+      "txHash": "0xdd9b504c2fb89d2a67d972632710442a15d3ce03db93b7288228c25bb4f0bae2",
+      "timestamp": "2024-06-21T07:00:09.025Z",
+      "balanceShannons": "24679230867052450"
+    },
+    {
+      "txHash": "0xfea0c34464865457ce34f578286078ec6c0668527a050d40bdd1ea917c6fa890",
+      "timestamp": "2024-09-22T07:13:42.049Z",
+      "balanceShannons": "24679237067052043"
+    },
+    {
+      "txHash": "0x92f233a4cbd76f14e3c6184ce7ba9a9ccb12bda431ac69df42b5c6ee5ae5e3e1",
+      "timestamp": "2024-11-02T11:43:26.775Z",
+      "balanceShannons": "24611897067051398"
+    },
+    {
+      "txHash": "0x2992b63caade5c79ce078993d9a8fec7c7811f5f8d834c9d7bff96a981a90d1d",
+      "timestamp": "2025-07-04T02:09:54.366Z",
+      "balanceShannons": "24677533442051398"
+    },
+    {
+      "txHash": "0x273e5c732a257da4754d9f62382d6ddcd3f3c2b3d62ff9aab5b268669cb5ae3c",
+      "timestamp": "2025-08-08T03:35:24.771Z",
+      "balanceShannons": "24641510342050212"
+    },
+    {
+      "txHash": "0x0d802fe8793e15ca39ca7a87f1defdcdcbbfcad4e6ea9bfd823d7b5bccb28907",
+      "timestamp": "2025-10-23T02:08:56.464Z",
+      "balanceShannons": "24448646242048922"
+    },
+    {
+      "txHash": "0x07aef49a7290a534a901bb1e1bb701c141976cb4a7843cd3c4772e88ed12dfcb",
+      "timestamp": "2025-12-18T01:30:21.865Z",
+      "balanceShannons": "24309576657747736"
+    },
+    {
+      "txHash": "0x1cc067b60fe869704d48ab537b36f15ecdf8851b27b93b6bb2e67be79681675b",
+      "timestamp": "2025-12-19T08:45:43.347Z",
+      "balanceShannons": "24017264477746546"
+    },
+    {
+      "txHash": "0x2238842cbff411e10c63c316ca9bd4efabcd0e3861d29d1cf9a483b6631eb97e",
+      "timestamp": "2025-12-20T08:57:22.957Z",
+      "balanceShannons": "22497241141745252"
+    },
+    {
+      "txHash": "0x41a182b678b6312ac85807834a915bc9529f1c898b3ee4f27f2c3392b181fcbd",
+      "timestamp": "2026-02-11T03:00:46.821Z",
+      "balanceShannons": "22406166441744066"
+    },
+    {
+      "txHash": "0x99f25871c99b6f663b301fa267bf94a3c2649c2356f22b5f4cb4f7f1658ecb56",
+      "timestamp": "2026-03-10T08:53:12.614Z",
+      "balanceShannons": "22135163641742880"
+    },
+    {
+      "txHash": "0xc0d6256f62667a86f655add3d2a0dd22cf76e3afac82d6fd2690026289af72f2",
+      "timestamp": "2026-03-10T09:14:44.991Z",
+      "balanceShannons": "21906505041741694"
+    },
+    {
+      "txHash": "0x85fb0634ab39ed5f9b5d0fd4f22d6352a76d3102dc5d35581c6c7afa05b0294c",
+      "timestamp": "2026-03-17T00:05:09.310Z",
+      "balanceShannons": "21395322841740508"
+    },
+    {
+      "txHash": "0x6ad0e217a800ae14c650139661ba3c40fdb381091b8fa850c46a5670120229c1",
+      "timestamp": "2026-03-26T05:20:04.138Z",
+      "balanceShannons": "21163364041739322"
+    },
+    {
+      "txHash": "0xe1d8483b135facb4280e0ac06f84afdee46d763875336068cd8613c0056743c0",
+      "timestamp": "2026-04-06T04:35:51.617Z",
+      "balanceShannons": "20824859041738136"
+    },
+    {
+      "txHash": "0x03274cedea0cc5c39bcf669ad4d238d21e52267e9ee8ac60194ae6cbb730cb16",
+      "timestamp": "2026-05-12T07:41:29.262Z",
+      "balanceShannons": "20604989341736846"
+    },
+    {
+      "txHash": "0x88241cad0617d2ca5f1482217d557c89ea34429c55c61cf1cf34e637e412c286",
+      "timestamp": "2026-05-12T08:07:10.304Z",
+      "balanceShannons": "20292285741735660"
+    },
+    {
+      "txHash": "0x0c59bdaedb9be76e4682c75a254dafc35713cbe136d158a444d18dfa5b96c3dc",
+      "timestamp": "2026-05-12T08:11:19.295Z",
+      "balanceShannons": "19414579441734474"
+    },
+    {
+      "txHash": "0xfb96be152b5fbc01ed454c5dc713a03584b316f3139cc093577e233a1e039611",
+      "timestamp": "2026-06-02T01:09:57.431Z",
+      "balanceShannons": "18972753141733288"
+    },
+    {
+      "txHash": "0x5b4b7deecdb9c521902feb04e1b6a552467c2544f70faa9bb4d873c9949e5f89",
+      "timestamp": "2026-06-16T07:29:02.498Z",
+      "balanceShannons": "17289419641731998"
+    },
+    {
+      "txHash": "0x4163c0e5da469e8f62afb5fd6ef38a07fe45f7aaaffd8025bc80d09f5ccfdc4a",
+      "timestamp": "2026-07-11T03:22:18.537Z",
+      "balanceShannons": "17126376141730812"
+    },
+    {
+      "txHash": "0x1565338fd543a257906e5debe6b4b5cedbe4cff86af47ec620e18a3bfb838b9a",
+      "timestamp": "2026-07-19T12:05:49.568Z",
+      "balanceShannons": "16955921541729626"
+    },
+    {
+      "txHash": "0x63a7f3a52fc91c52939186ca9c1064238ccdfe498d3398f25707537f591bbaa4",
+      "timestamp": "2026-09-04T08:50:01.289Z",
+      "balanceShannons": "16668565141728440"
+    },
+    {
+      "txHash": "0x8f954193651b18d9ddeda44494f76a3a8d72aaf699b808a785d6e83da69f66a4",
+      "timestamp": "2026-09-05T02:45:09.337Z",
+      "balanceShannons": "16493565141727254"
+    },
+    {
+      "txHash": "0x5498c3ab6f2abf8f07fca785c4d3b2a63d27a5cce4054b35bb15ac6d84b46f50",
+      "timestamp": "2026-09-08T12:23:55.118Z",
+      "balanceShannons": "16343565141726068"
+    },
+    {
+      "txHash": "0x339b64f3b53ad611e290ceac724b98633f673ac3693a30bc54b69f7afbff7990",
+      "timestamp": "2026-09-08T12:54:28.424Z",
+      "balanceShannons": "16068335741724778"
+    },
+    {
+      "txHash": "0x6e6d22e05ba50a36d8b96f68a728474c5bf566102332827966d99cb112014494",
+      "timestamp": "2026-09-22T07:14:20.840Z",
+      "balanceShannons": "15961192841723592"
+    },
+    {
+      "txHash": "0xa86b7915ce458cd338aeb86e5a20c4ac4373c45420b798fb3537d4aad7936498",
+      "timestamp": "2026-10-02T14:14:39.394Z",
+      "balanceShannons": "15764342441722406"
+    },
+    {
+      "txHash": "0x1d55a5eb7e13e00a37e00d9438a4393e09c4373f475f05c3475188037bc921ee",
+      "timestamp": "2026-10-15T04:52:58.142Z",
+      "balanceShannons": "15625453541721220"
+    },
+    {
+      "txHash": "0xc167f79c0ffc6148d9e74f06cc5040ccf9a886c7b0fdd5d240451941e59608a7",
+      "timestamp": "2026-10-19T06:53:51.132Z",
+      "balanceShannons": "15458786841720034"
     }
   ]
 }

@@ -14,12 +14,12 @@ try {
 const deadline = Date.now() + 55_000;
 async function publicJson(url) {
   const remaining = deadline - Date.now();
-  if (remaining <= 0) throw new Error('Treasury verification timed out; saved expenditures are unchanged');
+  if (remaining <= 0) throw new Error('Treasury verification timed out; saved expenditures and balances are unchanged');
   const response = await fetch(url, {
     headers: { Accept: 'application/vnd.api+json', 'Content-Type': 'application/vnd.api+json' },
     signal: AbortSignal.timeout(Math.min(15_000, remaining)),
   });
-  if (!response.ok) throw new Error(`Explorer request failed (${response.status}); saved expenditures are unchanged`);
+  if (!response.ok) throw new Error(`Explorer request failed (${response.status}); saved expenditures and balances are unchanged`);
   return response.json();
 }
 
@@ -43,10 +43,10 @@ for (let attempt = 0; attempt < 2; attempt += 1) {
   }
 }
 if (next === saved) {
-  console.log(`Verified the full treasury ledger; ${saved.entries.length} expenditure records are unchanged.`);
+  console.log(`Verified the full treasury ledger; ${saved.entries.length} expenditures and ${saved.balances.length} balance records are unchanged.`);
 } else {
   const temporary = new URL('../data/treasury-spending.generated.json.tmp', import.meta.url);
   await writeFile(temporary, `${JSON.stringify(next, null, 2)}\n`);
   await rename(temporary, output);
-  console.log(`Saved ${next.entries.length} exact external expenditures from all ${next.transactionsScanned} verified address transactions.`);
+  console.log(`Saved ${next.entries.length} exact external expenditures and ${next.balances.length} post-transaction balances from all ${next.transactionsScanned} verified address transactions.`);
 }
