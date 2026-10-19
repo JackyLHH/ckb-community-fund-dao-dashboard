@@ -45,6 +45,18 @@ try {
       assert.match(html, /hidden md:contents/, 'Filters occupy the same desktop row but collapse on mobile');
       assert.match(html, /aria-controls="directory-filters"/);
       assert.match(html, /<output[^>]+aria-live="polite"/);
+      const stats = compiled.exports.render('LiveProjectStats');
+      const statNumbers = [...stats.matchAll(/<p class="([^"]*\btabular-nums\b[^"]*)">(\d+)<\/p>/g)];
+      assert.equal(statNumbers.length, 5, 'All five directory statistics remain present');
+      for (const [, classes] of statNumbers) {
+        assert.ok(classes.split(/\s+/).includes('text-white'), 'All statistic numbers use the same white text in either theme and language');
+        assert.doesNotMatch(classes, /(?:dark:)?text-\[#|dark:text-/, 'Statistic numbers must not regain a special color override');
+      }
+      assert.equal(Number(statNumbers[0][2]), count, 'All proposals retains the live proposal count');
+      if (count === 0) assert.ok(statNumbers.every((number) => number[2] === '0'), 'Empty live data retains truthful zero counts');
+      for (const query of ['', '?funded=1', '?type=Governance', '?status=discussion', '?status=voting']) {
+        assert.ok(stats.includes(`href="/projects${query}#proposal-directory"`), `Statistic deep link remains available: ${query || 'all'}`);
+      }
     }
     const stats = compiled.exports.render('LiveProjectStats');
     assert.doesNotMatch(stats, /Whole-directory overview|全站概况|these counts are not additive/);
@@ -66,4 +78,4 @@ assert.match(page, /zh="DAO 提案，一目了然" en="DAO proposals, at a glanc
 assert.match(page, /zh="查看社区提案、资助情况与交付进展。"/);
 assert.match(page, /en="See what’s proposed, funded, and delivered\."/);
 assert.doesNotMatch(page, /Explore every community proposal|Track CKB ecosystem proposals from discussion/);
-console.log('Directory layout: bilingual concise counts, no status panel or standalone funded toggle, one desktop control row, mobile disclosure, and URL compatibility pass.');
+console.log('Directory layout: five uniformly white live statistics with preserved deep links, bilingual concise counts, no status panel or standalone funded toggle, one desktop control row, mobile disclosure, and URL compatibility pass.');
