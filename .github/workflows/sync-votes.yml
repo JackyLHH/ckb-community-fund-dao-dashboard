@@ -30,19 +30,19 @@ jobs:
         if: always()
         continue-on-error: true
         run: node --experimental-strip-types scripts/sync-lifecycle.mjs
-      - name: Record the daily observed treasury balance
+      - name: Verify all historical treasury expenditures
         id: treasury
         if: always()
         continue-on-error: true
-        run: node --experimental-strip-types scripts/sync-treasury-history.mjs
+        run: node --experimental-strip-types scripts/sync-treasury-spending.mjs
       - name: Save observed results
         if: always()
         run: |
-          if ! git diff --quiet -- data/votes.generated.json data/lifecycle.generated.json data/treasury-history.generated.json; then
+          if ! git diff --quiet -- data/votes.generated.json data/lifecycle.generated.json data/treasury-spending.generated.json; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add data/votes.generated.json data/lifecycle.generated.json data/treasury-history.generated.json
-            git commit -m 'Sync public votes, lifecycle events and treasury observations'
+            git add data/votes.generated.json data/lifecycle.generated.json data/treasury-spending.generated.json
+            git commit -m 'Sync public votes, lifecycle events and treasury expenditures'
             git pull --rebase origin main
             git push origin HEAD:main
           fi

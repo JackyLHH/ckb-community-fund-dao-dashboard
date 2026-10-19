@@ -115,8 +115,8 @@ export default function Home() {
                 icon: Vote,
                 titleZh: '投票', titleEn: 'Voting',
                 metaZh: 'Metaforo · 公开投票 7 天', metaEn: 'Metaforo · 7-day public vote',
-                bodyZh: '预算类提案需至少 51% 赞成，且总投票权重不少于申请 CKB 数量的 3 倍；元规则修改提案需至少 67% 赞成，且总投票数不少于 185,000,000。',
-                bodyEn: 'Budget proposals need at least 51% approval and voting weight of at least three times the requested CKB. Meta-rule amendments need at least 67% approval and 185,000,000 total votes.',
+                bodyZh: '预算类提案需至少 51% 赞成，且总投票数不少于申请 CKB 数量的 3 倍；元规则修改提案需至少 67% 赞成，且总投票数不少于 185,000,000。',
+                bodyEn: 'Budget proposals need at least 51% approval and total CKB-weighted votes of at least three times the requested CKB. Meta-rule amendments need at least 67% approval and 185,000,000 total votes.',
               },
               {
                 no: '03',

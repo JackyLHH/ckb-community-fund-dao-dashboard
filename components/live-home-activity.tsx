@@ -25,7 +25,7 @@ export function LiveHomeActivity() {
               <LiveSyncBadge state={state} fetchedAt={data.meta.generatedAt} />
             </div>
             <h2 className="section-heading mt-3"><I18nText zh="最新提案活动" en="Latest proposal activity" /></h2>
-            <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground"><I18nText zh="按论坛最近活动排序；讨论回复不一定是提案人的进展报告。" en="Ordered by recent forum activity; a reply is not necessarily a progress report from the proposer." /></p>
+            <p title={locale === 'en' ? 'The update time includes forum replies, not only proposer progress reports.' : '更新时间包含论坛回复，并不一定是提案人的进展报告。'} className="mt-3 max-w-md text-sm leading-6 text-muted-foreground"><I18nText zh="按最近更新时间排序" en="Ordered by latest update" /></p>
             <div className="mt-6 flex gap-7">
               {[
                 { href: '/projects', count: data.meta.proposalCount, zh: '提案记录', en: 'Proposals' },
@@ -43,7 +43,7 @@ export function LiveHomeActivity() {
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`size-2 rounded-full ${leadStatus.dotClassName}`} aria-hidden="true" />
-                      <span className="text-xs font-semibold text-muted-foreground">{tags.map((tag) => locale === 'en' ? statusMeta[tag].en : statusMeta[tag].zh).join(' · ')} · <I18nText zh="论坛活动" en="Forum activity" /> {formatDate(proposal.updatedAt, locale === 'en' ? 'en-US' : 'zh-CN')}</span>
+                      <span title={locale === 'en' ? 'Latest forum activity may include community replies.' : '更新时间可能包含社区回复。'} className="text-xs font-semibold text-muted-foreground">{tags.map((tag) => locale === 'en' ? statusMeta[tag].en : statusMeta[tag].zh).join(' · ')} · <I18nText zh="更新于" en="Updated" /> <time dateTime={proposal.updatedAt}>{formatDate(proposal.updatedAt, locale === 'en' ? 'en-US' : 'zh-CN')}</time></span>
                     </div>
                     <h3 id={`activity-title-${proposal.id}`} className="mt-2 font-bold group-hover:text-primary">{getProposalTitle(proposal, locale)}</h3>
                     <p className="mt-1 line-clamp-2 text-sm leading-6 text-muted-foreground">{cleanSummary(proposal, 220, locale)}</p>

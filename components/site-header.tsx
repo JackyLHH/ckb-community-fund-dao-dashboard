@@ -11,6 +11,7 @@ import { useLocale } from '@/lib/use-locale';
 const pages = [
   { href: '/', zh: '总览', en: 'Overview' },
   { href: '/projects', zh: '提案', en: 'Proposals' },
+  { href: '/#subscribe', zh: '订阅', en: 'Subscribe' },
   { href: '/methodology', zh: '数据说明', en: 'Methodology' },
 ];
 const subscribePath = (sync: () => void) => {
@@ -43,7 +44,6 @@ export function SiteHeader() {
             className={`touch-target inline-flex items-center rounded-xl px-4 font-semibold transition ${active(page.href) ? 'bg-secondary text-primary' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'}`}>
             <I18nText zh={page.zh} en={page.en} />
           </Link>)}
-          <Link href="/#subscribe" className="touch-target inline-flex items-center rounded-xl px-4 font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground"><I18nText zh="订阅" en="Subscribe" /></Link>
         </nav>
         <div className="flex items-center gap-2">
           <ThemeSwitch /><LanguageSwitch />
@@ -54,7 +54,6 @@ export function SiteHeader() {
       </div>
       <nav hidden={!open} id="mobile-navigation" aria-label={t('手机导航', 'Mobile navigation')} className="border-t border-border px-4 py-3 lg:hidden">
         {pages.map(page => <Link key={page.href} href={page.href} onClick={() => setOpen(false)} aria-current={active(page.href) ? 'page' : undefined} className={`touch-target flex items-center rounded-xl px-4 font-semibold ${active(page.href) ? 'bg-secondary text-primary' : 'hover:bg-secondary'}`}><I18nText zh={page.zh} en={page.en} /></Link>)}
-        <Link href="/#subscribe" onClick={() => setOpen(false)} className="touch-target flex items-center rounded-xl px-4 hover:bg-secondary"><I18nText zh="订阅邮件与 Telegram" en="Email & Telegram subscriptions" /></Link>
         <a href="https://talk.nervos.org/c/daos-funding/ckb-community-fund-dao/65" target="_blank" rel="noreferrer" className="touch-target flex items-center gap-2 rounded-xl px-4 hover:bg-secondary">Nervos Talk <ArrowUpRight className="size-4" aria-hidden="true" /><span className="sr-only">{t('在新标签页打开', 'opens in a new tab')}</span></a>
       </nav>
     </header>

@@ -18,11 +18,10 @@ export function LiveTreasuryCard() {
       <div className="flex items-start justify-between gap-5">
         <div>
           <p className="label-caps text-white/75"><I18nText zh="国库余额" en="Treasury balance" /></p>
-          <p className="mt-4 font-mono text-[clamp(1.8rem,4.5vw,3.5rem)] font-semibold tracking-[-.04em] text-[#c8ff67]">
-            {Number(treasury.remainingCkb).toLocaleString('en-US', { maximumFractionDigits: 0 })}
+          <p className="mt-4 whitespace-nowrap font-mono text-[clamp(1.25rem,3.2vw,2.6rem)] font-semibold tracking-[-.04em] text-[#c8ff67]">
+            {Number(treasury.remainingCkb).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })}
           </p>
           <p className="mt-1 text-sm text-white/75"><I18nText zh="剩余 CKB" en="CKB remaining" /></p>
-          <p className="mt-1 break-all font-mono text-xs text-white/70"><I18nText zh="完整读取值：" en="Read value: " />{treasury.remainingCkb} CKB</p>
         </div>
         <Landmark className="hidden size-7 shrink-0 text-[#7fe0bc] sm:block" aria-hidden="true" />
       </div>
@@ -37,15 +36,13 @@ export function LiveTreasuryCard() {
       <div className="mt-8 grid grid-cols-2 gap-3 border-t border-white/10 pt-6">
         <div>
           <p className="font-mono text-2xl font-semibold">{treasury.fundedProposalCount}</p>
-          <p className="mt-1 text-sm text-white/75"><I18nText zh="清单内已资助提案" en="Funded proposals on the list" /></p>
-          <p className="mt-1 text-xs text-white/70"><I18nText zh={`清单更新于 ${treasury.forumAsOf ?? treasury.asOf}`} en={`List dated ${treasury.forumAsOf ?? treasury.asOf}`} /></p>
+          <p className="mt-1 text-sm text-white/75"><I18nText zh="已资助提案" en="Funded proposals" /></p>
         </div>
         <div>
           <p className="font-mono text-lg font-semibold">{treasury.asOf.replaceAll('-', '.')}</p>
           <p className="mt-1 text-sm text-white/75"><I18nText zh={treasury.balanceSource === 'chain' ? '链上余额读取日期' : '论坛余额快照日期'} en={treasury.balanceSource === 'chain' ? 'On-chain balance read date' : 'Forum balance snapshot date'} /></p>
         </div>
       </div>
-      <p className="mt-4 text-xs leading-5 text-white/70"><I18nText zh="余额、资助清单与投票数据来自不同来源，更新日期可能不同。余额变化不等同于资助支出。" en="Balance, funding list, and votes have separate sources and dates. A balance change is not necessarily grant spending." /></p>
       <a href={balanceLink} target="_blank" rel="noreferrer" className="touch-target mt-2 inline-flex items-center gap-1.5 rounded-lg text-sm font-semibold text-[#7fe0bc] hover:text-[#c8ff67]">
         <I18nText zh="查看余额来源" en="View balance source" /> <ArrowUpRight className="size-3.5" />
       </a>

@@ -52,11 +52,13 @@ Personal management credentials are 256-bit bearer tokens in a URL **fragment**,
 
 Preference changes do not backfill previously excluded lifecycle events. Language-only changes preserve the event eligibility boundary. Email confirmation is idempotent, and bounce/complaint suppression remains authoritative during concurrent requests.
 
-### Observed treasury history
+### Verified treasury expenditures
 
-`scripts/sync-treasury-history.mjs` records at most one actual Explorer balance per Beijing day in `data/treasury-history.generated.json`, alongside the vote workflow. The first verified observation is 2026-10-19. Missing days are never filled with estimates. The chart only appears after two observations, labels its auto-scaled range, and includes an exact shannon-derived CKB table. Balance changes must not be described as grant spending without transaction-level evidence.
+`scripts/sync-treasury-spending.mjs` paginates the public Explorer transaction history for the published treasury address and stores verified external CKB transfers in `data/treasury-spending.generated.json`. It runs alongside the existing vote workflow, not once per day. The cumulative line includes every verified expenditure, and the disclosure lists each transaction rather than daily balance samples. Figures use exact integer shannons, displayed to three CKB decimals.
 
-`npm test` includes offline preference/security, detail/source-failure, directory, theme/locale, and exact balance-history regressions. These tests never send real email or Telegram messages.
+Only external transfers funded entirely by this treasury are counted; own-address change and internal reorganizations, incoming refunds, and miner fees are excluded. Payments are not automatically attributed to a proposal or described as approved grants: the complete address history also contains early test transfers. Incomplete pagination, truncated cells, mixed ownership, or a ledger that cannot reconcile with the current balance must fail visibly and preserve the last verified file. No artificial historical backfill is used. The collector does not rewrite an unchanged expenditure dataset on every run.
+
+`npm test` includes offline preference/security, detail/source-failure, directory, theme/locale, expenditure validation, and chart regressions. These tests never send real email or Telegram messages.
 
 ## Proposal overview translation priority
 
