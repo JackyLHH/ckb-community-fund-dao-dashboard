@@ -10,6 +10,7 @@ import { proposalOverridesById } from '../lib/proposal-overrides.js';
 import { cleanProposalTitle, looksLikeProposal } from '../lib/proposal-title.js';
 import { proposalOverviewTranslationsById } from '../lib/proposal-overview-translations.js';
 import { discussionDeadline, lifecycleLabel, lifecycleStatus, pendingLifecycleEvents, readDiscussionEvidence, type LifecycleEvent, type LifecycleSnapshot } from '../lib/digest-lifecycle.js';
+import { confirmationCooldown, filterSubscriptionDigest, maskedEmail, normalizeSubscriptionPreferences } from '../lib/subscription-preferences.js';
 import {
   classifyProgressUpdate,
   DIGEST_LOOKBACK_MS,
@@ -37,6 +38,10 @@ type Subscriber = {
   confirmation_token: string;
   unsubscribe_token: string;
   confirmed_at?: string;
+  preferences?: unknown;
+  preferences_updated_at?: string | null;
+  confirmation_sent_at?: string | null;
+  management_sent_at?: string | null;
 };
 type Topic = {
   id: number;
@@ -107,7 +112,9 @@ type TelegramDelivery = {
 
 const proposalById = new Map(proposals.map((proposal) => [proposal.id, proposal]));
 
-const json = (data: unknown, status = 200) => Response.json(data, { status });
+const json = (data: unknown, status = 200) => Response.json(data, {
+  status, headers: { 'Cache-Control': 'no-store, private', 'Referrer-Policy': 'no-referrer' },
+});
 const siteUrl = () => publicSiteUrl;
 const requiredEnv = (name: string) => {
   const value = process.env[name];
@@ -414,7 +421,7 @@ function updateUrl(item: DigestTopic) {
   return item.lifecycleEvent?.sourceUrl ?? topicUrl(item.topic, item.latestPostNumber);
 }
 
-function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: DigestTopic[], unsubscribeUrl: string) {
+function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: DigestTopic[], unsubscribeUrl: string, preferencesUrl?: string) {
   const en = locale === 'en';
   const newCount = newTopics.length;
   const updatedCount = updatedTopics.length;
@@ -452,8 +459,8 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
     ? `<h2 style="margin:30px 0 12px;font-size:19px">${title}</h2><ul style="padding:0;margin:0">${items.map(render).join('')}</ul>`
     : '';
   const footer = en
-    ? `You receive this email because you subscribed to daily proposal updates. Generated at ${esc(generatedAt)} China Standard Time. <a href="${esc(unsubscribeUrl)}">Unsubscribe</a>.`
-    : `你收到此邮件是因为订阅了每日提案更新。本期汇总生成于北京时间 ${esc(generatedAt)}。<a href="${esc(unsubscribeUrl)}">取消订阅</a>。`;
+    ? `You receive this email because you subscribed to daily proposal updates. Generated at ${esc(generatedAt)} China Standard Time (UTC+8). ${preferencesUrl ? `<a href="${esc(preferencesUrl)}">Manage preferences</a> · ` : ''}<a href="${esc(unsubscribeUrl)}">Unsubscribe</a>.`
+    : `你收到此邮件是因为订阅了每日提案更新。本期汇总生成于北京时间 ${esc(generatedAt)}。${preferencesUrl ? `<a href="${esc(preferencesUrl)}">管理订阅偏好</a> · ` : ''}<a href="${esc(unsubscribeUrl)}">取消订阅</a>。`;
   const preheader = en
     ? `${newCount} new ${plural(newCount, 'proposal')} and ${updatedCount} ${plural(updatedCount, 'proposal update')} in today’s digest.`
     : `今日汇总：${newCount} 份新提案，${updatedCount} 条进展更新。`;
@@ -474,7 +481,7 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
   return {
     subject,
     html: shell(content, footer, preheader),
-    text: `${greeting}\n${dateLabel}\n\n${intro}\n${summary}\n\n${textSections}\n\n${en ? 'Open the proposal directory' : '查看提案目录'}: ${siteUrl()}/projects\n${en ? 'Unsubscribe' : '取消订阅'}: ${unsubscribeUrl}`,
+    text: `${greeting}\n${dateLabel}\n\n${intro}\n${summary}\n\n${textSections}\n\n${en ? 'Open the proposal directory' : '查看提案目录'}: ${siteUrl()}/projects${preferencesUrl ? `\n${en ? 'Manage preferences' : '管理订阅偏好'}: ${preferencesUrl}` : ''}\n${en ? 'Unsubscribe' : '取消订阅'}: ${unsubscribeUrl}`,
     headers: {
       'List-Unsubscribe': `<${unsubscribeUrl}>`,
       'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
@@ -585,17 +592,37 @@ async function saveStates(topics: Topic[]) {
   });
 }
 
+const suppressedStatuses = new Set(['bounced', 'complained', 'suppressed']);
+
+async function claimSubscriptionMail(email: string) {
+  // Share a server-side lease across confirmation and management requests. A
+  // timestamp checked in application code alone permits parallel email floods.
+  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(email));
+  const key = [...new Uint8Array(hash)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  return db<boolean>('rpc/claim_digest_delivery', '', {
+    method: 'POST', body: { p_key: `subscription-mail:${key}`, p_lease_seconds: 60 },
+  });
+}
+
+function subscriptionReceipt(email: string) {
+  // Do not reveal whether an address is new, confirmed, pending or suppressed.
+  return json({ ok: true, code: 'request_received', destination: maskedEmail(email), retryAfter: 60 });
+}
+
 async function subscribe(request: Request) {
   const input = await request.json() as { email?: string; locale?: string; company?: string };
-  if (input.company) return json({ ok: true });
+  if (input.company) return json({ ok: true, code: 'request_received', retryAfter: 60 });
   const email = input.email?.trim().toLowerCase() ?? '';
   const locale: Locale = input.locale === 'en' ? 'en' : 'zh';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) return json({ ok: false, code: 'invalid_email' }, 400);
+  if (!await claimSubscriptionMail(email)) return subscriptionReceipt(email);
   const existing = await db<Subscriber[]>('email_subscribers', `select=*&email=eq.${encodeURIComponent(email)}&limit=1`);
-  if (existing[0]?.status === 'confirmed') return json({ ok: true, code: 'already_subscribed' });
-  if (['bounced', 'complained', 'suppressed'].includes(existing[0]?.status ?? '')) {
-    return json({ ok: false, code: 'delivery_blocked' }, 409);
+  if (suppressedStatuses.has(existing[0]?.status ?? '')) return subscriptionReceipt(email);
+  if (existing[0]?.status === 'confirmed') {
+    if (!confirmationCooldown(existing[0].management_sent_at)) await sendManagementLink(existing[0]);
+    return subscriptionReceipt(email);
   }
+  if (confirmationCooldown(existing[0]?.confirmation_sent_at)) return subscriptionReceipt(email);
   const confirmationToken = token();
   const record = {
     email,
@@ -606,34 +633,109 @@ async function subscribe(request: Request) {
     confirmed_at: null,
     unsubscribed_at: null,
   };
-  await db<void>('email_subscribers', existing[0] ? `id=eq.${existing[0].id}` : '', {
-    method: existing[0] ? 'PATCH' : 'POST', body: record,
+  const written = await db<Subscriber[]>('email_subscribers', existing[0] ? `id=eq.${existing[0].id}&status=in.(pending,unsubscribed)` : '', {
+    method: existing[0] ? 'PATCH' : 'POST', body: record, prefer: 'return=representation',
   });
+  if (!written.length) return subscriptionReceipt(email); // A suppression webhook won the race.
   const confirmationUrl = `${siteUrl()}/api/confirm?token=${confirmationToken}`;
   await sendEmail(email, confirmationMessage(locale, confirmationUrl));
-  return json({ ok: true, code: 'confirmation_sent' });
+  await db<void>('email_subscribers', `email=eq.${encodeURIComponent(email)}`, {
+    method: 'PATCH', body: { confirmation_sent_at: new Date().toISOString() },
+  });
+  return subscriptionReceipt(email);
+}
+
+function managementUrl(value: string, proposalId?: string) {
+  // A fragment never reaches our hosting logs, request URLs or referrer headers.
+  return `${siteUrl()}/subscription${proposalId && /^[1-9]\d{0,8}$/.test(proposalId) ? `?proposal=${proposalId}` : ''}#token=${value}`;
+}
+
+async function requestManagementLink(request: Request) {
+  const input = await request.json() as { email?: string; locale?: string; company?: string; proposalId?: string };
+  if (input.company) return json({ ok: true, code: 'management_sent', retryAfter: 60 });
+  const email = input.email?.trim().toLowerCase() ?? '';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) return json({ ok: false, code: 'invalid_email' }, 400);
+  if (!await claimSubscriptionMail(email)) return json({ ok: true, code: 'management_sent', retryAfter: 60 });
+  const matches = await db<Subscriber[]>('email_subscribers', `select=*&email=eq.${encodeURIComponent(email)}&limit=1`);
+  const subscriber = matches[0];
+  // Identical feedback for unknown, pending and suppressed addresses avoids an
+  // email-enumeration endpoint. Only confirmed subscribers receive this email.
+  if (subscriber?.status === 'confirmed' && !confirmationCooldown(subscriber.management_sent_at)) {
+    await sendManagementLink(subscriber, input.proposalId);
+  }
+  return json({ ok: true, code: 'management_sent', retryAfter: 60 });
+}
+
+async function sendManagementLink(subscriber: Subscriber, proposalId?: string) {
+    const locale = subscriber.locale === 'en' ? 'en' : 'zh';
+    const en = locale === 'en';
+    const url = managementUrl(subscriber.unsubscribe_token, proposalId);
+    const heading = en ? 'Manage your proposal updates' : '管理你的提案订阅';
+    const body = en
+      ? 'Hello, CKB community friend 👋 You can choose your email language, update categories and proposals below. Keep this personal link private. If you did not request it, simply ignore this email.'
+      : '你好，CKB 社区的朋友 👋 你可以通过下方按钮选择邮件语言、动态类别和关注的提案。请勿分享这个私人链接。如果不是你发起的请求，忽略此邮件即可。';
+    const footer = en ? 'Questions? Simply reply to this email.' : '有问题？直接回复这封邮件即可。';
+    await sendEmail(subscriber.email, {
+      subject: heading,
+      html: shell(`<h1 style="margin-top:0">${heading}</h1><p style="line-height:1.75;color:#4d5953">${body}</p><a href="${esc(url)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:13px 20px;font-weight:bold">${heading}</a>`, footer, heading),
+      text: `${heading}\n\n${body}\n\n${url}\n\n${footer}`,
+    });
+    await db<void>('email_subscribers', `id=eq.${subscriber.id}`, {
+      method: 'PATCH', body: { management_sent_at: new Date().toISOString() },
+    });
+}
+
+async function subscriptionPreferences(request: Request) {
+  const input = await request.json() as { token?: string; preferences?: unknown; locale?: string };
+  const value = input.token ?? '';
+  const privateJson = (data: unknown, status = 200) => Response.json(data, {
+    status, headers: { 'Cache-Control': 'no-store, private', 'Referrer-Policy': 'no-referrer' },
+  });
+  if (!/^[a-f0-9]{64}$/.test(value)) return privateJson({ ok: false, code: 'invalid_link' }, 401);
+  const matches = await db<Subscriber[]>('email_subscribers', `select=*&unsubscribe_token=eq.${value}&limit=1`);
+  const subscriber = matches[0];
+  if (!subscriber || !constantTimeEqual(subscriber.unsubscribe_token ?? '', value) || subscriber.status !== 'confirmed') return privateJson({ ok: false, code: 'invalid_link' }, 401);
+  if (input.preferences !== undefined) {
+    if (!input.preferences || typeof input.preferences !== 'object' || Array.isArray(input.preferences)
+      || !['zh', 'en'].includes(input.locale ?? '')) return privateJson({ ok: false, code: 'invalid_preferences' }, 400);
+    const normalized = normalizeSubscriptionPreferences(input.preferences);
+    const changed = JSON.stringify(normalized) !== JSON.stringify(normalizeSubscriptionPreferences(subscriber.preferences));
+    await db<void>('email_subscribers', `id=eq.${subscriber.id}`, {
+      method: 'PATCH', body: { preferences: normalized, locale: input.locale,
+        ...(changed ? { preferences_updated_at: new Date().toISOString() } : {}) },
+    });
+  }
+  return privateJson({ ok: true, destination: maskedEmail(subscriber.email),
+    locale: input.preferences !== undefined ? input.locale : subscriber.locale,
+    preferences: normalizeSubscriptionPreferences(input.preferences ?? subscriber.preferences) });
 }
 
 async function updateSubscription(request: Request, action: 'confirm' | 'unsubscribe', redirect = true) {
+  const result = (status: 'invalid' | 'confirmed' | 'unsubscribed') => redirect
+    ? new Response(null, { status: 302, headers: { Location: `${siteUrl()}/?subscription=${status}`, 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } })
+    : json({ ok: status !== 'invalid' }, status === 'invalid' ? 400 : 200);
   const value = new URL(request.url).searchParams.get('token') ?? '';
-  if (!/^[a-f0-9]{64}$/.test(value)) {
-    return redirect ? Response.redirect(`${siteUrl()}/?subscription=invalid`, 302) : json({ ok: false }, 400);
-  }
+  if (!/^[a-f0-9]{64}$/.test(value)) return result('invalid');
   const column = action === 'confirm' ? 'confirmation_token' : 'unsubscribe_token';
   const matches = await db<Subscriber[]>('email_subscribers', `select=*&${column}=eq.${value}&limit=1`);
-  if (!matches[0]) {
-    return redirect ? Response.redirect(`${siteUrl()}/?subscription=invalid`, 302) : json({ ok: true });
-  }
+  const subscriber = matches[0];
+  if (!subscriber || !constantTimeEqual(subscriber[column] ?? '', value)) return action === 'unsubscribe' && !redirect ? json({ ok: true }) : result('invalid');
+  if (action === 'confirm' && !['pending', 'confirmed'].includes(subscriber.status)) return result('invalid');
+  if (action === 'confirm' && subscriber.status === 'confirmed') return result('confirmed');
+  // One-click unsubscribe remains idempotent but cannot erase a suppression and
+  // thereby let the signup flow reactivate a complained-about address later.
+  if (action === 'unsubscribe' && (suppressedStatuses.has(subscriber.status) || subscriber.status === 'unsubscribed')) return result('unsubscribed');
   const now = new Date().toISOString();
-  await db<void>('email_subscribers', `id=eq.${matches[0].id}`, {
+  const guard = action === 'confirm' ? `status=eq.pending&confirmation_token=eq.${value}` : 'status=in.(pending,confirmed,unsubscribed)';
+  const written = await db<Subscriber[]>('email_subscribers', `id=eq.${subscriber.id}&${guard}`, {
     method: 'PATCH',
+    prefer: 'return=representation',
     body: action === 'confirm'
       ? { status: 'confirmed', confirmed_at: now, unsubscribed_at: null }
       : { status: 'unsubscribed', unsubscribed_at: now },
   });
-  return redirect
-    ? Response.redirect(`${siteUrl()}/?subscription=${action === 'confirm' ? 'confirmed' : 'unsubscribed'}`, 302)
-    : json({ ok: true });
+  if (action === 'confirm' && !written.length) return result('invalid');
+  return result(action === 'confirm' ? 'confirmed' : 'unsubscribed');
 }
 
 function decodeBase64(value: string) {
@@ -830,12 +932,18 @@ async function digest(request: Request) {
       const results = await Promise.allSettled(chunk.map(async (subscriber) => {
         const unsubscribeUrl = `${siteUrl()}/api/unsubscribe?token=${subscriber.unsubscribe_token}`;
         const destination = `email:${subscriber.id}`;
-        const lifecycle = await undeliveredLifecycle(destination, lifecycleTopics, subscriber.confirmed_at);
+        const filtered = filterSubscriptionDigest(subscriber.preferences, freshDigestTopics, [...updatedDigestTopics, ...lifecycleTopics]);
+        const preferenceStart = Date.parse(subscriber.preferences_updated_at ?? '');
+        // Newly enabled categories/watchlists start now; do not resurrect weeks
+        // of deliberately excluded events when someone changes their choices.
+        const eligibleLifecycle = filtered.updates.filter((item) => item.lifecycleEvent
+          && (!Number.isFinite(preferenceStart) || Date.parse(item.lifecycleEvent.occurredAt) >= preferenceStart));
+        const lifecycle = await undeliveredLifecycle(destination, eligibleLifecycle, subscriber.confirmed_at);
         lifecycle.forEach((item) => pendingEventIds.add(item.lifecycleEvent!.id));
-        const updates = [...updatedDigestTopics, ...lifecycle];
-        if (!freshDigestTopics.length && !updates.length) return false;
-        await sendEmail(subscriber.email, digestMessage(subscriber.locale, freshDigestTopics, updates, unsubscribeUrl),
-          await digestIdempotencyKey(destination, freshDigestTopics, updates));
+        const updates = [...filtered.updates.filter((item) => !item.lifecycleEvent), ...lifecycle];
+        if (!filtered.fresh.length && !updates.length) return false;
+        await sendEmail(subscriber.email, digestMessage(subscriber.locale, filtered.fresh, updates, unsubscribeUrl, managementUrl(subscriber.unsubscribe_token)),
+          await digestIdempotencyKey(destination, filtered.fresh, updates));
         await saveLifecycleReceipts(destination, lifecycle);
         await db<void>('email_subscribers', `id=eq.${subscriber.id}`, { method: 'PATCH', body: { last_sent_at: new Date().toISOString() } });
         return true;
@@ -844,11 +952,14 @@ async function digest(request: Request) {
     }
     const deliverTelegram = async (locale: Locale): Promise<TelegramDelivery> => {
       const destination = `telegram:${locale}`;
-      const lifecycle = await undeliveredLifecycle(destination, lifecycleTopics);
+      // Public channels remain an all-proposal digest; personal email choices
+      // must never change what another subscriber or a channel receives.
+      const filtered = filterSubscriptionDigest(undefined, freshDigestTopics, [...updatedDigestTopics, ...lifecycleTopics]);
+      const lifecycle = await undeliveredLifecycle(destination, filtered.updates.filter((item) => item.lifecycleEvent));
       lifecycle.forEach((item) => pendingEventIds.add(item.lifecycleEvent!.id));
-      const updates = [...updatedDigestTopics, ...lifecycle];
-      if (!freshDigestTopics.length && !updates.length) return { configured: true, locale, messagesSent: 0, messageIds: [] };
-      const result = await sendTelegramDigest(locale, freshDigestTopics, updates);
+      const updates = [...filtered.updates.filter((item) => !item.lifecycleEvent), ...lifecycle];
+      if (!filtered.fresh.length && !updates.length) return { configured: true, locale, messagesSent: 0, messageIds: [] };
+      const result = await sendTelegramDigest(locale, filtered.fresh, updates);
       if (result.configured) await saveLifecycleReceipts(destination, lifecycle);
       return result;
     };
@@ -901,6 +1012,8 @@ export async function POST(request: Request) {
   const action = new URL(request.url).searchParams.get('action');
   try {
     if (action === 'subscribe') return await subscribe(request);
+    if (action === 'manage-link') return await requestManagementLink(request);
+    if (action === 'preferences') return await subscriptionPreferences(request);
     if (action === 'unsubscribe') return await updateSubscription(request, 'unsubscribe', false);
     if (action === 'resend-webhook') return await handleResendWebhook(request);
     return json({ ok: false }, 404);

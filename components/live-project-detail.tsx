@@ -2,38 +2,19 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { StaticLink as Link } from '@/components/static-link';
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  CalendarDays,
-  Check,
-  CircleDot,
-  Clock3,
-  ExternalLink,
-  Eye,
-  FileText,
-  MessageCircle,
-  ThumbsUp,
-  UserRound,
-  Vote,
-  WalletCards,
-} from 'lucide-react';
-import { I18nText } from '@/components/i18n-text';
+import { ArrowLeft, ArrowUpRight, CalendarDays, Check, Circle, CircleDot, Clock3, Copy, ExternalLink, FileText, RefreshCw, UserRound } from 'lucide-react';
 import { LiveSyncBadge } from '@/components/live-sync-badge';
 import { ProposalStatusTags } from '@/components/proposal-status-tags';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import {
-  getProposalOverview,
-  formatCompact,
-  formatDate,
-  getProposalStatusTags,
-  getProposalTitle,
-  projectTypeLabels,
-  type Proposal,
-} from '@/lib/proposals';
+import { classifyProgressUpdate, progressUpdateCategoryLabel } from '@/lib/digest-activity';
+import { detailStageStates, detailUpdateCategory, localizedSourceLabel, sortDetailUpdates, updateMatchesFilter, updateMonthKey, type UpdateFilter } from '@/lib/proposal-detail-ux';
+import { getProposalOverview, formatCompact, formatDate, getProposalStatusTags, getProposalTitle, projectTypeLabels, type Proposal } from '@/lib/proposals';
 import { useLiveProject } from '@/lib/use-live-data';
 import { useLocale } from '@/lib/use-locale';
+
+const panel = 'rounded-2xl border border-border bg-card p-5 sm:p-7';
+const action = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold transition hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring';
 
 function InlineLinks({ text }: { text: string }) {
   const parts: ReactNode[] = [];
@@ -42,332 +23,159 @@ function InlineLinks({ text }: { text: string }) {
   for (const match of text.matchAll(pattern)) {
     const index = match.index ?? 0;
     if (index > cursor) parts.push(text.slice(cursor, index));
-    parts.push(
-      <a key={`${match[2]}-${index}`} href={match[2]} target="_blank" rel="noreferrer" className="font-semibold text-[#087958] underline decoration-[#087958]/30 underline-offset-2 hover:decoration-[#087958]">
-        {match[1].replaceAll('\\[', '[').replaceAll('\\]', ']')}
-      </a>,
-    );
+    parts.push(<a key={`${match[2]}-${index}`} href={match[2]} target="_blank" rel="noreferrer" className="font-semibold text-primary underline underline-offset-4">{match[1].replaceAll('\\[', '[').replaceAll('\\]', ']')}</a>);
     cursor = index + match[0].length;
   }
   if (cursor < text.length) parts.push(text.slice(cursor));
   return <>{parts}</>;
 }
 
+function DetailSkeleton({ label }: { label: string }) {
+  return <section aria-busy="true" aria-label={label} className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+    <output className="block text-sm text-muted-foreground">{label}</output>
+    <div aria-hidden="true" className="mt-6 space-y-5 motion-safe:animate-pulse">
+      <div className="h-5 w-40 rounded bg-muted" /><div className="h-12 max-w-2xl rounded bg-muted" /><div className="h-6 max-w-md rounded bg-muted" />
+      <div className="grid gap-5 lg:grid-cols-[1fr_330px]"><div className="h-72 rounded-2xl bg-muted" /><div className="h-72 rounded-2xl bg-muted" /></div>
+    </div>
+  </section>;
+}
+
+function VotePanel({ proposal }: { proposal: Proposal }) {
+  const { locale, t } = useLocale();
+  const voting = proposal.voting;
+  if (!voting) return <section id="voting" className={`${panel} scroll-mt-28`} aria-labelledby="vote-title"><h2 id="vote-title" className="text-lg font-bold">{t('Metaforo 投票', 'Metaforo voting')}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{proposal.votingPageNotFound ? t('未找到对应投票页。', 'No corresponding voting page was found.') : t('尚未核验到对应投票页。发现链接不代表已经开始或完成投票。', 'A corresponding voting page has not been verified. Finding a link alone does not establish that voting has started or finished.')}</p></section>;
+  const active = voting.status === 'active';
+  const passed = voting.status === 'approved' || (voting.status === 'unknown' && getProposalStatusTags(proposal).includes('vote-passed'));
+  const rejected = voting.status === 'rejected';
+  const final = voting.status === 'approved' || rejected;
+  const timestamp = voting.verifiedAt ? new Date(voting.verifiedAt) : null;
+  const checks = [
+    { label: t('最低投票权重', 'Quorum requirement'), actual: voting.totalVotes, required: voting.minimumVotes, percent: false },
+    { label: t('最低赞成比例', 'Approval requirement'), actual: voting.yesPercent, required: voting.passPercent, percent: true },
+  ];
+  return <section id="voting" className={`${panel} scroll-mt-28`} aria-labelledby="vote-title">
+    <div className="flex flex-wrap items-start justify-between gap-3"><h2 id="vote-title" className="text-lg font-bold">{t('Metaforo 投票', 'Metaforo voting')}</h2><span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold">{active ? t('正在投票 · 暂时数据', 'Voting open · provisional') : rejected ? t('最终结果：未通过', 'Final result: not passed') : final && passed ? t('最终结果：通过', 'Final result: approved') : passed ? t('投票通过 · 完整票数待核验', 'Approved · full tally pending') : t('结果待核验', 'Result unverified')}</span></div>
+    {active && <p className="mt-3 text-sm leading-6 text-muted-foreground">{t('投票尚未结束，当前票数和赞成比例不是最终结果。', 'Voting is still open. The current tally and approval percentage are not a final result.')}</p>}
+    <dl className="mt-5 grid grid-cols-2 gap-4 rounded-xl bg-muted/60 p-4"><div><dt className="text-xs text-muted-foreground">{t('总投票权重（CKB）', 'Total voting weight (CKB)')}</dt><dd className="mt-2 break-words font-mono text-lg font-semibold tabular-nums">{voting.totalVotes?.toLocaleString(locale === 'en' ? 'en-US' : 'zh-CN') ?? '—'}</dd></div><div><dt className="text-xs text-muted-foreground">{t('赞成比例', 'Approval')}</dt><dd className="mt-2 font-mono text-lg font-semibold tabular-nums">{voting.yesPercent != null ? `${voting.yesPercent.toFixed(2)}%` : '—'}</dd></div></dl>
+    <p className="mt-3 text-xs leading-5 text-muted-foreground">{t('按 CKB 权重计算，并非参与投票的人数。', 'CKB-weighted votes, not the number of people voting.')}</p>
+    <div className="mt-5 space-y-3">{checks.map((check) => {
+      const known = check.actual != null && check.required != null;
+      const met = known && check.actual! >= check.required!;
+      return <div key={check.label} className="rounded-xl border border-border p-3"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold">{check.label}</h3><span className="text-xs text-muted-foreground">{known ? met ? t('已达到', 'Met') : t('未达到', 'Not met') : t('待核验', 'Unverified')}</span></div><p className="mt-1 font-mono text-sm tabular-nums">{check.required != null ? `${check.required.toLocaleString('en-US')}${check.percent ? '%' : ' CKB'}` : '—'}</p></div>;
+    })}</div>
+    {voting.minimumVotes === 0 && <p className="mt-3 text-xs leading-5 text-muted-foreground">{t('Metaforo 原页面的最低票数为 0，此处按来源展示。', 'Metaforo records a quorum of 0; this value is reproduced from the source.')}</p>}
+    {(voting.noteZh || voting.noteEn) && <p className="mt-4 text-sm leading-6 text-muted-foreground">{locale === 'en' ? voting.noteEn ?? voting.noteZh : voting.noteZh ?? voting.noteEn}</p>}
+    {timestamp && Number.isFinite(timestamp.getTime()) && <p className="mt-4 text-xs leading-5 text-muted-foreground">{t('投票数据核验时间：', 'Voting data verified: ')}<time dateTime={voting.verifiedAt}>{timestamp.toLocaleString(locale === 'en' ? 'en-US' : 'zh-CN', { timeZone: 'Asia/Shanghai', dateStyle: 'medium', timeStyle: 'short' })}</time> UTC+8</p>}
+    <a href={voting.url} target="_blank" rel="noreferrer" className={`${action} mt-5 w-full text-primary`}>{active ? t('前往投票', 'Cast your vote') : t('查看投票来源', 'View voting source')}<ArrowUpRight className="size-4" aria-hidden="true" /></a>
+  </section>;
+}
+
 export function LiveProjectDetail({ id, initialProposal }: { id?: string; initialProposal?: Proposal }) {
   const { locale, t } = useLocale();
   const [resolvedId, setResolvedId] = useState<string | null>(id ?? initialProposal?.id ?? null);
-
+  const [idResolved, setIdResolved] = useState(Boolean(id ?? initialProposal?.id));
+  const [copied, setCopied] = useState<'idle' | 'done' | 'failed'>('idle');
+  const [updateFilter, setUpdateFilter] = useState<UpdateFilter>('all');
+  const [directoryUrl, setDirectoryUrl] = useState('/projects');
   useEffect(() => {
-    if (resolvedId) return;
+    try {
+      const context = JSON.parse(window.sessionStorage.getItem('ckb-dao-directory-context') ?? 'null') as { url?: string } | null;
+      if (context?.url && /^\/projects(?:[?#]|$)/.test(context.url)) queueMicrotask(() => setDirectoryUrl(context.url!));
+    } catch { /* A direct visit needs no stored directory state. */ }
+    if (idResolved) return;
     const value = new URLSearchParams(window.location.search).get('id');
-    queueMicrotask(() => setResolvedId(value));
-  }, [resolvedId]);
-
-  const { proposal, state } = useLiveProject(resolvedId, initialProposal);
-
-  if (!proposal) {
-    const isLoading = state === 'loading';
-    return (
-      <main className="min-h-screen bg-[#f5f7f2] text-[#0b0f0e]">
-        <SiteHeader />
-        <section className="grid min-h-[65vh] place-items-center px-5 text-center">
-          <div>
-            <LiveSyncBadge state={state} />
-            <h1 className="mt-6 text-3xl font-black">{isLoading ? t('正在读取最新提案数据…', 'Loading the latest proposal data…') : t('没有找到这个提案', 'Proposal not found')}</h1>
-            <p className="mt-3 text-sm text-black/50">{isLoading ? t('正在连接 Nervos Talk 公共来源。', 'Connecting to the public Nervos Talk source.') : t('提案可能已移动或来源暂时不可用。', 'The proposal may have moved or its source may be unavailable.')}</p>
-            {!isLoading && <Link href="/projects" className="mt-7 inline-flex rounded-full bg-[#096c4c] px-5 py-3 text-sm font-bold text-white"><I18nText zh="返回提案目录" en="Back to proposals" /></Link>}
-          </div>
-        </section>
-        <SiteFooter />
-      </main>
-    );
+    queueMicrotask(() => { setResolvedId(value); setIdResolved(true); });
+  }, [idResolved]);
+  const { proposal, state, error, retry } = useLiveProject(resolvedId, initialProposal);
+  const displayTitle = proposal ? getProposalTitle(proposal, locale) : '';
+  useEffect(() => {
+    document.title = displayTitle ? `${displayTitle} — CKB Community Fund DAO` : locale === 'en' ? 'Proposal — CKB Community Fund DAO' : '提案 — CKB Community Fund DAO';
+  }, [displayTitle, locale]);
+  useEffect(() => {
+    if (copied === 'idle') return;
+    const timer = window.setTimeout(() => setCopied('idle'), 4000);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+  async function copyLink() {
+    try { await navigator.clipboard.writeText(window.location.href); setCopied('done'); } catch { setCopied('failed'); }
   }
 
-  const proposalStatusTags = getProposalStatusTags(proposal);
-  const hasPassedVote = proposalStatusTags.includes('vote-passed');
-  const isCompleted = proposalStatusTags.includes('completed');
-  const executionStarted = proposal.executionComplete !== false
-    && (proposal.funded || proposalStatusTags.includes('executing') || isCompleted || proposal.executionComplete === true);
-  const voteDetailZh = proposal.voting?.status === 'approved' || (proposal.voting?.status === 'unknown' && hasPassedVote)
-    ? '投票已通过'
-    : proposal.voting?.status === 'rejected'
-      ? '投票未通过'
-      : proposal.voting?.status === 'active'
-        ? '投票正在进行'
-        : proposal.voting
-          ? '已发现投票页，结果待核验'
-          : '未发现投票链接';
-  const voteDetailEn = proposal.voting?.status === 'approved' || (proposal.voting?.status === 'unknown' && hasPassedVote)
-    ? 'Vote approved'
-    : proposal.voting?.status === 'rejected'
-      ? 'Vote not passed'
-      : proposal.voting?.status === 'active'
-        ? 'Voting is open'
-        : proposal.voting
-          ? 'Voting page found; result to verify'
-          : 'No voting link found';
-  const governanceSteps = [
-    { titleZh: '讨论', titleEn: 'Discussion', done: true, detailZh: `首帖 ${proposal.discussion.likes ?? '—'} 个赞 · ${proposal.discussion.replies ?? '—'} 条回复`, detailEn: `${proposal.discussion.likes ?? '—'} first-post likes · ${proposal.discussion.replies ?? '—'} replies` },
-    { titleZh: '投票', titleEn: 'Voting', done: Boolean(proposal.voting), detailZh: voteDetailZh, detailEn: voteDetailEn },
-    {
-      titleZh: '执行',
-      titleEn: 'Execution',
-      done: executionStarted,
-      detailZh: executionStarted ? (isCompleted ? '已完成' : '正在进行中') : '尚未开始',
-      detailEn: executionStarted ? (isCompleted ? 'Completed' : 'In progress') : 'Not started',
-    },
+  if (!proposal) {
+    const missingId = idResolved && !resolvedId;
+    const loading = !missingId && !error && state === 'loading';
+    return <div className="min-h-screen bg-background text-foreground"><SiteHeader /><main id="main-content" tabIndex={-1}>
+      {loading ? <DetailSkeleton label={t('正在读取提案；已有记录会优先展示', 'Loading proposal; available records are shown first')} /> : <section className="mx-auto min-h-[55vh] max-w-2xl px-5 py-16">
+        <p className="text-sm font-semibold text-primary">{t('提案记录', 'Proposal record')}</p><h1 className="mt-4 text-3xl font-bold">{missingId || error === 'invalid' ? t('提案编号无效', 'Invalid proposal ID') : error === 'not-found' ? t('没有找到这个提案', 'Proposal not found') : t('暂时无法读取提案', 'Proposal temporarily unavailable')}</h1>
+        <p className="mt-4 leading-7 text-muted-foreground">{missingId || error === 'invalid' ? t('请从提案目录打开记录，或检查链接中的编号。', 'Open a record from the directory or check the ID in the link.') : error === 'not-found' ? t('原始来源返回了不存在的记录，请检查编号。', 'The original source returned a missing record. Please check the ID.') : t('公开来源可能连接失败或暂时限制访问，这不代表提案已被删除。请稍后重试。', 'The public source may be offline or rate-limited. This does not mean the proposal was deleted. Please try again.')}</p>
+        <div className="mt-6 flex flex-wrap gap-3">{!missingId && error !== 'invalid' && <button type="button" onClick={retry} className={action}><RefreshCw className="size-4" aria-hidden="true" />{t('重新读取', 'Try again')}</button>}<Link href="/projects" className={action}>{t('返回提案目录', 'Back to proposals')}</Link></div>
+      </section>}
+      </main><SiteFooter /></div>;
+  }
+
+  const statusTags = getProposalStatusTags(proposal);
+  const stageStates = detailStageStates(proposal, statusTags);
+  const completed = statusTags.includes('completed');
+  const milestones = proposal.overview?.milestones ?? [];
+  const milestoneStructure = locale === 'en' ? proposal.milestoneStructureEn ?? proposal.milestoneStructureZh : proposal.milestoneStructureZh ?? proposal.milestoneStructureEn;
+  const progressNote = locale === 'en' ? proposal.progressNoteEn ?? proposal.progressNoteZh : proposal.progressNoteZh ?? proposal.progressNoteEn;
+  const updates = sortDetailUpdates(proposal.updates);
+  const latestUpdate = updates[0];
+  const filteredUpdates = updates.filter((update) => updateMatchesFilter(detailUpdateCategory(update, classifyProgressUpdate(update.title)).kind, updateFilter, update.title));
+  const groups = new Map<string, typeof updates>();
+  for (const update of filteredUpdates) { const key = updateMonthKey(update.date); groups.set(key, [...(groups.get(key) ?? []), update]); }
+  const localizedDate = (date: string) => formatDate(date, locale === 'en' ? 'en-US' : 'zh-CN');
+  const steps = [
+    { title: t('讨论', 'Discussion'), detail: statusTags.includes('discussion') ? t('处于七天讨论阶段', 'Within the seven-day discussion stage') : t('讨论阶段已结束', 'Discussion stage ended') },
+    { title: t('投票', 'Voting'), detail: proposal.voting?.status === 'active' ? t('投票进行中，当前结果仍会变化', 'Voting is open; the tally can still change') : statusTags.includes('vote-passed') ? t('投票通过', 'Vote passed') : statusTags.includes('vote-failed') ? t('投票未通过', 'Vote not passed') : proposal.voting ? t('已发现链接，投票状态待核验', 'Link found; voting status unverified') : t('尚未发现投票页', 'No voting page found') },
+    { title: t('执行', 'Execution'), detail: completed ? t('已完成', 'Completed') : stageStates[2] === 'current' ? t('正在进行中', 'In progress') : stageStates[2] === 'ended' ? t('已结束', 'Ended') : t('尚未开始', 'Not started') },
   ];
-  const overview = proposal.overview;
-  const overviewObjective = getProposalOverview(proposal, locale);
-  const milestoneCount = overview?.milestones.length ?? 0;
-  const milestoneStructure = locale === 'en'
-    ? proposal.milestoneStructureEn ?? proposal.milestoneStructureZh
-    : proposal.milestoneStructureZh ?? proposal.milestoneStructureEn;
-  const progressNote = locale === 'en'
-    ? proposal.progressNoteEn ?? proposal.progressNoteZh
-    : proposal.progressNoteZh ?? proposal.progressNoteEn;
-  const displayTitle = getProposalTitle(proposal, locale);
-  return (
-    <main className="min-h-screen bg-[#f5f7f2] text-[#0b0f0e]">
-      <SiteHeader />
-      <section className="border-b border-white/10 bg-[#0b0f0e] text-white">
-        <div className="ledger-grid mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-18">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <Link href="/projects" className="inline-flex items-center gap-2 text-xs font-bold text-white/50 transition hover:text-[#c8ff67]">
-              <ArrowLeft className="size-4" /> <I18nText zh="返回提案目录" en="Back to proposals" />
-            </Link>
-            <LiveSyncBadge state={state} fetchedAt={proposal.lastVerifiedAt} dark />
-          </div>
-          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_280px] lg:items-end">
-            <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <ProposalStatusTags proposal={proposal} />
-                <span className="label-caps text-white/35">{proposal.projectType}</span>
-              </div>
-              <h1 className="mt-6 max-w-5xl text-[clamp(2.4rem,6vw,5.8rem)] font-black leading-[.95] tracking-[-.055em]">{displayTitle}</h1>
-              <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-xs text-white/48">
-                <span className="inline-flex items-center gap-1.5"><UserRound className="size-3.5" />{proposal.author}</span>
-                <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-3.5" />{formatDate(proposal.createdAt, locale === 'en' ? 'en-US' : 'zh-CN')}</span>
-                <span className="inline-flex items-center gap-1.5"><Clock3 className="size-3.5" /><I18nText zh="更新于" en="Updated" /> {formatDate(proposal.updatedAt, locale === 'en' ? 'en-US' : 'zh-CN')}</span>
-              </div>
-            </div>
-            <a href={proposal.originalUrl} target="_blank" rel="noreferrer" className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#c8ff67] px-6 text-sm font-black text-[#102119] transition hover:bg-[#b9ed60]">
-              <I18nText zh="查看原始提案" en="View original proposal" /> <ArrowUpRight className="size-4" />
-            </a>
-          </div>
-        </div>
-      </section>
+  const nav = [['overview', t('概览', 'Overview')], ...(milestones.length ? [['milestones', t('里程碑', 'Milestones')]] : []), ['governance', t('治理路径', 'Governance')], ['voting', t('投票', 'Voting')], ['updates', t('进展', 'Updates')], ['sources', t('来源', 'Sources')]];
 
-      <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-14">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="space-y-8">
-            <article className="rounded-[24px] border border-black/10 bg-white p-6 sm:p-8">
-              <p className="label-caps text-[#087958]"><I18nText zh="提案概览" en="Proposal overview" /></p>
-              <p className="mt-5 max-w-4xl text-lg leading-8 text-black/68">
-                {overviewObjective}
-              </p>
-              <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl bg-[#f1f5f1] p-4">
-                  <p className="text-[11px] font-bold text-black/38"><I18nText zh="申请预算" en="Requested budget" /></p>
-                  <p className="mt-2 font-mono text-lg font-semibold">{proposal.budgetLabel ?? t('原帖未明确标注', 'Not clearly stated')}</p>
-                </div>
-                <div className="rounded-2xl bg-[#f1f5f1] p-4">
-                  <p className="text-[11px] font-bold text-black/38"><I18nText zh="里程碑结构" en="Milestone structure" /></p>
-                  <p className="mt-2 text-lg font-black">
-                    {milestoneStructure ?? (milestoneCount > 0
-                      ? t(`${milestoneCount} 个阶段`, `${milestoneCount} milestone${milestoneCount === 1 ? '' : 's'}`)
-                      : t('原帖未明确拆分', 'No explicit breakdown'))}
-                  </p>
-                </div>
-              </div>
+  return <div className="min-h-screen bg-background text-foreground"><SiteHeader /><main id="main-content" tabIndex={-1}>
+    <section className="border-b border-border bg-card"><div className="mx-auto max-w-7xl px-5 py-7 lg:px-8 lg:py-10">
+      <div className="flex flex-wrap items-center justify-between gap-3"><Link href={directoryUrl} className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary"><ArrowLeft className="size-4" aria-hidden="true" />{t('返回提案目录', 'Back to proposals')}</Link><LiveSyncBadge state={state} fetchedAt={proposal.lastVerifiedAt} /></div>
+      <div className="mt-4 flex flex-wrap items-center gap-3"><ProposalStatusTags proposal={proposal} /><span className="text-sm font-semibold text-muted-foreground">{locale === 'en' ? proposal.projectType : projectTypeLabels[proposal.projectType] ?? proposal.projectType}</span><span className="font-mono text-xs text-muted-foreground">#{proposal.id}</span></div>
+      <h1 className={`mt-4 max-w-5xl break-words font-bold tracking-tight ${locale === 'zh' ? 'text-[clamp(1.75rem,3.8vw,2.75rem)] leading-[1.3]' : 'text-[clamp(1.75rem,3.8vw,3rem)] leading-[1.15]'}`}>{displayTitle}</h1>
+      <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground"><span className="inline-flex items-center gap-2"><UserRound className="size-4" aria-hidden="true" />{t('提案人：', 'Proposer: ')}{proposal.author}</span><span className="inline-flex items-center gap-2"><CalendarDays className="size-4" aria-hidden="true" />{t('发布于 ', 'Published ')}<time dateTime={proposal.createdAt}>{localizedDate(proposal.createdAt)}</time></span><span className="inline-flex items-center gap-2"><Clock3 className="size-4" aria-hidden="true" />{t('论坛最近活动：', 'Forum activity: ')}<time dateTime={proposal.updatedAt}>{localizedDate(proposal.updatedAt)}</time></span></div>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2"><div className="rounded-xl bg-secondary p-4"><p className="text-xs font-semibold text-muted-foreground">{t('申请预算', 'Requested budget')}</p><p className="mt-1 break-words font-mono text-xl font-semibold tabular-nums">{proposal.budgetLabel ?? t('原帖未明确标注', 'Not clearly stated')}</p></div><a href={latestUpdate ? '#updates' : '#sources'} className="rounded-xl border border-border p-4 hover:bg-muted/60"><p className="text-xs font-semibold text-muted-foreground">{t('提案人最近公开更新', 'Latest proposer update')}</p><p className="mt-1 text-sm font-semibold">{latestUpdate ? `${latestUpdate.date ? localizedDate(latestUpdate.date) : t('日期待核验', 'Date unverified')} · ${progressUpdateCategoryLabel(detailUpdateCategory(latestUpdate, classifyProgressUpdate(latestUpdate.title)), locale)}` : t('尚未发现可核验的公开更新', 'No verifiable public update found')}</p></a></div>
+      <div className="mt-5 flex flex-wrap items-center gap-3"><a href={proposal.originalUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">{t('查看原始提案', 'View original proposal')}<ArrowUpRight className="size-4" aria-hidden="true" /></a>{proposal.voting?.status === 'active' && <a href={proposal.voting.url} target="_blank" rel="noreferrer" className={action}>{t('前往投票', 'Cast your vote')}<ArrowUpRight className="size-4" aria-hidden="true" /></a>}<Link href={`/subscription?proposal=${encodeURIComponent(proposal.id)}`} className={action}>{t('关注此提案', 'Watch updates')}</Link><button type="button" className={action} onClick={copyLink}><Copy className="size-4" aria-hidden="true" />{t('复制链接', 'Copy link')}</button><output aria-live="polite" className="text-sm text-muted-foreground">{copied === 'done' ? t('链接已复制', 'Link copied') : copied === 'failed' ? t('未能复制，请从浏览器地址栏复制链接', 'Could not copy. Copy the URL from your browser address bar.') : ''}</output></div>
+      {state === 'fallback' && <div className="mt-5 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/60 p-3 text-sm"><p className="flex-1 leading-6 text-muted-foreground">{t('当前显示最近可用记录；部分公开来源暂不可用，不能据此判断提案已终止。', 'Showing the latest available record. Some public sources are unavailable; this does not imply the proposal ended.')}</p><button type="button" onClick={retry} className={action}><RefreshCw className="size-4" aria-hidden="true" />{t('重试', 'Retry')}</button></div>}
+    </div></section>
 
-              {milestoneCount > 0 ? (
-                <div className="mt-8">
-                  <div className="flex items-center gap-3">
-                    <span className="h-px flex-1 bg-black/8" />
-                    <p className="text-[11px] font-black uppercase tracking-[.16em] text-black/35"><I18nText zh="路线图与里程碑" en="Roadmap & milestones" /></p>
-                    <span className="h-px flex-1 bg-black/8" />
-                  </div>
-                  <ol className="mt-5 grid gap-3">
-                    {overview?.milestones.map((milestone, index) => {
-                      const milestoneTitle = locale === 'en'
-                        ? milestone.titleEn ?? milestone.title
-                        : milestone.titleZh ?? milestone.title;
-                      const milestoneDescription = locale === 'en'
-                        ? milestone.descriptionEn ?? milestone.description
-                        : milestone.descriptionZh ?? milestone.description;
-                      const milestoneBudget = locale === 'en'
-                        ? milestone.budgetEn ?? milestone.budget
-                        : milestone.budgetZh ?? milestone.budget;
-                      return (
-                        <li key={`${milestone.title}-${index}`} className="grid gap-4 rounded-2xl border border-black/8 bg-[#fbfcfa] p-5 sm:grid-cols-[42px_1fr]">
-                          <span className="grid size-10 place-items-center rounded-full bg-[#102119] font-mono text-xs font-bold text-[#c8ff67]">{String(index + 1).padStart(2, '0')}</span>
-                          <div>
-                            <div className="flex flex-wrap items-start justify-between gap-2">
-                              <h3 className="font-black leading-6">{milestoneTitle}</h3>
-                              <div className="flex flex-wrap gap-2">
-                                {milestoneBudget && <span className="rounded-full bg-[#e3f8ef] px-2.5 py-1 font-mono text-[10px] font-bold text-[#087958]">{milestoneBudget}</span>}
-                              </div>
-                            </div>
-                            <p className="mt-2 text-sm leading-6 text-black/55">{milestoneDescription}</p>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ol>
-                </div>
-              ) : (
-                <div className="mt-6 rounded-xl border border-dashed border-black/15 bg-[#f5f7f2] p-5 text-sm leading-6 text-black/48">
-                  <I18nText zh="原始提案没有明确拆分阶段性里程碑；概览仅呈现可以从原帖直接核验的目标和总预算。" en="The original proposal does not explicitly separate milestone stages, so this overview only shows the objective and total budget that can be verified from the source." />
-                </div>
-              )}
-              <div className="mt-7 flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#e8efea] px-3 py-1.5 text-xs font-bold">{locale === 'en' ? proposal.projectType : projectTypeLabels[proposal.projectType] ?? proposal.projectType}</span>
-              </div>
-            </article>
+    <nav aria-label={t('本页导航', 'On this page')} className="border-b border-border bg-card"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-5 py-2 lg:px-8">{nav.map(([anchor, label]) => <a key={anchor} href={`#${anchor}`} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-3 text-sm font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground">{label}</a>)}</div></nav>
 
-            <section className="rounded-[24px] border border-black/10 bg-white p-6 sm:p-8">
-              <div className="flex flex-wrap items-end justify-between gap-4">
-                <div><p className="label-caps text-[#087958]"><I18nText zh="治理时间线" en="Governance timeline" /></p><h2 className="mt-3 text-2xl font-black tracking-[-.03em]"><I18nText zh="治理路径" en="Governance path" /></h2></div>
-                <span className="text-xs text-black/35"><I18nText zh="状态来自公开证据，不做无依据推断" en="Statuses follow public evidence; no unsupported assumptions" /></span>
-              </div>
-              <ol className="mt-8 grid gap-4">
-                {governanceSteps.map((step, index) => (
-                  <li key={step.titleEn} className="grid grid-cols-[42px_1fr] gap-4">
-                    <div className="relative flex justify-center">
-                      <span className={`z-10 grid size-9 place-items-center rounded-full border ${step.done ? 'border-[#00a873] bg-[#e3f8ef] text-[#087958]' : 'border-black/12 bg-[#f5f7f2] text-black/30'}`}>
-                        {step.done ? <Check className="size-4" /> : <CircleDot className="size-4" />}
-                      </span>
-                      {index < governanceSteps.length - 1 && <span className="absolute top-9 h-[calc(100%+1rem)] w-px bg-black/10" />}
-                    </div>
-                    <div className="pb-5">
-                      <h3 className="font-black"><I18nText zh={step.titleZh} en={step.titleEn} /></h3>
-                      <p className="mt-1.5 text-sm leading-6 text-black/50"><I18nText zh={step.detailZh} en={step.detailEn} /></p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </section>
+    <div className="mx-auto grid max-w-7xl gap-6 px-5 py-7 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-8 lg:px-8 lg:py-10">
+      <div className="lg:col-start-2 lg:row-start-1"><VotePanel proposal={proposal} /></div>
+      <div className="min-w-0 space-y-6 lg:col-start-1 lg:row-start-1 lg:row-span-2">
+        <article id="overview" className={`${panel} scroll-mt-28`} aria-labelledby="overview-title"><h2 id="overview-title" className="text-xl font-bold">{t('提案概览', 'Proposal overview')}</h2><p className="mt-4 max-w-prose text-base leading-8 text-foreground/85 sm:text-lg">{getProposalOverview(proposal, locale)}</p><dl className="mt-6 rounded-xl bg-muted/60 p-4"><dt className="text-xs font-semibold text-muted-foreground">{t('里程碑结构', 'Milestone structure')}</dt><dd className="mt-1 font-semibold">{milestoneStructure ?? (milestones.length ? t(`${milestones.length} 个阶段`, `${milestones.length} milestone${milestones.length === 1 ? '' : 's'}`) : t('原帖未明确拆分', 'No explicit breakdown'))}</dd></dl>
+          {milestones.length > 0 ? <section id="milestones" className="mt-7 scroll-mt-28" aria-labelledby="milestones-title"><h2 id="milestones-title" className="text-lg font-bold">{t('路线图与里程碑', 'Roadmap & milestones')}</h2><p className="mt-2 text-xs leading-5 text-muted-foreground">{t('以下是提案的计划交付内容，列出阶段不代表已完成；交付情况请核对进展报告。', 'These are planned deliverables. Listing a stage does not establish completion; consult delivery reports for evidence.')}</p><ol className="mt-4 space-y-3">{milestones.map((milestone, index) => {
+            const title = locale === 'en' ? milestone.titleEn ?? milestone.title : milestone.titleZh ?? milestone.title;
+            const description = locale === 'en' ? milestone.descriptionEn ?? milestone.description : milestone.descriptionZh ?? milestone.description;
+            const budget = locale === 'en' ? milestone.budgetEn ?? milestone.budget : milestone.budgetZh ?? milestone.budget;
+            return <li key={`${milestone.title}-${index}`} className="rounded-xl border border-border bg-background/60 p-4 sm:p-5"><div className="flex items-start gap-3"><span aria-hidden="true" className="pt-0.5 font-mono text-sm font-semibold text-primary">{String(index + 1).padStart(2, '0')}</span><div className="min-w-0 flex-1"><h3 className="font-semibold leading-7">{title}</h3>{budget && <p className="mt-2 font-mono text-sm font-semibold text-primary">{t('对应预算：', 'Allocated budget: ')}{budget}</p>}<p className="mt-2 whitespace-pre-line text-sm leading-7 text-muted-foreground">{description}</p></div></div></li>;
+          })}</ol></section> : <p className="mt-4 text-sm leading-6 text-muted-foreground">{t('原始提案未明确拆分里程碑；此处仅展示可从来源核验的目标与预算。', 'The source does not explicitly break down milestones. Only verifiable objectives and budget are shown.')}</p>}
+        </article>
 
-            <section className="rounded-[24px] border border-black/10 bg-white p-6 sm:p-8">
-              <p className="label-caps text-[#087958]"><I18nText zh="提案记录" en="Proposal record" /></p>
-              <h2 className="mt-3 text-2xl font-black tracking-[-.03em]"><I18nText zh="进展与更新" en="Progress and updates" /></h2>
-              {progressNote && (
-                <div className="mt-6 rounded-xl border border-[#00a873]/20 bg-[#eef9f3] p-5 text-base leading-7 text-black/65">
-                  <InlineLinks text={progressNote} />
-                </div>
-              )}
-              {proposal.updates.length > 0 ? (
-                <div className="mt-7 divide-y divide-black/8">
-                  {proposal.updates.map((update) => (
-                    <a key={update.url} href={update.url} target="_blank" rel="noreferrer" className="group grid gap-2 py-5 first:pt-0 sm:grid-cols-[120px_1fr_auto] sm:gap-5">
-                      <p className="font-mono text-[11px] text-black/35">{update.date ? formatDate(update.date, locale === 'en' ? 'en-US' : 'zh-CN') : t('日期待核验', 'Date to verify')}</p>
-                      <div><p className="line-clamp-2 text-sm font-semibold leading-6 group-hover:text-[#087958]">{locale === 'en' ? update.titleEn ?? update.title : update.titleZh ?? update.title}</p><p className="mt-1 text-[11px] text-black/35">by {update.author}</p></div>
-                      <ExternalLink className="size-4 text-black/25 group-hover:text-[#087958]" />
-                    </a>
-                  ))}
-                </div>
-              ) : !progressNote ? (
-                <div className="mt-6 rounded-xl border border-dashed border-black/15 bg-[#f5f7f2] p-6 text-sm text-black/45"><I18nText zh="尚未发现提案人发布的项目进展、更新或完结报告；完整回复仍可在原始提案中查看。" en="No project update, progress report, or completion report from the proposal author was found; the complete reply history remains available in the source proposal." /></div>
-              ) : null}
-            </section>
-          </div>
+        <section id="governance" className={`${panel} scroll-mt-28`} aria-labelledby="governance-title"><h2 id="governance-title" className="text-xl font-bold">{t('治理路径', 'Governance path')}</h2><p className="mt-2 text-xs leading-5 text-muted-foreground">{t('空心圆：未开始 · 圆点：进行中 · 勾：阶段完成 · 横线：已结束', 'Open circle: not started · Dot: in progress · Check: stage complete · Dash: ended')}</p><ol className="mt-5 grid gap-4 sm:grid-cols-3">{steps.map((step, index) => <li key={step.title} className="rounded-xl border border-border p-4"><div className="flex items-center gap-2"><span aria-hidden="true" className="text-primary">{stageStates[index] === 'complete' ? <Check className="size-5" /> : stageStates[index] === 'current' ? <CircleDot className="size-5" /> : stageStates[index] === 'ended' ? <span className="inline-block w-5 text-center">—</span> : <Circle className="size-5" />}</span><h3 className="font-semibold">{step.title}</h3><span className="sr-only">{stageStates[index] === 'complete' ? t('阶段完成', 'Stage complete') : stageStates[index] === 'current' ? t('进行中', 'In progress') : stageStates[index] === 'ended' ? t('已结束', 'Ended') : t('尚未开始', 'Not started')}</span></div><p className="mt-2 text-sm leading-6 text-muted-foreground">{step.detail}</p></li>)}</ol></section>
 
-          <aside className="space-y-5">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: ThumbsUp, labelZh: '首帖赞数', labelEn: 'First-post likes', value: formatCompact(proposal.discussion.likes) },
-                { icon: MessageCircle, labelZh: '回复', labelEn: 'Replies', value: formatCompact(proposal.discussion.replies) },
-                { icon: Eye, labelZh: '浏览', labelEn: 'Views', value: formatCompact(proposal.discussion.views) },
-                {
-                  icon: Vote,
-                  labelZh: '投票页',
-                  labelEn: 'Voting page',
-                  value: proposal.voting
-                    ? t('已发现', 'Found')
-                    : proposal.votingPageNotFound
-                      ? t('未找到', 'Not Found')
-                      : t('待核验', 'To verify'),
-                },
-              ].map(({ icon: Icon, labelZh, labelEn, value }) => (
-                <div key={labelEn} className="rounded-2xl border border-black/10 bg-white p-4">
-                  <Icon className="size-4 text-[#087958]" /><p className="mt-4 font-mono text-lg font-semibold">{value}</p><p className="mt-1 text-[11px] text-black/40"><I18nText zh={labelZh} en={labelEn} /></p>
-                </div>
-              ))}
-            </div>
+        <section id="updates" className={`${panel} scroll-mt-28`} aria-labelledby="updates-title"><h2 id="updates-title" className="text-xl font-bold">{t('进展与更新', 'Progress and updates')}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{t('最新发布的更新在前；发帖日期与报告涵盖的周期可能不同。', 'Newest posts first. The posting date can differ from the period covered by a report.')}</p>
+          {progressNote && <div className="mt-4 rounded-xl bg-secondary p-4 text-sm leading-7"><InlineLinks text={progressNote} /></div>}
+          {updates.length > 0 ? <><fieldset aria-label={t('按更新类别筛选', 'Filter update categories')} className="mt-5 flex flex-wrap gap-2">{(['all', 'milestone', 'completion', 'major'] as UpdateFilter[]).map((filter, index) => <button key={filter} type="button" aria-pressed={updateFilter === filter} onClick={() => setUpdateFilter(filter)} className={`min-h-11 rounded-xl border px-3 py-2 text-sm font-semibold ${updateFilter === filter ? 'border-primary bg-secondary text-primary' : 'border-border text-muted-foreground hover:bg-muted'}`}>{[t('全部', 'All'), t('里程碑报告', 'Milestones'), t('结项报告', 'Completion'), t('关键交付与事项', 'Key events')][index]}</button>)}</fieldset><output className="mt-3 text-xs text-muted-foreground">{t(`${filteredUpdates.length} 条更新`, `${filteredUpdates.length} update${filteredUpdates.length === 1 ? '' : 's'}`)}</output>
+            {filteredUpdates.length === 0 && <p className="mt-5 rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground">{t('此类别下暂无记录，请切换到“全部”。', 'No records in this category. Switch to All to see every update.')}</p>}
+            {[...groups].map(([month, entries]) => <div key={month} className="mt-6"><h3 className="border-b border-border pb-2 text-sm font-semibold">{month === 'unknown' ? t('日期待核验', 'Dates unverified') : new Date(`${month}-15T00:00:00Z`).toLocaleDateString(locale === 'en' ? 'en-US' : 'zh-CN', { year: 'numeric', month: 'long', timeZone: 'Asia/Shanghai' })}</h3><ol className="divide-y divide-border">{entries.map((update) => {
+              const category = detailUpdateCategory(update, classifyProgressUpdate(update.title));
+              const label = progressUpdateCategoryLabel(category, locale);
+              const rawTitle = locale === 'en' ? update.titleEn ?? update.title : update.titleZh ?? update.title;
+              const title = rawTitle.length > 150 ? label : rawTitle;
+              return <li key={update.url} className="py-4"><div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground"><span>{t('发布于 ', 'Posted ')}{update.date ? <time dateTime={update.date}>{localizedDate(update.date)}</time> : t('日期待核验', 'Date unverified')}</span><span>{t('更新者：', 'By ')}{update.author}</span></div><h4 className="mt-2 font-semibold leading-7">{title}</h4>{title !== label && <p className="mt-1 text-sm text-muted-foreground">{label}</p>}<a href={update.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary underline-offset-4 hover:underline">{t('查看本次更新', 'View this update')}<ExternalLink className="size-4" aria-hidden="true" /></a></li>;
+            })}</ol></div>)}</> : !progressNote && <p className="mt-5 rounded-xl bg-muted/60 p-4 text-sm leading-7 text-muted-foreground">{t('尚未发现提案人发布的可核验进展或完结报告。这不代表项目没有开展工作；完整回帖请查看原始提案。', 'No verifiable progress or completion report from the proposer was found. This does not establish inactivity; see the source for the complete discussion.')}</p>}
+        </section>
+      </div>
 
-            <div className="rounded-[22px] bg-[#0b0f0e] p-6 text-white">
-              <WalletCards className="size-5 text-[#7fe0bc]" />
-              <p className="label-caps mt-5 text-white/35"><I18nText zh="申请预算" en="Requested budget" /></p>
-              <p className="mt-3 font-mono text-2xl font-semibold text-[#c8ff67]">{proposal.budgetLabel ?? t('待核验', 'To verify')}</p>
-              <p className="mt-4 border-t border-white/10 pt-4 text-xs leading-5 text-white/48"><I18nText zh="申请、批准和实际拨付是不同概念；本页仅展示已找到的原始金额与证据。" en="Requested, approved, and actually disbursed funds are different. This page shows only the amounts and evidence found in public sources." /></p>
-            </div>
-
-            {proposal.voting && (
-              <div className="overflow-hidden rounded-[22px] border border-amber-200 bg-amber-50">
-                <div className="p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-black text-amber-950"><I18nText zh="Metaforo 投票结果" en="Metaforo vote result" /></p>
-                      <p className="mt-1 text-[11px] text-amber-900/55">
-                        {proposal.voting.verifiedAt
-                          ? t(`核验于 ${formatDate(proposal.voting.verifiedAt, 'zh-CN')}`, `Verified ${formatDate(proposal.voting.verifiedAt, 'en-US')}`)
-                          : t('等待来源数据', 'Awaiting source data')}
-                      </p>
-                    </div>
-                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-black ${proposal.voting.status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}`}>
-                      {proposal.voting.status === 'active'
-                        ? t('正在投票', 'Voting now')
-                        : proposal.voting.status === 'approved'
-                          ? t('通过', 'Approved')
-                          : proposal.voting.status === 'rejected'
-                            ? t('未通过', 'Not passed')
-                            : hasPassedVote
-                              ? t('通过 · 票数待补', 'Approved · tally pending')
-                              : t('待核验', 'To verify')}
-                    </span>
-                  </div>
-
-                  {proposal.voting.totalVotes != null || proposal.voting.yesPercent != null ? (
-                    <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-amber-900/10 pt-5">
-                      {proposal.voting.totalVotes != null && <div><p className="font-mono text-base font-semibold">{proposal.voting.totalVotes.toLocaleString('en-US')}</p><p className="mt-1 text-[10px] text-amber-900/50"><I18nText zh="总投票数" en="Total votes" /></p></div>}
-                      {proposal.voting.yesPercent != null && <div><p className="font-mono text-base font-semibold">{proposal.voting.yesPercent.toFixed(2)}%</p><p className="mt-1 text-[10px] text-amber-900/50"><I18nText zh="赞成票比例" en="Yes votes" /></p></div>}
-                      {proposal.voting.minimumVotes != null && <div><p className="font-mono text-base font-semibold">{proposal.voting.minimumVotes.toLocaleString('en-US')}</p><p className="mt-1 text-[10px] text-amber-900/50"><I18nText zh="投票页最低票数" en="Metaforo minimum" /></p></div>}
-                      {proposal.voting.passPercent != null && <div><p className="font-mono text-base font-semibold">{proposal.voting.passPercent}%</p><p className="mt-1 text-[10px] text-amber-900/50"><I18nText zh="通过比例" en="Pass threshold" /></p></div>}
-                    </div>
-                  ) : (
-                    <p className="mt-4 text-xs leading-5 text-amber-900/60"><I18nText zh="已发现投票页，但公开票数尚未录入。" en="A voting page was found, but its public tally has not yet been recorded." /></p>
-                  )}
-                  {proposal.voting.minimumVotes === 0 && (
-                    <p className="mt-4 text-[11px] leading-5 text-amber-900/60"><I18nText zh="该投票页将最低票数记录为 0；此处按 Metaforo 原页面如实展示。" en="This poll records its minimum vote count as 0; the value is reproduced exactly as shown on Metaforo." /></p>
-                  )}
-                  {(proposal.voting.noteZh || proposal.voting.noteEn) && (
-                    <p className="mt-4 rounded-xl bg-white/55 p-3 text-[11px] leading-5 text-amber-950/65">
-                      {locale === 'en' ? proposal.voting.noteEn ?? proposal.voting.noteZh : proposal.voting.noteZh ?? proposal.voting.noteEn}
-                    </p>
-                  )}
-                </div>
-                <a href={proposal.voting.url} target="_blank" rel="noreferrer" className="flex items-center justify-between border-t border-amber-900/10 px-5 py-3 text-xs font-black text-amber-900 transition hover:bg-amber-100">
-                  <I18nText zh="打开结果来源" en="Open result source" /><ArrowUpRight className="size-4" />
-                </a>
-              </div>
-            )}
-
-            <div className="rounded-[22px] border border-black/10 bg-white p-5">
-              <div className="flex items-center gap-2"><FileText className="size-4 text-[#087958]" /><h2 className="text-sm font-black"><I18nText zh="来源" en="Sources" /></h2></div>
-              <div className="mt-4 divide-y divide-black/8">
-                {proposal.sources.map((source) => (
-                  <a key={`${source.label}-${source.url}`} href={source.url} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-4 py-3 text-xs font-semibold text-black/55 hover:text-[#087958]">
-                    {source.label}<ExternalLink className="size-3.5 shrink-0" />
-                  </a>
-                ))}
-              </div>
-              <p className="mt-4 rounded-lg bg-[#f5f7f2] p-3 text-[10px] leading-4 text-black/40">{t('本次读取：', 'Read on: ')}{formatDate(proposal.lastVerifiedAt, locale === 'en' ? 'en-US' : 'zh-CN')}{t('。', '. ')}<I18nText zh="数据存在冲突时，以原始来源为准。" en="When data conflicts, the original source takes precedence." /></p>
-            </div>
-          </aside>
-        </div>
-      </section>
-      <SiteFooter />
-    </main>
-  );
+      <aside className="min-w-0 space-y-6 lg:col-start-2 lg:row-start-2" aria-label={t('讨论与来源', 'Discussion and sources')}>
+        <section className={panel} aria-labelledby="discussion-title"><h2 id="discussion-title" className="text-lg font-bold">{t('公开讨论', 'Public discussion')}</h2><dl className="mt-4 grid grid-cols-3 gap-2">{[[t('当前首帖赞数', 'Current first-post likes'), formatCompact(proposal.discussion.likes)], [t('回复', 'Replies'), formatCompact(proposal.discussion.replies)], [t('浏览', 'Views'), formatCompact(proposal.discussion.views)]].map(([label, value]) => <div key={label}><dt className="min-h-9 text-xs leading-5 text-muted-foreground">{label}</dt><dd className="mt-1 font-mono text-lg font-semibold">{value}</dd></div>)}</dl><p className="mt-4 text-xs leading-5 text-muted-foreground">{t('当前赞数并非七天截止时的赞数，不能仅凭当前数量判断是否在讨论期内达到门槛。', 'The current like count is not a seven-day cutoff snapshot and does not by itself prove the discussion threshold was met in time.')}</p></section>
+        <section id="sources" className={`${panel} scroll-mt-28`} aria-labelledby="sources-title"><div className="flex items-center gap-2"><FileText className="size-4 text-primary" aria-hidden="true" /><h2 id="sources-title" className="text-lg font-bold">{t('来源与核验', 'Sources and verification')}</h2></div><ul className="mt-3 divide-y divide-border">{proposal.sources.map((source) => <li key={`${source.label}-${source.url}`}><a href={source.url} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-between gap-3 py-3 text-sm font-semibold leading-6 text-primary">{localizedSourceLabel(source.label, source.url, locale)}<ExternalLink className="size-4 shrink-0" aria-hidden="true" /></a></li>)}</ul><p className="mt-4 text-xs leading-6 text-muted-foreground">{t('记录读取时间：', 'Record read: ')}<time dateTime={proposal.lastVerifiedAt}>{localizedDate(proposal.lastVerifiedAt)}</time>{t('。这不代表每个来源都在同一时间更新。', '. Sources may have different update times.')}</p><p className="mt-3 text-xs leading-6 text-muted-foreground">{t('申请、批准和实际拨付是不同概念。数据存在冲突时，以原始论坛、投票页和链上证据为准。', 'Requested, approved, and disbursed amounts are different. When records conflict, consult the original forum, voting page, and on-chain evidence.')}</p></section>
+      </aside>
+    </div></main><SiteFooter />
+  </div>;
 }

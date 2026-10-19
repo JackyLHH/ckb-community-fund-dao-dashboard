@@ -1,44 +1,29 @@
 'use client';
 
-import { Database, RefreshCw, ShieldCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { I18nText } from '@/components/i18n-text';
-import { LiveSyncBadge } from '@/components/live-sync-badge';
 import { getProposalStatusTags } from '@/lib/proposals';
 import { useLiveDataset } from '@/lib/use-live-data';
+import { useLocale } from '@/lib/use-locale';
 
 export function LiveProjectStats() {
-  const { data } = useLiveDataset();
-  const fundedCount = data.proposals.filter((proposal) => proposal.funded).length;
-  const governanceCount = data.proposals.filter((proposal) => proposal.projectType === 'Governance').length;
-  const discussionCount = data.proposals.filter((proposal) => getProposalStatusTags(proposal).includes('discussion')).length;
-  const votingCount = data.proposals.filter((proposal) => getProposalStatusTags(proposal).includes('voting')).length;
-  return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/10 pt-6 sm:grid-cols-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-      <div><p className="font-mono text-2xl font-semibold text-[#c8ff67]">{data.meta.proposalCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="提案" en="Proposals" /></p></div>
-      <div><p className="font-mono text-2xl font-semibold">{fundedCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="已资助" en="Funded" /></p></div>
-      <div><p className="font-mono text-2xl font-semibold">{governanceCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="治理提案" en="Governance Proposals" /></p></div>
-      <div><p className="font-mono text-2xl font-semibold">{discussionCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="讨论中" en="Discussion" /></p></div>
-      <div><p className="font-mono text-2xl font-semibold">{votingCount}</p><p className="mt-1 text-[11px] text-white/40"><I18nText zh="正在投票" en="Voting now" /></p></div>
-    </div>
-  );
-}
-
-export function LiveDirectoryFacts() {
   const { data, state } = useLiveDataset();
+  const { t } = useLocale();
+  const items = [
+    { key: 'all', count: data.proposals.length, zh: '全部提案', en: 'All proposals', query: '' },
+    { key: 'funded', count: data.proposals.filter((proposal) => proposal.funded).length, zh: '已资助', en: 'Funded', query: '?funded=1' },
+    { key: 'governance', count: data.proposals.filter((proposal) => proposal.projectType === 'Governance').length, zh: '治理提案', en: 'Governance', query: '?type=Governance' },
+    { key: 'discussion', count: data.proposals.filter((proposal) => getProposalStatusTags(proposal).includes('discussion')).length, zh: '讨论中', en: 'Discussion', query: '?status=discussion' },
+    { key: 'voting', count: data.proposals.filter((proposal) => getProposalStatusTags(proposal).includes('voting')).length, zh: '正在投票', en: 'Voting now', query: '?status=voting' },
+  ];
   return (
-    <div className="mb-6 grid gap-3 sm:grid-cols-3">
-      <div className="flex items-center gap-3 rounded-xl border border-black/8 bg-white px-4 py-3">
-        <Database className="size-4 text-[#087958]" />
-        <div><p className="text-xs font-bold"><I18nText zh={`${data.meta.proposalCount} 份提案记录`} en={`${data.meta.proposalCount} proposal records`} /></p><p className="mt-0.5 text-[11px] text-black/40"><I18nText zh="实时读取 Nervos Talk 分类页" en="Read live from Nervos Talk" /></p></div>
+    <div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        {items.map((item) => <a key={item.key} href={`/projects${item.query}#proposal-directory`} aria-label={t(`查看${item.zh}：${item.count} 份`, `View ${item.en.toLowerCase()}: ${item.count} proposals`)} className="group flex min-h-20 items-center justify-between gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 transition hover:border-[#7fe0bc]/70 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe0bc] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f0e]">
+          <div><p className={`font-mono text-2xl font-semibold tabular-nums ${item.key === 'all' ? 'text-[#c8ff67]' : 'text-white'}`}>{item.count}</p><p className="mt-1 text-xs font-medium text-white/80"><I18nText zh={item.zh} en={item.en} /></p></div><ArrowRight className="size-4 shrink-0 text-white/65 transition group-hover:translate-x-0.5 group-hover:text-[#7fe0bc]" aria-hidden="true" />
+        </a>)}
       </div>
-      <div className="flex items-center gap-3 rounded-xl border border-black/8 bg-white px-4 py-3">
-        <ShieldCheck className="size-4 text-[#087958]" />
-        <div><p className="text-xs font-bold"><I18nText zh="证据优先" en="Evidence first" /></p><p className="mt-0.5 text-[11px] text-black/40"><I18nText zh="缺少数据时显示待核验" en="Missing data is marked for verification" /></p></div>
-      </div>
-      <div className="flex items-center gap-3 rounded-xl border border-black/8 bg-white px-4 py-3">
-        <RefreshCw className="size-4 text-[#087958]" />
-        <div><p className="text-xs font-bold"><I18nText zh="打开即更新" en="Refreshes on open" /></p><div className="mt-1"><LiveSyncBadge state={state} fetchedAt={data.meta.generatedAt} /></div></div>
-      </div>
+      <p className="mt-3 text-xs leading-5 text-white/75"><I18nText zh="全站概况：资助、类型和阶段是不同维度，数量可能重叠。点击数字可筛选。" en="Whole-directory overview. Funding, type, and stage overlap; these counts are not additive. Select a count to filter." />{state === 'loading' && <> <I18nText zh="正在显示缓存记录，实时数据读取中。" en="Showing cached records while live data loads." /></>}{state === 'fallback' && <> <I18nText zh="来源暂不可用，当前为最近可用记录。" en="The source is unavailable; these are the latest available records." /></>}</p>
     </div>
   );
 }

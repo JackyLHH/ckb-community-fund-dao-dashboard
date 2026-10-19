@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "address": "ckb1qyqnrg4jfx82g29l44q6d93jnrm5ytcp0d8sjfev2q",
+  "timezone": "Asia/Shanghai",
+  "observations": [
+    {
+      "date": "2026-10-19",
+      "observedAt": "2026-10-19T04:22:52.219Z",
+      "balanceShannons": "15625453541721220",
+      "balanceCkb": "156254535.4172122",
+      "sourceUrl": "https://mainnet-api.explorer.nervos.org/api/v1/addresses/ckb1qyqnrg4jfx82g29l44q6d93jnrm5ytcp0d8sjfev2q"
+    }
+  ]
+}

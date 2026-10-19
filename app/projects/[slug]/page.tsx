@@ -9,10 +9,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const proposal = findProposal(slug);
-  if (!proposal) return { title: 'Project not found' };
+  if (!proposal) return { title: 'Proposal not found' };
   const description = cleanSummary(proposal, 155);
   return {
-    title: `${proposal.title} | CKB Community Fund DAO`,
+    title: proposal.title,
     description,
     openGraph: { title: proposal.title, description, images: [] },
     twitter: { card: 'summary', title: proposal.title, description, images: [] },

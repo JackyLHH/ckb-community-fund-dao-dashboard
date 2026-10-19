@@ -12,32 +12,34 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <main className="min-h-screen bg-[#f5f7f2] text-[#0b0f0e]">
+    <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
-      <section className="border-b border-black/10 bg-[#0b0f0e] text-white">
-        <div className="ledger-grid mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-16">
-          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div>
-              <p className="label-caps text-[#7fe0bc]">Proposal directory</p>
-              <h1 className="mt-4 text-4xl font-black tracking-[-.045em] sm:text-6xl">
+      <main id="main-content" tabIndex={-1}>
+      <section aria-labelledby="directory-title" className="border-b border-white/10 bg-[#0b0f0e] text-white">
+        <div className="ledger-grid mx-auto max-w-7xl px-5 py-7 lg:px-8 lg:py-9">
+          <div>
+            <div className="max-w-3xl">
+              <p className="text-xs font-semibold tracking-wider text-[#7fe0bc]"><I18nText zh="提案目录" en="Proposal directory" /></p>
+              <h1 id="directory-title" className="mt-3 text-3xl font-bold leading-tight tracking-[-.025em] sm:text-4xl">
                 <I18nText zh="查看每一个社区提案" en="Explore every community proposal" />
               </h1>
-              <p className="mt-5 max-w-2xl text-sm leading-6 text-white/55 sm:text-base">
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">
                 <I18nText
                   zh="从讨论帖到投票和拨款证据，用同一套结构追踪 CKB 生态建设提案。"
                   en="Track CKB ecosystem proposals from discussion through voting, funding, and delivery evidence."
                 />
               </p>
             </div>
-            <LiveProjectStats />
+            <div className="mt-6"><LiveProjectStats /></div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-14">
+      <section aria-labelledby="directory-title" className="mx-auto max-w-7xl px-5 py-6 lg:px-8 lg:py-8">
         <ProjectsExplorer />
       </section>
+      </main>
       <SiteFooter />
-    </main>
+    </div>
   );
 }

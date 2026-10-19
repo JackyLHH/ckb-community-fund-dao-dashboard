@@ -1,6 +1,7 @@
 import { StaticLink as Link } from '@/components/static-link';
 import {
   ArrowUpRight,
+  ArrowRight,
   Ban,
   CircleCheck,
   Coins,
@@ -13,25 +14,27 @@ import { I18nText } from '@/components/i18n-text';
 import { LiveFeaturedProposals } from '@/components/live-featured-proposals';
 import { LiveHomeActivity } from '@/components/live-home-activity';
 import { LiveTreasuryCard } from '@/components/live-treasury-card';
+import { HomeQuickActions } from '@/components/home-quick-actions';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
+import { TreasuryHistoryChart } from '@/components/treasury-history';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f5f7f2] text-[#0b0f0e]">
+    <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
-
+      <main id="main-content" tabIndex={-1}>
       <section className="overflow-hidden bg-[#0b0f0e] text-white">
-        <div className="ledger-grid relative mx-auto grid max-w-7xl gap-14 px-5 py-20 lg:grid-cols-[1.04fr_.96fr] lg:px-8 lg:py-28">
+        <div className="ledger-grid relative mx-auto grid max-w-7xl gap-10 px-5 py-12 lg:grid-cols-[1.04fr_.96fr] lg:px-8 lg:py-16">
           <div className="pointer-events-none absolute -left-24 top-16 size-72 rounded-full bg-[#00cc8e]/15 blur-3xl" />
           <div className="relative z-10 max-w-3xl">
-            <h1 className="max-w-3xl font-[var(--font-heading-stack)] text-[clamp(3.1rem,7vw,6.7rem)] font-black leading-[.88] tracking-[-.065em]">
+            <h1 className="max-w-3xl font-[var(--font-heading-stack)] text-[clamp(2.5rem,4.7vw,4.25rem)] font-black leading-[1.1] tracking-[-.04em]">
               <I18nText
-                zh={<>让每一笔社区资金<span className="mt-2 block text-[#c8ff67]">清晰可见</span></>}
+                zh={<span className="text-[clamp(2.1rem,4vw,3.4rem)] tracking-[-.025em]">让每一笔社区资金<span className="mt-2 block text-[#c8ff67]">清晰可见</span></span>}
                 en={<>See every community fund<span className="mt-2 block text-[#c8ff67]">in the open</span></>}
               />
             </h1>
-            <p className="mt-8 max-w-xl text-base leading-7 text-white/65 sm:text-lg">
+            <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg">
               <I18nText
                 zh="一站查看 CKB Community Fund DAO 的治理规则、资金余额、提案投票与里程碑进展。"
                 en="Explore the rules, treasury, votes, and milestone progress of the CKB Community Fund DAO in one place."
@@ -42,7 +45,7 @@ export default function Home() {
                 href="/projects"
                 className="inline-flex h-12 items-center justify-center gap-1.5 rounded-full bg-[#c8ff67] px-6 text-sm font-bold text-[#102119] transition hover:bg-[#b9ed60]"
               >
-                <I18nText zh="浏览所有提案" en="Explore all proposals" /> <ArrowUpRight data-icon="inline-end" />
+                <I18nText zh="浏览所有提案" en="Explore all proposals" /> <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
               <a
                 href="#governance"
@@ -73,6 +76,7 @@ export default function Home() {
                 )}
               />
             </div>
+            <HomeQuickActions />
           </div>
 
           <div className="relative self-end lg:pl-8">
@@ -81,15 +85,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="governance" className="bg-[#f5f7f2]">
-        <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
+      <section id="governance" className="bg-background">
+        <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-18">
           <div className="grid gap-10 lg:grid-cols-[.72fr_1.28fr]">
           <div>
-            <p className="label-caps text-[#087958]">Governance path</p>
-            <h2 className="mt-4 max-w-md text-4xl font-black tracking-[-.04em] sm:text-5xl">
+            <p className="label-caps text-primary"><I18nText zh="治理流程" en="Governance path" /></p>
+            <h2 className="section-heading mt-4 max-w-md">
               <I18nText zh="从一个想法，到可验证的交付" en="From an idea to verifiable delivery" />
             </h2>
-            <p className="mt-5 max-w-md text-sm leading-6 text-black/55">
+            <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground">
               <I18nText
                 zh="三个公开阶段让社区有时间理解、讨论、表决并持续监督资金的使用。"
                 en="Three public stages give the community time to understand, discuss, vote, and monitor how funds are used."
@@ -118,28 +122,28 @@ export default function Home() {
                 no: '03',
                 icon: CircleCheck,
                 titleZh: '执行', titleEn: 'Execution',
-                metaZh: 'Milestones · 持续披露', metaEn: 'Milestones · Ongoing disclosure',
+                metaZh: '里程碑 · 持续披露', metaEn: 'Milestones · Ongoing disclosure',
                 bodyZh: '通过后按规则拨款；提案人通过 [Status Update] 报告里程碑、交付物与资金使用。',
                 bodyEn: 'Approved proposals receive funds under the rules and report milestones, deliverables, and spending through [Status Update] posts.',
               },
             ].map(({ no, icon: Icon, titleZh, titleEn, metaZh, metaEn, bodyZh, bodyEn }) => (
               <li
                 key={no}
-                className="group grid gap-5 rounded-2xl border border-black/10 bg-white p-5 transition hover:-translate-y-0.5 hover:border-[#00a873]/40 sm:grid-cols-[64px_1fr_auto] sm:items-center sm:p-6"
+                className="grid gap-5 rounded-2xl border border-border bg-card p-5 sm:grid-cols-[48px_1fr_auto] sm:items-start sm:p-6"
               >
-                <span className="grid size-12 place-items-center rounded-full bg-[#e6f7ef] font-mono text-xs font-bold text-[#087958]">
+                <span className="grid size-12 place-items-center rounded-full bg-secondary font-mono text-sm font-bold text-primary">
                   {no}
                 </span>
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
                     <h3 className="text-lg font-bold tracking-tight"><I18nText zh={titleZh} en={titleEn} /></h3>
-                    <span className="rounded-full border border-black/10 bg-[#f5f7f2] px-2 py-1 text-[10px] font-semibold text-black/55">
+                    <span className="rounded-full border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                       <I18nText zh={metaZh} en={metaEn} />
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-black/55"><I18nText zh={bodyZh} en={bodyEn} /></p>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground"><I18nText zh={bodyZh} en={bodyEn} /></p>
                 </div>
-                <Icon className="hidden size-6 text-[#087958] sm:block" aria-hidden="true" />
+                <Icon className="hidden size-6 text-primary sm:block" aria-hidden="true" />
               </li>
             ))}
             </ol>
@@ -147,23 +151,23 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-black/10 bg-white">
-        <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
+      <section className="border-y border-border bg-card">
+        <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-18">
           <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
           <div>
-            <p className="label-caps text-[#087958]">Rules that protect the fund</p>
-            <h2 className="mt-4 max-w-lg text-4xl font-black tracking-[-.04em] sm:text-5xl">
+            <p className="label-caps text-primary"><I18nText zh="资金保障规则" en="Rules that protect the fund" /></p>
+            <h2 className="section-heading mt-4 max-w-lg">
               <I18nText zh="规则不是装饰，是资金的护栏" en="Rules are the treasury’s guardrails" />
             </h2>
-            <p className="mt-5 max-w-md text-sm leading-6 text-black/52">
+            <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground">
               <I18nText
                 zh="关键规则直接链接到治理主源；网站只做解释和聚合，不改变社区规则。"
                 en="Every key rule links back to governance sources. This site explains and aggregates; it does not redefine governance."
               />
             </p>
             <I18nText
-              zh={<a href="https://github.com/CKB-Community-Fund-DAO/rules/blob/main/rules-cn.md" target="_blank" rel="noreferrer" className="mt-7 inline-flex items-center gap-2 text-sm font-black text-[#087958]">阅读完整规则 <ArrowUpRight className="size-4" /></a>}
-              en={<a href="https://github.com/CKB-Community-Fund-DAO/rules/blob/main/rules-en.md" target="_blank" rel="noreferrer" className="mt-7 inline-flex items-center gap-2 text-sm font-black text-[#087958]">Read the full rules <ArrowUpRight className="size-4" /></a>}
+              zh={<a href="https://github.com/CKB-Community-Fund-DAO/rules/blob/main/rules-cn.md" target="_blank" rel="noreferrer" className="touch-target mt-5 inline-flex items-center gap-2 rounded-lg text-sm font-bold text-primary">阅读完整规则 <ArrowUpRight className="size-4" /></a>}
+              en={<a href="https://github.com/CKB-Community-Fund-DAO/rules/blob/main/rules-en.md" target="_blank" rel="noreferrer" className="touch-target mt-5 inline-flex items-center gap-2 rounded-lg text-sm font-bold text-primary">Read the full rules <ArrowUpRight className="size-4" /></a>}
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -173,10 +177,10 @@ export default function Home() {
               { icon: Coins, titleZh: '大额预算分期拨付', titleEn: 'Large budgets use milestones', textZh: '超过 $10,000 的预算采用里程碑付款；首笔不超过 20%，且上限 $10,000。', textEn: 'Budgets over $10,000 use milestone payments. The first payment is capped at 20% and $10,000.' },
               { icon: FileCheck2, titleZh: '持续发布进展报告', titleEn: 'Ongoing delivery reports', textZh: '提案人需报告里程碑、目标完成情况与资金使用，供社区监督。', textEn: 'Teams report milestones, completed goals, and fund usage for community oversight.' },
             ].map(({ icon: Icon, titleZh, titleEn, textZh, textEn }) => (
-              <div key={titleEn} className="rounded-[20px] border border-black/10 bg-white p-6">
-                <span className="grid size-10 place-items-center rounded-xl bg-[#e3f8ef] text-[#087958]"><Icon className="size-5" /></span>
+              <div key={titleEn} className="rounded-[20px] border border-border bg-background p-6">
+                <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary"><Icon className="size-5" aria-hidden="true" /></span>
                 <h3 className="mt-5 font-black"><I18nText zh={titleZh} en={titleEn} /></h3>
-                <p className="mt-2 text-xs leading-5 text-black/48"><I18nText zh={textZh} en={textEn} /></p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground"><I18nText zh={textZh} en={textEn} /></p>
               </div>
             ))}
             </div>
@@ -184,15 +188,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b border-black/10 bg-[#eaf0eb]">
-        <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+      <section className="border-b border-border bg-surface-alternate">
+        <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-18">
           <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
-              <p className="label-caps text-[#087958]">Featured proposals</p>
-              <h2 className="mt-3 text-3xl font-black tracking-[-.035em]"><I18nText zh="正在执行的提案" en="Proposals in progress" /></h2>
+              <p className="label-caps text-primary"><I18nText zh="精选提案" en="Featured proposals" /></p>
+              <h2 className="section-heading mt-3"><I18nText zh="正在执行的提案" en="Proposals in progress" /></h2>
             </div>
-            <Link href="/projects?status=executing" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#087958]">
-              <I18nText zh="更多正在执行中的提案" en="More proposals in progress" /> <ArrowUpRight className="size-4" />
+            <Link href="/projects?status=executing" className="touch-target inline-flex items-center gap-1.5 rounded-lg text-sm font-bold text-primary">
+              <I18nText zh="更多正在执行中的提案" en="More proposals in progress" /> <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
           <LiveFeaturedProposals />
@@ -200,7 +204,9 @@ export default function Home() {
       </section>
 
       <LiveHomeActivity />
+      <div className="border-t border-border bg-background"><div className="mx-auto max-w-7xl px-5 py-10 lg:px-8"><TreasuryHistoryChart /></div></div>
+      </main>
       <SiteFooter />
-    </main>
+    </div>
   );
 }

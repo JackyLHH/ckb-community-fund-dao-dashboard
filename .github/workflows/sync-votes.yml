@@ -30,17 +30,22 @@ jobs:
         if: always()
         continue-on-error: true
         run: node --experimental-strip-types scripts/sync-lifecycle.mjs
+      - name: Record the daily observed treasury balance
+        id: treasury
+        if: always()
+        continue-on-error: true
+        run: node --experimental-strip-types scripts/sync-treasury-history.mjs
       - name: Save observed results
         if: always()
         run: |
-          if ! git diff --quiet -- data/votes.generated.json data/lifecycle.generated.json; then
+          if ! git diff --quiet -- data/votes.generated.json data/lifecycle.generated.json data/treasury-history.generated.json; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add data/votes.generated.json data/lifecycle.generated.json
-            git commit -m 'Sync public Metaforo vote results'
+            git add data/votes.generated.json data/lifecycle.generated.json data/treasury-history.generated.json
+            git commit -m 'Sync public votes, lifecycle events and treasury observations'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
       - name: Report incomplete observations
-        if: steps.collect.outcome == 'failure' || steps.lifecycle.outcome == 'failure'
+        if: steps.collect.outcome == 'failure' || steps.lifecycle.outcome == 'failure' || steps.treasury.outcome == 'failure'
         run: exit 1

@@ -38,7 +38,27 @@ The project exports a static build to `dist/client` and includes `vercel.json`. 
 
 The `main` branch is connected to the production Vercel project. Pushing to `main` deploys the live site, while pull requests and other branches receive Vercel preview deployments.
 
-## Proposal overview translations
+## Interface and optional preferences
+
+The interface supports Chinese/English, light/dark/system appearance, visible keyboard focus, a skip link, reduced motion, and mobile navigation. Browser storage is optional: blocked storage must not prevent reading or switching languages. The directory preserves filters in its URL, accepts exact proposal IDs and trusted topic URLs, and remembers the status guide and compact-list preference locally. Cards and detail pages share the reviewed overview and budget; card summaries remain limited to six lines.
+
+Details distinguish planned milestones from delivery evidence, provisional vote totals from final outcomes, and execution in progress from completion. Progress is newest first, grouped by Beijing calendar month; presentation filters must not loosen the daily digest's stricter author/update classifier. Failed detail reads retain cached information with an explicit notice and retry, not a false “deleted” conclusion. Human corrections always override browser-cached content.
+
+### Private email preferences
+
+Apply `supabase/migrations/20261019_subscription_preferences.sql` before deploying this feature. Existing subscribers continue to receive all categories and all proposals by default. `/subscription` allows confirmed subscribers to choose language, event categories, and up to 100 specific proposal IDs through a private email link, without an account. An empty category selection or empty selected-proposal list pauses matching emails; public Telegram channels always retain the global digest.
+
+Personal management credentials are 256-bit bearer tokens in a URL **fragment**, submitted only in an HTTPS POST body. The page is excluded from Analytics, is noindex/no-referrer, and APIs prohibit caching. The subscriber table remains RLS-protected and inaccessible to public database roles. Never share or log personal links. Signup/management responses do not reveal account existence. Shared per-address atomic mail leases limit resend races; they are not a replacement for hosting-level abuse protection.
+
+Preference changes do not backfill previously excluded lifecycle events. Language-only changes preserve the event eligibility boundary. Email confirmation is idempotent, and bounce/complaint suppression remains authoritative during concurrent requests.
+
+### Observed treasury history
+
+`scripts/sync-treasury-history.mjs` records at most one actual Explorer balance per Beijing day in `data/treasury-history.generated.json`, alongside the vote workflow. The first verified observation is 2026-10-19. Missing days are never filled with estimates. The chart only appears after two observations, labels its auto-scaled range, and includes an exact shannon-derived CKB table. Balance changes must not be described as grant spending without transaction-level evidence.
+
+`npm test` includes offline preference/security, detail/source-failure, directory, theme/locale, and exact balance-history regressions. These tests never send real email or Telegram messages.
+
+## Proposal overview translation priority
 
 Human-reviewed `objectiveZh` and `objectiveEn` values always take precedence. When a live proposal supplies only one language, `/api/translation` translates that exact overview into the missing language. Production uses the public MyMemory Translation API by default, which requires no browser-exposed credential or payment method. If `AI_GATEWAY_API_KEY` is configured, Vercel AI Gateway is preferred and the public service becomes the fallback.
 

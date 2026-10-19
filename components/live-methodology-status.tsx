@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2 } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { I18nText } from '@/components/i18n-text';
 import { LiveSyncBadge } from '@/components/live-sync-badge';
 import { useLiveDataset } from '@/lib/use-live-data';
@@ -8,14 +8,14 @@ import { useLiveDataset } from '@/lib/use-live-data';
 export function LiveMethodologyStatus() {
   const { data, state } = useLiveDataset();
   return (
-    <div className="mt-12 flex items-start gap-3 rounded-[20px] border border-[#00a873]/20 bg-[#eaf8f1] p-5">
-      <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-[#087958]" />
+    <div className="mt-10 flex items-start gap-3 rounded-[20px] border border-border bg-secondary p-5">
+      <Info className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
       <div>
         <LiveSyncBadge state={state} fetchedAt={data.meta.generatedAt} />
-        <p className="mt-3 text-sm leading-6 text-black/58">
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
           <I18nText
-            zh={<>提案目录、互动数据和提案详情在每次打开网站时重新读取。DAO 余额优先读取公布地址的链上余额；已资助清单本身最后更新于 {data.treasury.forumAsOf ?? data.treasury.asOf}。来源暂时不可用时，网站会明确提示并回退到最近一次可用快照。</>}
-            en={<>The proposal directory, interaction metrics, and proposal details are refreshed whenever the site opens. The DAO balance comes from the published on-chain address; the funded proposals list itself was last updated on {data.treasury.forumAsOf ?? data.treasury.asOf}. If a source is unavailable, the site clearly falls back to the latest snapshot.</>}
+            zh={<>打开网站时会尝试读取公开来源，并使用短期缓存减少等待；“来源读取时间”不等于每个字段的更新时间。DAO 余额优先读取链上地址，余额来源日期为 {data.treasury.asOf}；已资助清单更新于 {data.treasury.forumAsOf ?? data.treasury.asOf}。自动投票核验、人工审校和原帖活动有各自的时间。来源暂不可用时会显示缓存记录，不应将其视为刚刚更新的数据。</>}
+            en={<>Opening the site checks public sources, using short-lived caches to reduce waiting. The source-check time is not the update time of every field. The balance prioritizes the on-chain address and is dated {data.treasury.asOf}; the funding list is dated {data.treasury.forumAsOf ?? data.treasury.asOf}. Vote checks, manual reviews, and forum activity have separate timestamps. Cached records shown during source outages should not be mistaken for newly updated data.</>}
           />
         </p>
       </div>

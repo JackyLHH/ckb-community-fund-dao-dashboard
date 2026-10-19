@@ -28,6 +28,7 @@ import { cleanProposalTitle as cleanTitle, looksLikeProposal } from './proposal-
 import { resolveVoteLifecycle } from './metaforo-voting';
 import { executionStatusTags } from './proposal-lifecycle';
 import savedVotes from '../data/votes.generated.json';
+import { PublicSourceError, resolveDetailSource, type ProjectReadResult } from './live-project-result';
 
 const categoryEndpoint = '/live/nervos/category';
 const fundedTopicEndpoint = '/live/nervos/topic/7793';
@@ -93,7 +94,7 @@ let liveVotes: Record<string, ProposalVoting> = savedVotes.votes as Record<strin
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, { ...init, cache: 'no-store' });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+  if (!response.ok) throw new PublicSourceError(response.status, response.statusText);
   return response.json() as Promise<T>;
 }
 
@@ -687,13 +688,20 @@ export function loadLiveDataset() {
   return datasetPromise;
 }
 
-export async function loadLiveProject(id: string): Promise<Proposal | null> {
+export async function loadLiveProjectWithState(id: string, options: { forceRefresh?: boolean } = {}): Promise<ProjectReadResult<Proposal>> {
+  if (options.forceRefresh) {
+    // A user-requested retry must not reuse the failed five-minute promise.
+    datasetPromise = null;
+    datasetExpiresAt = 0;
+  }
   const data = await loadLiveDataset();
-  const base = data.proposals.find((proposal) => proposal.id === id) ?? fallbackById(id);
-  if (!base) return null;
+  const base = data.proposals.find((proposal) => proposal.id === id) ?? fallbackById(id) ?? null;
   const proposalOverride = proposalOverridesById[id];
-  try {
-    const detail = await fetchJson<TopicResponse>(topicEndpoint(id));
+  const result = await resolveDetailSource<Proposal>(base, async () => {
+    const detail = await fetchJson<TopicResponse>(topicEndpoint(id), { signal: AbortSignal.timeout(15_000) });
+    // A topic can exist outside the proposal category or be missing from a
+    // temporarily unavailable listing. Do not invent its proposal fields.
+    if (!base) throw new Error('Proposal listing is unavailable for this topic');
     const posts = await loadAllTopicPosts(id, detail);
     const firstPost = posts.find((post) => post.post_number === 1) ?? posts[0];
     const cooked = firstPost?.cooked ?? '';
@@ -747,7 +755,11 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
     const withOverview = await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview });
     const withMilestones = await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
     return await translateMissingProposalUpdates(withMilestones, fetch);
-  } catch {
-    return await translateMissingProposalUpdates(base, fetch);
-  }
+  }, (known) => translateMissingProposalUpdates(known, fetch));
+  return data.meta.usedFallback && result.state === 'live' ? { ...result, state: 'fallback' } : result;
+}
+
+// Preserve the existing public return shape for other callers.
+export async function loadLiveProject(id: string): Promise<Proposal | null> {
+  return (await loadLiveProjectWithState(id)).proposal;
 }

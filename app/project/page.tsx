@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { LiveProjectDetail } from '@/components/live-project-detail';
 
 export const metadata: Metadata = {
-  title: 'Project details',
-  description: 'Live CKB Community Fund DAO project details, discussion, voting, and delivery evidence.',
+  title: 'Proposal',
+  description: 'CKB Community Fund DAO proposal overview, budget, voting, milestones, and progress updates with original public sources.',
   openGraph: { images: [] },
   twitter: { images: [] },
 };

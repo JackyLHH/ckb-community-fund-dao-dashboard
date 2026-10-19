@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { Analytics } from '@vercel/analytics/next';
+import { PrivacyAnalytics } from '@/components/privacy-analytics';
+import { preferencesBootstrap } from '@/lib/ui-preferences';
 import './globals.css';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ckbcommunityfunddao.xyz';
@@ -15,14 +16,14 @@ export const metadata: Metadata = {
   icons: { icon: '/favicon.svg' },
   openGraph: {
     title: 'CKB Community Fund DAO',
-    description: 'Rules · Funding · Projects · Progress',
+    description: 'Rules · Funding · Proposals · Progress',
     type: 'website',
-    images: [{ url: '/og.png', width: 1731, height: 909, alt: 'CKB Community Fund DAO — Rules, Funding, Projects, Progress' }],
+    images: [{ url: '/og.png', width: 1731, height: 909, alt: 'CKB Community Fund DAO — Rules, Funding, Proposals, Progress' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'CKB Community Fund DAO',
-    description: 'Rules · Funding · Projects · Progress',
+    description: 'Rules · Funding · Proposals · Progress',
     images: ['/og.png'],
   },
   other: {
@@ -34,10 +35,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="zh-CN" translate="no" className="notranslate">
+    <html lang="zh-CN" translate="no" className="notranslate" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: preferencesBootstrap }} /></head>
       <body className="notranslate">
         {children}
-        <Analytics />
+        <PrivacyAnalytics />
       </body>
     </html>
   );
