@@ -21,12 +21,12 @@ export default function ProjectsPage() {
             <div className="max-w-3xl">
               <p className="text-xs font-semibold tracking-wider text-[#7fe0bc]"><I18nText zh="提案目录" en="Proposal directory" /></p>
               <h1 id="directory-title" className="mt-3 text-3xl font-bold leading-tight tracking-[-.025em] sm:text-4xl">
-                <I18nText zh="查看每一个社区提案" en="Explore every community proposal" />
+                <I18nText zh="DAO 提案，一目了然" en="DAO proposals, at a glance" />
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">
                 <I18nText
-                  zh="从讨论帖到投票和拨款证据，用同一套结构追踪 CKB 生态建设提案。"
-                  en="Track CKB ecosystem proposals from discussion through voting, funding, and delivery evidence."
+                  zh="查看社区提案、资助情况与交付进展。"
+                  en="See what’s proposed, funded, and delivered."
                 />
               </p>
             </div>

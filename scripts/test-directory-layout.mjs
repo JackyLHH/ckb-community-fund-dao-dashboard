@@ -61,4 +61,9 @@ assert.match(source, /if \(key === 'funded'\) setFundedOnly\(false\)/, 'A funded
 assert.match(source, /window\.addEventListener\('popstate', readLocation\)/);
 assert.match(source, /window\.history\.replaceState/);
 assert.match(source, /window\.localStorage\.setItem\(viewPreferenceKey, next\)/);
+const page = await readFile(new URL('../app/projects/page.tsx', import.meta.url), 'utf8');
+assert.match(page, /zh="DAO 提案，一目了然" en="DAO proposals, at a glance"/);
+assert.match(page, /zh="查看社区提案、资助情况与交付进展。"/);
+assert.match(page, /en="See what’s proposed, funded, and delivered\."/);
+assert.doesNotMatch(page, /Explore every community proposal|Track CKB ecosystem proposals from discussion/);
 console.log('Directory layout: bilingual concise counts, no status panel or standalone funded toggle, one desktop control row, mobile disclosure, and URL compatibility pass.');
