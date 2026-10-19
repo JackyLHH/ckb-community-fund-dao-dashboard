@@ -15,6 +15,7 @@ const bundled = await build({
     import { LiveTreasuryCard } from './components/live-treasury-card.tsx';
     import { LiveFeaturedProposals } from './components/live-featured-proposals.tsx';
     import { LiveHomeActivity } from './components/live-home-activity.tsx';
+    import { SiteFooter } from './components/site-footer.tsx';
     import { proposals, getProposalOverview, getProposalTitle } from './lib/proposals.ts';
     const homepageIds = ['9756', '10015', '10583'];
     export const homepageProposals = homepageIds.map((id, index) => ({
@@ -39,7 +40,7 @@ const bundled = await build({
       },
     });
     export const homepageExpected = (proposal, locale) => ({ overview: getProposalOverview(proposal, locale), title: getProposalTitle(proposal, locale) });
-    export const render = (name, props = {}) => renderToStaticMarkup(createElement({ SiteHeader, HomeQuickActions, LiveSyncBadge, LiveTreasuryCard, LiveFeaturedProposals, LiveHomeActivity }[name], props));
+    export const render = (name, props = {}) => renderToStaticMarkup(createElement({ SiteHeader, HomeQuickActions, LiveSyncBadge, LiveTreasuryCard, LiveFeaturedProposals, LiveHomeActivity, SiteFooter }[name], props));
   `, resolveDir: root, loader: 'tsx' },
   bundle: true, platform: 'node', format: 'cjs', packages: 'external', write: false,
   jsx: 'automatic',
@@ -94,6 +95,52 @@ try {
     const treasury = render('LiveTreasuryCard');
     assert.match(treasury, /156,254,535\.417/);
     assert.doesNotMatch(treasury, /156254535\.4172122|完整读取值|Read value|清单内已资助提案|Funded proposals on the list|清单更新于|List dated|2026-05-15|A balance change is not necessarily/);
+    assert.match(treasury, /^<a\b[^>]*href="#treasury-history"/, 'The entire treasury card links to the on-page balance and spending section');
+    assert.match(treasury, /aria-labelledby="treasury-balance-heading"/);
+    assert.match(treasury, /<p\b[^>]*id="treasury-balance-heading"/, 'The card link remains named by its visible treasury balance label');
+    assert.match(treasury, /aria-describedby="treasury-card-help"/);
+    assert.match(treasury, /<span\b[^>]*id="treasury-card-help"[^>]*class="sr-only"/, 'The card destination stays explained to assistive technology without visible clutter');
+    assert.match(treasury, /focus-visible:ring-2/, 'Keyboard focus on the whole-card link remains visible');
+    assert.equal([...treasury.matchAll(/<a\b/g)].length, 1, 'The whole-card link does not contain nested source links');
+    assert.doesNotMatch(treasury, /已资助提案|Funded proposals|链上余额读取日期|On-chain balance read date|论坛余额快照日期|Forum balance snapshot date|查看余额来源|View balance source|explorer\.example/, 'Removed treasury metadata and source CTA do not remain in either locale');
+    assert.match(treasury, /<meter\b[^>]*value="56\.61"/, 'The accessible remaining balance meter is preserved');
+    assert.match(treasury, /width:56\.61%/, 'The visual remaining balance bar still reflects the live treasury percentage');
+    assert.match(treasury, /276M CKB|2\.76 亿 CKB/, 'Initial balance context is preserved');
+    assert.match(treasury, /14:19/, 'Compact freshness remains available within the linked card');
+
+    const footer = render('SiteFooter');
+    assert.match(footer, /<section\b[^>]*id="subscribe"[^>]*aria-labelledby="proposal-updates-title"/, 'Homepage subscription anchor and accessible heading remain available');
+    const channelPanels = [...footer.matchAll(/<(?:div|section)\b[^>]*data-subscription-channel="(email|telegram)"[^>]*>/g)];
+    assert.deepEqual(channelPanels.map(([, channel]) => channel), ['email', 'telegram'], 'Email and Telegram remain distinct, clearly ordered subscription panels');
+    for (const [panel] of channelPanels) {
+      assert.match(panel, /\brounded-/);
+      assert.match(panel, /\bborder(?:\s|["-])/, 'Both subscription methods receive a consistently outlined panel');
+    }
+    for (const channel of ['email', 'telegram']) {
+      assert.match(footer, new RegExp(`<section\\b[^>]*data-subscription-channel="${channel}"[^>]*aria-labelledby="${channel}-subscription-title"`), 'Each subscription option is named by its own visible heading');
+      assert.match(footer, new RegExp(`<h3\\b[^>]*id="${channel}-subscription-title"`));
+    }
+    assert.match(footer, /<form\b/);
+    assert.match(footer, /<label\b[^>]*for="subscription-email"/);
+    assert.match(footer, /<input\b[^>]*id="subscription-email"[^>]*type="email"[^>]*inputMode="email"[^>]*autoComplete="email"[^>]*required=""/);
+    assert.match(footer, /aria-describedby="subscription-help subscription-feedback"/, 'Email input remains connected to privacy help and submission feedback');
+    const botProtection = footer.match(/<input\b[^>]*name="company"[^>]*>/)?.[0];
+    assert.match(botProtection, /tabindex="-1"/, 'The hidden bot-protection field remains non-interactive');
+    assert.match(botProtection, /aria-hidden="true"/, 'Bot protection is excluded from the accessibility tree');
+    assert.equal([...footer.matchAll(/<button\b[^>]*type="submit"/g)].length, 1, 'There is one unambiguous email subscription action');
+    const emailInput = footer.match(/<input\b[^>]*id="subscription-email"[^>]*>/)?.[0];
+    const emailSubmit = footer.match(/<button\b[^>]*type="submit"[^>]*>/)?.[0];
+    assert.match(emailInput, /\bw-full\b/, 'The email field has its own full-width row');
+    assert.match(emailSubmit, /\bw-full\b/, 'The email action no longer squeezes the input into the same row');
+    assert.match(footer, /<output\b[^>]*id="subscription-feedback"[^>]*aria-live="polite"[^>]*aria-atomic="true"/, 'Subscription results still announce accessibly');
+    assert.match(footer, /id="subscription-help"/);
+    assert.match(footer, /href="\/subscription"/, 'Existing subscriber management remains available');
+    for (const channel of ['zh', 'en']) {
+      assert.match(footer, new RegExp(`<a\\b[^>]*href="/api/telegram\\?locale=${channel}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"`), 'Both language channels retain their existing safe redirect routes');
+    }
+    assert.match(footer, /16:00/, 'The 16:00 Beijing daily delivery schedule is unchanged');
+    assert.ok(localizedText(footer, locale).includes(locale === 'en' ? 'Email confirmation is required; unsubscribe at any time.' : '需要邮件确认，可随时取消订阅。'), 'The privacy and confirmation explanation remains localized');
+    assert.doesNotMatch(footer, /#229ed9|#8cdaff/, 'Telegram uses the shared green-neutral palette instead of a separate blue accent');
 
     globalThis.__uiTestProposals = compiled.exports.homepageProposals;
     const featured = render('LiveFeaturedProposals');
@@ -151,9 +198,18 @@ assert.match(theme, /option value="system"/, 'System preference remains availabl
 const home = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
 assert.match(home, /总投票数不少于申请 CKB 数量的 3 倍/);
 assert.doesNotMatch(home, /总投票权重不少于申请/);
+const history = await readFile(new URL('../components/treasury-history.tsx', import.meta.url), 'utf8');
+const historySection = history.match(/<section\b[^>]*id="treasury-history"[^>]*>/)?.[0];
+assert.match(historySection, /tabIndex=\{-1\}/, 'The treasury card destination is a programmatically focusable section');
+assert.match(historySection, /className="[^"]*\bscroll-mt-/, 'Anchor navigation clears the sticky navigation header');
+const footerSource = await readFile(new URL('../components/site-footer.tsx', import.meta.url), 'utf8');
+assert.match(footerSource, /fetch\('\/api\/subscribe'/);
+assert.match(footerSource, /JSON\.stringify\(\{ email: submittedEmail, locale, company: form\.get\('company'\) \}\)/, 'Language preference and bot protection still accompany subscription requests');
+assert.match(footerSource, /disabled=\{state === 'submitting' \|\| coolingDown\}/, 'Layout changes preserve send cooldown and duplicate-submit protection');
+assert.match(footerSource, /aria-invalid=\{state === 'error' && errorCode === 'invalid_email'\}/, 'Invalid email feedback remains associated with the input');
 for (const file of ['project-card', 'live-home-activity', 'live-project-detail']) {
   const source = await readFile(new URL(`../components/${file}.tsx`, import.meta.url), 'utf8');
   assert.match(source, /更新于/);
   assert.doesNotMatch(source, /t\('论坛活动 |t\('论坛最近活动：|zh="论坛活动"/);
 }
-console.log('Simplified UI: bilingual navigation, quick-action parity, compact freshness, three-decimal balance, effective theme icons, update labels, four-line featured cards, and one-line activity cards pass.');
+console.log('Simplified UI: bilingual navigation, quick actions, concise linked treasury card, preserved subscription controls and language routes, effective theme icons, update labels, four-line featured cards, and one-line activity cards pass.');

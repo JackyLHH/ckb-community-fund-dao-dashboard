@@ -55,7 +55,7 @@ export function TreasuryHistoryChart({ history = savedHistory as TreasurySpendin
   const monthReadout = selectedMonth ? `${monthFormatter.format(new Date(selectedMonth.startAt))} · ${t('当月支出', 'Monthly spending')} ${formatSpendingCkb(selectedMonth.amountShannons, numberLocale)} CKB · ${cumulativeLabel} ${formatSpendingCkb(selectedMonth.cumulativeShannons, numberLocale)} CKB` : '';
 
   return (
-    <section aria-labelledby="treasury-history-heading" className="rounded-2xl border border-border bg-card p-5 text-card-foreground sm:p-6">
+    <section id="treasury-history" tabIndex={-1} aria-labelledby="treasury-history-heading" className="scroll-mt-24 rounded-2xl border border-border bg-card p-5 text-card-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 id="treasury-history-heading" className="flex items-center gap-2 text-xl font-bold">

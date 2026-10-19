@@ -43,8 +43,8 @@ const bundled = await build({
         milestones: [],
       },
     };
-    export const render = (compact, missing = false) => renderToStaticMarkup(createElement(ProjectCard, {
-      proposal: missing ? { ...proposal, budgetLabel: null, discussion: { likes: null, replies: null, views: null } } : proposal,
+    export const render = (compact, missing = false, updatedAt = fixture.updatedAt) => renderToStaticMarkup(createElement(ProjectCard, {
+      proposal: { ...proposal, updatedAt, ...(missing ? { budgetLabel: null, discussion: { likes: null, replies: null, views: null } } : {}) },
       compact,
     }));
   `, resolveDir: root, loader: 'tsx' },
@@ -136,26 +136,47 @@ try {
           assert.ok(!card.includes(fixture.summary.zh) && !card.includes(fixture.summary.en), 'Compact rows render no proposal overview');
           assert.doesNotMatch(card, /lucide-(?:message-circle|eye)\b/, 'Compact rows omit reply and view statistics');
           assert.ok(metadata.includes(fixture.author), 'Long author names remain available in the shared row');
+          assert.match(card, /lucide-arrow-right/, 'The compact-mode arrow stays unchanged');
+          assert.ok(metadataText.includes(locale === 'en' ? 'Updated Oct 19, 2026' : '更新于 2026年10月19日'), 'Compact rows preserve their original date format and prefix');
+          assert.doesNotMatch(card, /data-proposal-header="card"/, 'Card-only header changes never affect compact mode');
         } else {
+          const header = elementWithAttribute(card, 'data-proposal-header', 'card');
+          assert.deepEqual([...header.matchAll(/data-proposal-field="([^"]+)"/g)].map((match) => match[1]), ['type', 'status'], 'The type is top-left and statuses follow on the right');
+          assert.ok(visibleText(header, locale).includes(type), 'Card type labels are in the header');
+          assert.match(header, /\[&amp;&gt;div\]:justify-end/, 'Status badges align to the right, including wrapped badges');
+          assert.doesNotMatch(card, /lucide-arrow-right/, 'Card mode removes the decorative arrow');
           const summary = card.match(/<p class="([^"]*text-sm leading-6[^"]*)">([^<]+)<\/p>/);
           assert.ok(summary, 'Cards preserve the proposal overview');
           assert.match(summary[1], /\bline-clamp-3\b/);
           assert.doesNotMatch(summary[1], /\bline-clamp-(1|2|6)\b/);
           assert.equal(summary[2], fixture.summary[locale], 'Visual clamping does not truncate the localized overview source');
-          assert.ok(metadataText.includes(type), 'The proposal type is in the card statistic row');
-          assert.deepEqual([...metadata.matchAll(/data-proposal-field="([^"]+)"/g)].map((match) => match[1]), ['type', 'likes', 'replies', 'views'], 'Card type precedes likes in the same statistic row');
+          assert.ok(!metadataText.includes(type), 'The proposal type no longer repeats in card metadata');
+          assert.deepEqual([...metadata.matchAll(/data-proposal-field="([^"]+)"/g)].map((match) => match[1]), ['author', 'likes', 'replies', 'views', 'updated'], 'Author, engagement and date share one card metadata row');
+          assert.match(metadata, /\bflex\b/);
+          assert.match(metadata, /\bwhitespace-nowrap\b/);
+          assert.match(metadata, /\boverflow-x-auto\b/, 'An exceptionally narrow card keeps overflow inside the metadata row');
+          assert.doesNotMatch(metadata, /\bflex-wrap\b|\bflex-col\b/, 'Card metadata does not create a second row');
           assert.match(metadata, /lucide-message-circle/);
           assert.match(metadata, /lucide-eye/);
           assert.equal(visibleText(elementWithAttribute(metadata, 'data-proposal-field', 'replies'), locale), missing ? '—' : '13');
           assert.equal(visibleText(elementWithAttribute(metadata, 'data-proposal-field', 'views'), locale), missing ? '—' : '5.7K');
           assert.ok(text.includes(budget), 'The requested budget remains visible');
           assert.ok(text.includes(fixture.author), 'The author remains visible in card mode');
-          assert.ok(!metadata.includes(fixture.author), 'The card author remains in the separate bottom row');
-          assert.ok(!metadata.includes('<time '), 'The card update time remains in the separate bottom row');
+          const author = elementWithAttribute(metadata, 'data-proposal-field', 'author');
+          assert.ok(author.includes(`title="${fixture.author}"`), 'Truncated author names remain available as a tooltip');
+          assert.match(author, /\btruncate\b/, 'Long author names do not force wider cards');
+          const updated = elementWithAttribute(metadata, 'data-proposal-field', 'updated');
+          assert.equal(visibleText(updated, locale), locale === 'en' ? 'Oct 19, 2026' : '2026.10.19', 'Card dates use concise localized formatting without the Updated prefix');
+          assert.match(updated, /lucide-calendar-days/, 'The calendar icon remains alongside the concise date');
           assert.ok(card.includes(`<time dateTime="${fixture.updatedAt}"`));
         }
       }
     }
+    const midnightBoundary = '2026-10-18T16:53:51.132Z';
+    const cardBoundary = elementWithAttribute(compiled.exports.render(false, false, midnightBoundary), 'data-proposal-field', 'updated');
+    assert.equal(visibleText(cardBoundary, locale), locale === 'en' ? 'Oct 19, 2026' : '2026.10.19', 'Card dates use the Beijing calendar day across midnight');
+    const compactBoundary = elementWithAttribute(compiled.exports.render(true, false, midnightBoundary), 'data-proposal-field', 'updated');
+    assert.equal(visibleText(compactBoundary, locale), locale === 'en' ? 'Updated Oct 18, 2026' : '更新于 2026年10月18日', 'Compact-mode UTC date behavior stays unchanged');
   }
 } finally { delete globalThis.__densityLocale; }
-console.log('Directory density: bilingual three-line cards, summary-free compact metadata rows, icon-only likes, no visible IDs, and resilient long/missing data.');
+console.log('Directory density: bilingual three-line cards with type/status headers and one-line icon metadata, Beijing card dates, resilient long/missing data, and unchanged compact rows.');

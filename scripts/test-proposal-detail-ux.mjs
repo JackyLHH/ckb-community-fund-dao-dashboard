@@ -178,7 +178,9 @@ try {
         assert.ok(row.includes(`href="${escapeHtml(update.url)}"`), 'Update link points to the real public source');
         assert.match(row, /target="_blank"/);
         assert.ok(row.includes(escapeHtml(localized(update, 'title', locale))), 'Full localized source title remains in HTML, including titles over 150 characters');
-        assert.match(row, /line-clamp-2/, 'Only visual two-line clamping shortens long update titles');
+        assert.match(row, /line-clamp-1/, 'Only visual one-line clamping shortens long update titles');
+        assert.doesNotMatch(row, /line-clamp-[2-9]/, 'Update content never expands to multiple visible lines');
+        assert.ok(row.includes(`title="${escapeHtml(localized(update, 'title', locale))}"`), 'Hover text preserves the complete localized title');
         assert.ok(textContent(row).includes(update.author), 'Update author remains in the link row');
         assert.match(row, /lucide-external-link/, 'Each update retains its external-link affordance');
         assert.doesNotMatch(row, /View this update|查看本次更新|Published a weekly update|发布了周报/, 'Do not add redundant category/action prose to the full-title link row');
@@ -191,7 +193,22 @@ try {
       assert.doesNotMatch(sources, /Record read:|记录读取时间|Sources may have different update times|这不代表每个来源都在同一时间更新/);
       assert.ok(textContent(sources).includes(locale === 'en' ? 'Requested, approved, and disbursed amounts are different.' : '申请、批准和实际拨付是不同概念。'), 'The meaningful evidence/conflict warning is preserved');
       for (const source of proposal.sources) assert.ok(sources.includes(`href="${escapeHtml(source.url)}"`));
-      assert.match(html, /id="governance"/, 'Governance remains part of the detail content');
+      const governance = elementWithAttribute(html, 'id', 'governance');
+      const governanceSteps = elementsWithAttribute(governance, 'data-governance-step');
+      assert.equal(governanceSteps.length, 3, 'Discussion, voting, and execution remain distinct stages');
+      for (const [index, step] of governanceSteps.entries()) {
+        assert.match(step, new RegExp(`data-governance-step="${index + 1}"`));
+        const number = elementWithAttribute(step, 'data-governance-number');
+        assert.equal(textContent(number), String(index + 1));
+        assert.match(number, /\brounded-full\b/);
+        assert.match(number, /\bbg-black\b/);
+        assert.match(number, /\btext-white\b/);
+        const label = (locale === 'en' ? ['Discussion', 'Voting', 'Execution'] : ['讨论', '投票', '执行'])[index];
+        assert.match(step, /<h3\b/);
+        assert.ok(textContent(step).includes(label));
+        assert.ok(step.indexOf('data-governance-number') < step.indexOf(label), 'Each step number precedes its localized stage label');
+        assert.match(step, /class="sr-only"/, 'Status remains understandable without relying on icons');
+      }
     }
 
     const emptyProposal = { ...realProposal, budgetLabel: null, updates: [], progressNoteZh: undefined, progressNoteEn: undefined, overview: { ...realProposal.overview, milestones: [] }, voting: null, votingPageNotFound: true };
@@ -202,11 +219,26 @@ try {
     assert.ok(textContent(emptyOverview).includes(locale === 'en' ? 'The source does not explicitly break down milestones.' : '原始提案未明确拆分里程碑'));
     assert.ok(textContent(elementWithAttribute(emptyHtml, 'id', 'updates')).includes(locale === 'en' ? 'No verifiable progress or completion report' : '尚未发现提案人发布的可核验进展或完结报告'));
     assert.ok(textContent(elementWithAttribute(emptyHtml, 'id', 'voting')).includes(locale === 'en' ? 'No corresponding voting page was found.' : '未找到对应投票页。'));
-    const noteProposal = { ...emptyProposal, progressNoteZh: '已退还[资金](https://explorer.nervos.org/transaction/0x123)。', progressNoteEn: 'The [funds](https://explorer.nervos.org/transaction/0x123) were returned.' };
-    const notes = elementWithAttribute(compiled.exports.render(noteProposal), 'id', 'updates');
-    assert.match(notes, /href="https:\/\/explorer\.nervos\.org\/transaction\/0x123"/);
-    assert.ok(textContent(notes).includes(locale === 'en' ? 'were returned.' : '已退还'));
-    assert.doesNotMatch(notes, /No verifiable progress|尚未发现提案人/, 'An explicit reviewed progress note replaces the generic absence message');
+    const unverifiedVote = elementWithAttribute(compiled.exports.render({ ...emptyProposal, votingPageNotFound: false }), 'id', 'voting');
+    assert.equal(textContent(elementWithAttribute(unverifiedVote, 'class', 'mt-3 text-sm leading-6 text-muted-foreground')), locale === 'en' ? 'A corresponding voting page has not been verified.' : '尚未核验到对应投票页。');
+    assert.doesNotMatch(unverifiedVote, /发现链接不代表|Finding a link alone/);
+    for (const prefixLength of [0, 8]) {
+      const noteProposal = {
+        ...emptyProposal,
+        progressNoteZh: `${'保留完整的维护说明及其核验信息。'.repeat(prefixLength)}已退还[资金](https://explorer.nervos.org/transaction/0x123)。`,
+        progressNoteEn: `${'Keep the complete maintenance explanation and its verification information. '.repeat(prefixLength)}The [funds](https://explorer.nervos.org/transaction/0x123) were returned.`,
+      };
+      const notes = elementWithAttribute(compiled.exports.render(noteProposal), 'id', 'updates');
+      const note = elementWithAttribute(notes, 'data-progress-note');
+      assert.match(note, /href="https:\/\/explorer\.nervos\.org\/transaction\/0x123"/);
+      assert.match(note, /class="[^"]*\bline-clamp-1\b/);
+      assert.match(note, /focus-within:line-clamp-none/, 'A keyboard-focused inline link reveals its surrounding note');
+      const expectedText = (locale === 'en' ? noteProposal.progressNoteEn : noteProposal.progressNoteZh).replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+      assert.equal(textContent(note.replace(/<[^>]*>/g, '')), expectedText, 'Visual clamping does not truncate the complete localized manual note');
+      assert.ok(note.includes(`title="${escapeHtml(expectedText)}"`), 'Full hover text uses link labels, not Markdown or raw destination URLs');
+      assert.ok(textContent(notes).includes(locale === 'en' ? 'were returned.' : '已退还'));
+      assert.doesNotMatch(notes, /No verifiable progress|尚未发现提案人/, 'An explicit reviewed progress note replaces the generic absence message');
+    }
 
     for (const [status, expectedZh, expectedEn] of [
       ['active', '正在投票 · 暂时数据', 'Voting open · provisional'],
