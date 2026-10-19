@@ -28,16 +28,16 @@ export default function Home() {
         <div className="ledger-grid relative mx-auto grid max-w-7xl gap-10 px-5 py-12 lg:grid-cols-[1.04fr_.96fr] lg:px-8 lg:py-16">
           <div className="pointer-events-none absolute -left-24 top-16 size-72 rounded-full bg-[#00cc8e]/15 blur-3xl" />
           <div className="relative z-10 max-w-3xl">
-            <h1 className="max-w-3xl font-[var(--font-heading-stack)] text-[clamp(2.5rem,4.7vw,4.25rem)] font-black leading-[1.1] tracking-[-.04em]">
+            <h1 className="max-w-3xl font-[var(--font-heading-stack)] text-[clamp(2rem,10vw,2.5rem)] font-black leading-[1.1] tracking-[-.04em] sm:text-[clamp(2.5rem,4.7vw,4.25rem)]">
               <I18nText
-                zh={<span className="text-[clamp(2.1rem,4vw,3.4rem)] tracking-[-.025em]">让每一笔社区资金<span className="mt-2 block text-[#c8ff67]">清晰可见</span></span>}
-                en={<>See every community fund<span className="mt-2 block text-[#c8ff67]">in the open</span></>}
+                zh={<span className="text-[clamp(2.1rem,4vw,3.4rem)] tracking-[-.025em]">看见资金流向，<span className="mt-2 block text-[#c8ff67]">跟进提案进展</span></span>}
+                en={<>Follow the funds,{' '}<span className="mt-2 block text-[#c8ff67]">see the progress</span></>}
               />
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg">
               <I18nText
-                zh="一站查看 CKB Community Fund DAO 的治理规则、资金余额、提案投票与里程碑进展。"
-                en="Explore the rules, treasury, votes, and milestone progress of the CKB Community Fund DAO in one place."
+                zh="从讨论、投票到资金拨付与里程碑更新，清晰了解社区提案的每一步。"
+                en="Follow community proposals from discussion and voting to funding and milestone updates."
               />
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
