@@ -135,6 +135,7 @@ const compiled = await build({
     export const titleCount = monthly.months.length + chart.points.filter((point) => point.balanceY !== null).length;
     export const months = monthly.months;
     export const latestBalanceShannons = history.balances.at(-1).balanceShannons;
+    export const latestBalanceTimestamp = history.balances.at(-1).timestamp;
     export const latestTimestamp = history.entries.at(-1).timestamp;
     export const totalShannons = period.reduce((total, entry) => total + BigInt(entry.amountShannons), BigInt(0)).toString();
   `, resolveDir: root, loader: 'tsx' },
@@ -155,7 +156,7 @@ try {
     globalThis.__treasuryChartTestLocale = locale;
     const markup = output.exports.render();
     assert.match(markup, locale === 'en' ? /Treasury balance &amp; spending/ : /国库余额与支出/);
-    assert.match(markup, locale === 'en' ? /Cumulative spending/ : /累计支出/);
+    assert.match(markup, locale === 'en' ? /Cumulative through month/ : /截至该月累计/);
     assert.match(markup, locale === 'en' ? /Treasury balance/ : /国库余额/);
     assert.match(markup, locale === 'en' ? /View each expenditure/ : /查看每次支出/);
     assert.doesNotMatch(markup, /View daily records|查看每日记录|Treasury balance history|国库余额记录/);
@@ -177,9 +178,42 @@ try {
       const column = markup.match(new RegExp(`<rect[^>]*data-month="${month.key}"[^>]*><title>([^<]+)</title>`));
       assert.ok(column, `Render the ${month.key} column with a plain-text native hover title.`);
       assert.ok(column[1].includes(amount) && column[1].includes(cumulative), 'Every monthly hover title includes its own spending AND cumulative spending through that month.');
-      assert.match(column[1], locale === 'en' ? /Monthly spending.*Cumulative spending/ : /当月支出.*累计支出/);
+      assert.match(column[1], locale === 'en' ? /Monthly spending.*Cumulative through month/ : /当月支出.*截至该月累计/);
     }
     assert.match(markup, /data-month-readout=/, 'A persistent readout supports pointer, tap, and keyboard inspection, not hover-only information.');
+    assert.match(markup, /data-balance-readout=/, 'The selected historical balance has its own persistent readout.');
+    assert.doesNotMatch(markup, /<figcaption\b/, 'Do not repeat the selected amounts underneath either chart.');
+    const figures = [...markup.matchAll(/<figure\b[^>]*>([\s\S]*?)<\/figure>/g)].map((match) => match[1]);
+    assert.equal(figures.length, 2, 'Balance and monthly spending retain separate, independently selectable panels.');
+    for (const [index, kind] of ['balance', 'monthly'].entries()) {
+      const figure = figures[index];
+      const header = figure.match(new RegExp(`<header\\b[^>]*data-chart-header="${kind}"[^>]*>([\\s\\S]*?)<\\/header>`));
+      assert.ok(header, `The ${kind} chart has its own semantic title-bar header.`);
+      const graphic = figure.match(/<svg\b[^>]*role="img"[^>]*>/);
+      assert.ok(graphic, `The ${kind} chart retains its accessible graphic.`);
+      assert.ok(header.index + header[0].length <= graphic.index, 'The title and dynamic readout appear together above the plotted data.');
+      const marker = kind === 'balance' ? 'data-balance-readout' : 'data-month-readout';
+      assert.equal([...markup.matchAll(new RegExp(`${marker}=`, 'g'))].length, 1, 'Each panel exposes one readout, without a second below-chart copy.');
+      const readout = header[1].match(new RegExp(`<div\\b[^>]*${marker}="[^"]*"[^>]*>`));
+      assert.ok(readout, `The ${kind} readout belongs inside the chart header, not beneath the graph.`);
+      const readoutId = readout[0].match(/\bid="([^"]+)"/);
+      assert.ok(readoutId, 'The readout has an ID so assistive technology can associate it with the plot.');
+      assert.ok(graphic[0].includes(`aria-describedby="${readoutId[1]}"`), 'The plot references its current readout without noisy hover-triggered live announcements.');
+      assert.doesNotMatch(header[1], /aria-live=/, 'Pointer movement should not repeatedly interrupt a screen reader.');
+      if (kind === 'balance') {
+        assert.match(header[1], locale === 'en' ? /Latest balance/ : /最新余额/, 'The initial selection is explicitly the latest verified balance.');
+        assert.ok(header[1].includes(formatSpendingCkb(output.exports.latestBalanceShannons, locale === 'en' ? 'en-US' : 'zh-CN')), 'The initial title-bar amount comes from the real latest ledger balance.');
+        assert.ok(header[1].includes(formatTreasuryTimestamp(output.exports.latestBalanceTimestamp)), 'The balance title bar retains the selected transaction’s exact Beijing seconds.');
+        assert.match(header[1], /\(UTC\+8\)/, 'The compact timestamp still identifies its timezone.');
+      } else {
+        const lastMonth = output.exports.months.at(-1);
+        assert.ok(header[1].includes(`data-month-readout="${lastMonth.key}"`), 'The latest observed month is selected initially.');
+        assert.match(header[1], locale === 'en' ? /Monthly spending.*Cumulative through month/ : /当月支出.*截至该月累计/, 'The monthly header distinguishes this month’s amount from the cumulative amount through it.');
+        for (const amount of [lastMonth.amountShannons, lastMonth.cumulativeShannons]) {
+          assert.ok(header[1].includes(formatSpendingCkb(amount, locale === 'en' ? 'en-US' : 'zh-CN')), 'Both month-specific amounts appear above the monthly plot.');
+        }
+      }
+    }
     assert.match(markup, /<th[^>]*>(?:Transaction details|交易详情)<\/th>/, 'The last column has a visible bilingual heading, not screen-reader-only text.');
     assert.ok(markup.includes(formatTreasuryTimestamp(output.exports.latestTimestamp)), 'Each expenditure displays full Beijing date and seconds.');
     assert.ok(markup.includes(formatSpendingCkb(output.exports.totalShannons, locale === 'en' ? 'en-US' : 'zh-CN')), 'The in-period cumulative total is rendered with three decimal places.');
@@ -199,4 +233,4 @@ try {
 }
 assert.deepEqual(renderWarnings, [], 'SVG point titles and the complete chart must render without React hydration warnings.');
 
-console.log('Validated inclusive Beijing cutoff, real balances, green balance-area and monthly-column panels, exact monthly/cumulative hover values, complete expenditure rows, and bilingual accessible rendering.');
+console.log('Validated centered title-bar readouts, bilingual latest balance and selected-month cumulative semantics, inclusive Beijing cutoff, real green chart data, exact values and seconds, accessible associations, and complete expenditure rows.');
