@@ -3,14 +3,14 @@
   "votes": {
     "10736": {
       "url": "https://dao.ckb.community/thread/vot-kaze-x-ckb-unitour-continuation-proposal-80384",
-      "totalVotes": 94483205,
+      "totalVotes": 94610069,
       "minimumVotes": 5721552,
       "yesPercent": 100,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-19T11:21:13.809Z",
-      "closesAt": "2026-10-23T00:00:13.809Z",
+      "verifiedAt": "2026-10-19T15:46:43.559Z",
+      "closesAt": "2026-10-23T00:00:43.559Z",
       "openedAt": "2026-10-15T17:19:39.000Z"
     },
     "10739": {
