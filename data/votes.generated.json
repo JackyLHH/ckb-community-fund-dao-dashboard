@@ -1,6 +1,16 @@
 {
   "version": 1,
   "votes": {
+    "10736": {
+      "url": "https://dao.ckb.community/thread/vot-kaze-x-ckb-unitour-continuation-proposal-80384",
+      "totalVotes": 93391326,
+      "minimumVotes": 5721552,
+      "yesPercent": 100,
+      "passPercent": 51,
+      "closed": false,
+      "status": "active",
+      "verifiedAt": "2026-10-19T02:25:35.535Z"
+    },
     "10739": {
       "url": "https://dao.ckb.community/thread/vot-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb-80044",
       "status": "approved",
