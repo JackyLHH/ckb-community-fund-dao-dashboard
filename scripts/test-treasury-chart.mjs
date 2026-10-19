@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { Script } from 'node:vm';
 import { build } from 'esbuild';
-import { buildSpendingChart, buildTreasuryChart, formatSpendingCkb, formatTreasuryTimestamp } from '../lib/treasury-chart.ts';
+import { buildSpendingChart, buildTreasuryChart, filterTreasuryDisplayPeriod, formatSpendingCkb, formatTreasuryTimestamp, TREASURY_CHART_START_AT } from '../lib/treasury-chart.ts';
 
 assert.equal(formatSpendingCkb('123456789', 'en-US'), '1.235');
 assert.equal(formatSpendingCkb('123450000', 'zh-CN'), '1.235');
@@ -79,6 +79,46 @@ assert.throws(() => buildTreasuryChart([], [balances[0], balances[0]]), /duplica
 assert.throws(() => buildTreasuryChart([expenses[0], expenses[0]], balances), /duplicated/);
 assert.throws(() => buildTreasuryChart(expenses, [balances[0]]), /requires its verified transaction balance/, 'Never silently infer a missing post-transaction balance.');
 
+assert.equal(TREASURY_CHART_START_AT, '2023-01-11T16:00:00.000Z', 'Reporting starts at Beijing midnight, not UTC midnight.');
+const boundaryBalances = [
+  { txHash: 'before', timestamp: '2023-01-11T15:59:59.999Z', balanceShannons: '90000000000' },
+  { txHash: 'exact', timestamp: '2023-01-11T16:00:00.000Z', balanceShannons: '79999999900' },
+  { txHash: 'after', timestamp: '2023-01-11T16:00:00.001Z', balanceShannons: '59999999800' },
+  { txHash: 'later-refund', timestamp: '2026-02-01T00:00:00Z', balanceShannons: '64999999800' },
+  { txHash: 'later-fee', timestamp: '2026-03-01T00:00:00Z', balanceShannons: '64999999750' },
+  { txHash: 'future-inflow', timestamp: '2027-01-01T00:00:00Z', balanceShannons: '74999999750' },
+];
+const boundaryExpenses = boundaryBalances.slice(0, 3).map((balance, index) => ({ txHash: balance.txHash, timestamp: balance.timestamp, amountShannons: index === 2 ? '20000000000' : '10000000000' }));
+const filteredExpenses = filterTreasuryDisplayPeriod(boundaryExpenses);
+assert.deepEqual(filteredExpenses.map((entry) => entry.txHash), ['exact', 'after'], 'The boundary is inclusive; one millisecond earlier is excluded from counts and rows.');
+assert.equal(boundaryExpenses.length, 3, 'Filtering never changes the full source ledger.');
+assert.throws(() => filterTreasuryDisplayPeriod([], 'invalid'), /valid start timestamp/);
+assert.throws(() => filterTreasuryDisplayPeriod([{ timestamp: 'invalid' }]), /valid timestamp/);
+const periodChart = buildTreasuryChart(boundaryExpenses, boundaryBalances, TREASURY_CHART_START_AT);
+assert.equal(periodChart.points[0].timestamp, TREASURY_CHART_START_AT, 'The x-axis begins at the exact reporting cutoff.');
+assert.equal(periodChart.points[0].x, 76);
+assert.equal(periodChart.points[0].txHash, null, 'The opening state is not a fabricated transaction.');
+assert.equal(periodChart.points[0].isOpening, true);
+assert.equal(periodChart.points[0].cumulativeShannons, '0', 'Cumulative spending resets at the requested period.');
+assert.equal(periodChart.points[0].balanceShannons, '90000000000', 'The opening balance carries the last verified pre-period state.');
+assert.equal(periodChart.points.filter((point) => point.txHash === 'exact').length, 1, 'A transaction exactly at the cutoff is counted once, independently of the opening state.');
+assert.equal(periodChart.points[1].x, 76, 'The opening state and transaction at the same timestamp share the same x-coordinate.');
+assert.ok(periodChart.points.every((point) => Date.parse(point.timestamp) >= Date.parse(TREASURY_CHART_START_AT)));
+assert.equal(periodChart.totalShannons, '30000000000', 'Pre-period spending is excluded from the plotted cumulative amount.');
+assert.equal(periodChart.latestBalanceShannons, '74999999750', 'Historical spending, refunds, fees and future inflows remain reflected in the real latest balance.');
+assert.deepEqual(periodChart.points.slice(1).map((point) => point.balanceShannons), boundaryBalances.slice(1).map((balance) => balance.balanceShannons), 'Reporting filters never reconstruct balances as initial capital minus displayed spending.');
+const noOpeningBalance = buildTreasuryChart([boundaryExpenses[1]], [boundaryBalances[1]], TREASURY_CHART_START_AT);
+assert.equal(noOpeningBalance.points[0].balanceShannons, null, 'An unknown opening balance is not invented.');
+assert.equal(noOpeningBalance.points[0].balanceY, null);
+assert.equal(noOpeningBalance.points[1].balanceShannons, boundaryBalances[1].balanceShannons);
+assert.ok(noOpeningBalance.points.every((point) => point.x === 76), 'Same-instant states are not stretched into a fictional time range.');
+const prePeriodOnly = buildTreasuryChart([boundaryExpenses[0]], [boundaryBalances[0]], TREASURY_CHART_START_AT);
+assert.equal(prePeriodOnly.points.length, 1, 'Only the opening state remains when all transactions precede the display period.');
+assert.equal(prePeriodOnly.totalShannons, '0');
+assert.equal(prePeriodOnly.latestBalanceShannons, boundaryBalances[0].balanceShannons);
+assert.equal(buildTreasuryChart([], [], TREASURY_CHART_START_AT).points.length, 0, 'An empty ledger does not invent an opening record.');
+assert.equal(buildTreasuryChart(boundaryExpenses, boundaryBalances).points.length, boundaryBalances.length, 'Generic callers retain the full-history behavior when no period is requested.');
+
 const root = new URL('../', import.meta.url).pathname;
 const compiled = await build({
   stdin: { contents: `
@@ -86,12 +126,15 @@ const compiled = await build({
     import { renderToStaticMarkup } from 'react-dom/server';
     import { TreasuryHistoryChart } from './components/treasury-history.tsx';
     import history from './data/treasury-spending.generated.json';
-    export const render = () => renderToStaticMarkup(createElement(TreasuryHistoryChart));
-    export const transactionCount = history.entries.length;
-    export const balanceCount = history.balances.length;
+    import { buildTreasuryChart, filterTreasuryDisplayPeriod, TREASURY_CHART_START_AT } from './lib/treasury-chart.ts';
+    export const render = (fixture = history) => renderToStaticMarkup(createElement(TreasuryHistoryChart, { history: fixture }));
+    const period = filterTreasuryDisplayPeriod(history.entries);
+    const chart = buildTreasuryChart(history.entries, history.balances, TREASURY_CHART_START_AT);
+    export const transactionCount = period.length;
+    export const titleCount = chart.points.length + chart.points.filter((point) => point.balanceY !== null).length;
     export const latestBalanceShannons = history.balances.at(-1).balanceShannons;
     export const latestTimestamp = history.entries.at(-1).timestamp;
-    export const totalShannons = history.entries.reduce((total, entry) => total + BigInt(entry.amountShannons), BigInt(0)).toString();
+    export const totalShannons = period.reduce((total, entry) => total + BigInt(entry.amountShannons), BigInt(0)).toString();
   `, resolveDir: root, loader: 'tsx' },
   bundle: true, platform: 'node', format: 'cjs', packages: 'external', write: false,
   jsx: 'automatic',
@@ -114,19 +157,26 @@ try {
     assert.match(markup, locale === 'en' ? /Treasury balance/ : /国库余额/);
     assert.match(markup, locale === 'en' ? /View each expenditure/ : /查看每次支出/);
     assert.doesNotMatch(markup, /View daily records|查看每日记录|Treasury balance history|国库余额记录/);
-    assert.equal([...markup.matchAll(/https:\/\/explorer\.nervos\.org\/transaction\//g)].length, output.exports.transactionCount, 'Every historical expenditure has its own source transaction link.');
+    assert.equal([...markup.matchAll(/https:\/\/explorer\.nervos\.org\/transaction\//g)].length, output.exports.transactionCount, 'Every in-period expenditure has its own source transaction link; the opening state does not.');
     assert.match(markup, /href="https:\/\/explorer\.nervos\.org\/address\//, 'The source action opens the human-readable explorer, not a JSON API.');
     assert.match(markup, /type="range"/, 'Keyboard users can inspect individual chart points.');
     assert.match(markup, /data-series="spending"/, 'Render the cumulative spending curve.');
     assert.match(markup, /data-series="balance"/, 'Render the historical balance curve.');
-    assert.match(markup, /stroke-dasharray="7 5"/, 'Color is not the only way to distinguish the two curves.');
+    assert.doesNotMatch(markup, /stroke-dasharray|border-dashed|虚线|dashed/, 'Both curves, legend swatches, and gridlines are solid.');
     assert.match(markup, /text-emerald-600/, 'Spending has a green line.');
     assert.match(markup, /text-blue-600/, 'Balance has a blue line.');
     assert.match(markup, /<th[^>]*>(?:Transaction details|交易详情)<\/th>/, 'The last column has a visible bilingual heading, not screen-reader-only text.');
     assert.ok(markup.includes(formatTreasuryTimestamp(output.exports.latestTimestamp)), 'Each expenditure displays full Beijing date and seconds.');
-    assert.ok(markup.includes(formatSpendingCkb(output.exports.totalShannons, locale === 'en' ? 'en-US' : 'zh-CN')), 'The complete recorded history is rendered with three decimal places.');
+    assert.ok(markup.includes(formatSpendingCkb(output.exports.totalShannons, locale === 'en' ? 'en-US' : 'zh-CN')), 'The in-period cumulative total is rendered with three decimal places.');
     assert.ok(markup.includes(formatSpendingCkb(output.exports.latestBalanceShannons, locale === 'en' ? 'en-US' : 'zh-CN')), 'The exact latest balance is rendered with three decimal places.');
-    assert.equal([...markup.matchAll(/<title>[^<]+<\/title>/g)].length, output.exports.balanceCount * 2, 'Both series contain every verified event and each SVG title renders as one text node, without React SSR comment separators.');
+    assert.equal([...markup.matchAll(/<title>[^<]+<\/title>/g)].length, output.exports.titleCount, 'Both series contain each in-period event plus a separately identified opening state; SVG titles remain single text nodes.');
+    assert.match(markup, locale === 'en' ? /Jan 12, 2023/ : /2023年1月12日/, 'The displayed x-axis starts on 12 January 2023 in Beijing time.');
+    assert.ok([...markup.matchAll(/<time dateTime="([^"]+)"/g)].every((match) => Date.parse(match[1]) >= Date.parse(TREASURY_CHART_START_AT)), 'All displayed table and selected timestamps are within the reporting period.');
+    const fixtureMarkup = output.exports.render({ complete: true, entries: boundaryExpenses.map((entry) => ({ ...entry, recipients: [] })), balances: boundaryBalances });
+    assert.ok(!fixtureMarkup.includes('/transaction/before'), 'Pre-period transactions never appear in the expenditure table.');
+    assert.ok(fixtureMarkup.includes('/transaction/exact') && fixtureMarkup.includes('/transaction/after'), 'Both exact-boundary and later expenses appear.');
+    assert.match(fixtureMarkup, locale === 'en' ? /2 expenditures/ : /2 次支出/);
+    assert.equal([...fixtureMarkup.matchAll(/https:\/\/explorer\.nervos\.org\/transaction\//g)].length, 2, 'Neither the opening anchor nor non-expense ledger events create transaction rows.');
   }
 } finally {
   console.error = originalConsoleError;
@@ -134,4 +184,4 @@ try {
 }
 assert.deepEqual(renderWarnings, [], 'SVG point titles and the complete chart must render without React hydration warnings.');
 
-console.log('Validated exact balance and cumulative expenditure series, shared axes, refund/fee semantics, second-precise Beijing dates, and bilingual accessible rendering with complete transaction links.');
+console.log('Validated inclusive Beijing reporting cutoff, real opening and ending balances, period-only spending/counts/rows, solid chart lines, exact amounts, and bilingual accessible rendering.');

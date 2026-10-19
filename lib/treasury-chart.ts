@@ -1,6 +1,20 @@
 const SHANNONS_PER_CKB = BigInt(100_000_000);
 const SHANNONS_PER_MILLICKB = BigInt(100_000);
 
+/** The public chart/reporting period begins at Beijing midnight on 12 January 2023. */
+export const TREASURY_CHART_START_AT = '2023-01-11T16:00:00.000Z';
+
+/** One inclusive reporting boundary shared by the chart, expenditure table and count. */
+export function filterTreasuryDisplayPeriod<T extends { timestamp: string }>(entries: readonly T[], startAt = TREASURY_CHART_START_AT) {
+  const startTime = Date.parse(startAt);
+  if (!Number.isFinite(startTime)) throw new Error('The treasury reporting period needs a valid start timestamp.');
+  return entries.filter((entry) => {
+    const time = Date.parse(entry.timestamp);
+    if (!Number.isFinite(time)) throw new Error('Every treasury transaction needs a valid timestamp.');
+    return time >= startTime;
+  });
+}
+
 export type TreasuryChartEntry = {
   txHash: string;
   timestamp: string;
@@ -57,7 +71,7 @@ function buildTicks(scale: { maximum: number; step: number }) {
 }
 
 /** Both series share transaction timestamps and a single zero-based CKB scale. */
-export function buildTreasuryChart(entries: readonly TreasuryChartEntry[], balances: readonly TreasuryChartBalance[] = []) {
+export function buildTreasuryChart(entries: readonly TreasuryChartEntry[], balances: readonly TreasuryChartBalance[] = [], startAt?: string) {
   const events = new Map<string, { txHash: string; timestamp: string; expenditureShannons: string; balanceShannons: string | null }>();
   let previousTime = -Infinity;
   for (const balance of balances) {
@@ -81,24 +95,37 @@ export function buildTreasuryChart(entries: readonly TreasuryChartEntry[], balan
     events.set(entry.txHash, { txHash: entry.txHash, timestamp: entry.timestamp, balanceShannons: event?.balanceShannons ?? null, expenditureShannons: entry.amountShannons });
   }
 
-  let cumulative = BigInt(0);
-  let maximum = BigInt(0);
-  let latestBalance: string | null = null;
   // Canonical post-transaction states must not be silently reordered by a block clock.
   const ordered = balances.length ? [...events.values()] : [...events.values()].sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
-  const values = ordered.map((event) => {
+  const periodEvents = startAt === undefined ? ordered : filterTreasuryDisplayPeriod(ordered, startAt);
+  const openingBalance = startAt === undefined ? null : ordered.filter((event) => Date.parse(event.timestamp) < Date.parse(startAt) && event.balanceShannons !== null).at(-1)?.balanceShannons ?? null;
+  let cumulative = BigInt(0);
+  let maximum = openingBalance === null ? BigInt(0) : BigInt(openingBalance);
+  let latestBalance: string | null = openingBalance;
+  const values: Array<{
+    txHash: string | null;
+    timestamp: string;
+    expenditureShannons: string;
+    balanceShannons: string | null;
+    cumulativeShannons: string;
+    isOpening: boolean;
+  }> = startAt !== undefined && ordered.length ? [{
+    txHash: null, timestamp: new Date(startAt).toISOString(), expenditureShannons: '0',
+    balanceShannons: openingBalance, cumulativeShannons: '0', isOpening: true,
+  }] : [];
+  for (const event of periodEvents) {
     cumulative += BigInt(event.expenditureShannons);
     if (event.balanceShannons !== null) latestBalance = event.balanceShannons;
     const balance = latestBalance === null ? BigInt(0) : BigInt(latestBalance);
     maximum = [maximum, balance, cumulative].reduce((largest, value) => value > largest ? value : largest);
-    return { ...event, balanceShannons: latestBalance, cumulativeShannons: cumulative.toString() };
-  });
+    values.push({ ...event, balanceShannons: latestBalance, cumulativeShannons: cumulative.toString(), isOpening: false });
+  }
   const scale = chartCeiling(toChartCkb(maximum));
   const firstTime = values.length ? Date.parse(values[0].timestamp) : 0;
   const lastTime = values.length ? Date.parse(values[values.length - 1].timestamp) : 0;
   const points = values.map((value, index) => ({
     ...value,
-    x: 76 + (lastTime === firstTime ? index / Math.max(values.length - 1, 1) : (Date.parse(value.timestamp) - firstTime) / (lastTime - firstTime)) * 662,
+    x: 76 + (lastTime === firstTime ? (startAt === undefined ? index / Math.max(values.length - 1, 1) : 0) : (Date.parse(value.timestamp) - firstTime) / (lastTime - firstTime)) * 662,
     spendingY: 210 - (toChartCkb(BigInt(value.cumulativeShannons)) / scale.maximum) * 190,
     balanceY: value.balanceShannons === null ? null : 210 - (toChartCkb(BigInt(value.balanceShannons)) / scale.maximum) * 190,
   }));
