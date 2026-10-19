@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ArrowUpRight, ChartNoAxesCombined } from 'lucide-react';
 import savedHistory from '@/data/treasury-spending.generated.json';
-import { buildTreasuryChart, filterTreasuryDisplayPeriod, formatSpendingCkb, formatTreasuryTimestamp, TREASURY_CHART_START_AT } from '@/lib/treasury-chart';
+import { buildTreasuryChart, buildTreasuryMonthlyChart, filterTreasuryDisplayPeriod, formatSpendingCkb, formatTreasuryTimestamp, TREASURY_CHART_START_AT } from '@/lib/treasury-chart';
 import { TREASURY_ADDRESS_URL, type TreasurySpendingHistory } from '@/lib/treasury-spending';
 import { useLocale } from '@/lib/use-locale';
 
@@ -13,29 +13,42 @@ function shortAddress(address: string) {
 
 export function TreasuryHistoryChart({ history = savedHistory as TreasurySpendingHistory }: { history?: TreasurySpendingHistory }) {
   const { locale, t } = useLocale();
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedBalanceIndex, setSelectedBalanceIndex] = useState<number | null>(null);
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(null);
   const periodEntries = filterTreasuryDisplayPeriod(history.entries);
-  const { points, ticks } = buildTreasuryChart(history.entries, history.balances ?? [], TREASURY_CHART_START_AT);
-  const selected = points[Math.min(selectedIndex ?? points.length - 1, points.length - 1)];
+  const { points, ticks, latestBalanceShannons } = buildTreasuryChart(history.entries, history.balances ?? [], TREASURY_CHART_START_AT);
   const first = points[0];
   const last = points.at(-1);
   const balancePoints = points.filter((point) => point.balanceY !== null);
+  const selectedBalance = balancePoints[Math.min(selectedBalanceIndex ?? balancePoints.length - 1, balancePoints.length - 1)];
+  const monthly = buildTreasuryMonthlyChart(history.entries, last?.timestamp ?? TREASURY_CHART_START_AT);
+  const selectedMonth = monthly.months[Math.min(selectedMonthIndex ?? monthly.months.length - 1, monthly.months.length - 1)];
   const numberLocale = locale === 'en' ? 'en-US' : 'zh-CN';
   const dateFormatter = new Intl.DateTimeFormat(numberLocale, {
     timeZone: 'Asia/Shanghai', year: 'numeric', month: 'short', day: 'numeric',
   });
+  const monthFormatter = new Intl.DateTimeFormat(numberLocale, { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'short' });
   const tickFormatter = new Intl.NumberFormat(numberLocale, { notation: 'compact', maximumFractionDigits: 1 });
+  // Hold each verified balance until the next transaction, rather than inventing daily interpolation.
+  const balanceLine = balancePoints.flatMap((point, index) => index === 0
+    ? [`${point.x},${point.balanceY}`]
+    : [`${point.x},${balancePoints[index - 1].balanceY}`, `${point.x},${point.balanceY}`]).join(' ');
+  const balanceArea = balancePoints.length ? `${balancePoints[0].x},210 ${balanceLine} ${balancePoints.at(-1)?.x},210` : '';
 
-  function selectNearest(clientX: number, clientY: number, svg: SVGSVGElement) {
+  function selectNearest(clientX: number, clientY: number, svg: SVGSVGElement, series: 'balance' | 'monthly') {
     const transform = svg.getScreenCTM();
-    if (!points.length || !transform) return;
+    const items = series === 'balance' ? balancePoints : monthly.months;
+    if (!items.length || !transform) return;
     const { x } = new DOMPoint(clientX, clientY).matrixTransform(transform.inverse());
     let nearest = 0;
-    for (let index = 1; index < points.length; index += 1) {
-      if (Math.abs(points[index].x - x) < Math.abs(points[nearest].x - x)) nearest = index;
+    for (let index = 1; index < items.length; index += 1) {
+      if (Math.abs(items[index].x - x) < Math.abs(items[nearest].x - x)) nearest = index;
     }
-    setSelectedIndex(nearest);
+    if (series === 'balance') setSelectedBalanceIndex(nearest);
+    else setSelectedMonthIndex(nearest);
   }
+
+  const monthReadout = selectedMonth ? `${monthFormatter.format(new Date(selectedMonth.startAt))} · ${t('当月支出', 'Monthly spending')} ${formatSpendingCkb(selectedMonth.amountShannons, numberLocale)} CKB · ${t('累计支出', 'Cumulative spending')} ${formatSpendingCkb(selectedMonth.cumulativeShannons, numberLocale)} CKB` : '';
 
   return (
     <section aria-labelledby="treasury-history-heading" className="rounded-2xl border border-border bg-card p-5 text-card-foreground sm:p-6">
@@ -46,69 +59,80 @@ export function TreasuryHistoryChart({ history = savedHistory as TreasurySpendin
             {t('国库余额与支出', 'Treasury balance & spending')}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            {t('自 2023 年 1 月 12 日起 · 余额与累计支出（CKB）', 'Since 12 Jan 2023 · balance and cumulative spending (CKB)')}
+            {t('2023/01/12 起 · CKB', 'Since 12 Jan 2023 · CKB')}
           </p>
         </div>
         <span className="text-xs text-muted-foreground">{t(`${periodEntries.length} 次支出`, `${periodEntries.length} expenditures`)}</span>
       </div>
 
       {first && last ? (
-        <figure className="mt-5">
-          <div className="mb-4 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium">
-            <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="w-6 border-t-[3px] border-emerald-600 dark:border-emerald-400" />{t('累计支出', 'Cumulative spending')}</span>
-            {balancePoints.length > 0 && <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="w-6 border-t-[3px] border-blue-600 dark:border-blue-400" />{t('国库余额', 'Treasury balance')}</span>}
-          </div>
-          <div className="relative h-52 sm:h-64">
-            {ticks.map((tick) => <span key={tick.value} aria-hidden="true" style={{ top: `${(tick.y / 230) * 100}%` }} className="absolute left-0 w-12 -translate-y-1/2 text-right text-xs leading-none text-muted-foreground">{tickFormatter.format(tick.value)}</span>)}
-            {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Native SVG charts require explicit image semantics. */}
-            <svg role="img"
-              viewBox="76 0 662 230"
-              preserveAspectRatio="none"
-              aria-label={t(`自 2023 年 1 月 12 日起的国库余额与累计支出折线图，绿色实线表示累计支出，蓝色实线表示余额，两条折线共用从零开始的 CKB 纵轴。包含 ${periodEntries.length} 次支出，逐笔金额见下方支出表。`, `Treasury history since 12 January 2023: a solid green line shows cumulative spending and a solid blue line shows the balance, sharing one zero-based CKB axis. Includes ${periodEntries.length} expenditures, listed individually below.`)}
-              className="absolute inset-y-0 left-14 h-full w-[calc(100%_-_3.5rem)] touch-pan-y overflow-visible"
-              onPointerMove={(event) => {
-                if (event.pointerType === 'mouse') selectNearest(event.clientX, event.clientY, event.currentTarget);
-              }}
-              onPointerDown={(event) => selectNearest(event.clientX, event.clientY, event.currentTarget)}
-            >
-              {ticks.map((tick) => <line key={tick.value} x1="76" y1={tick.y} x2="738" y2={tick.y} stroke="currentColor" vectorEffect="non-scaling-stroke" className="text-border" />)}
-              <polyline data-series="spending" points={points.map((point) => `${point.x},${point.spendingY}`).join(' ')} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" className="text-emerald-600 dark:text-emerald-400" />
-              {balancePoints.length > 0 && <polyline data-series="balance" points={balancePoints.map((point) => `${point.x},${point.balanceY}`).join(' ')} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" className="text-blue-600 dark:text-blue-400" />}
-              {points.map((point) => (
-                <line key={point.txHash ?? 'opening'} x1={point.x} y1={point.spendingY} x2={point.x + 0.001} y2={point.spendingY} stroke="currentColor" strokeWidth={selected === point ? 9 : 4} strokeLinecap="round" vectorEffect="non-scaling-stroke" className="text-emerald-600 dark:text-emerald-400">
-                  <title>{`${point.isOpening ? t('期初 · ', 'Opening · ') : ''}${formatTreasuryTimestamp(point.timestamp)} (UTC+8): ${t('累计支出', 'Cumulative spending')} ${formatSpendingCkb(point.cumulativeShannons, numberLocale)} CKB`}</title>
-                </line>
-              ))}
-              {balancePoints.map((point) => (
-                <line key={`balance-${point.txHash}`} x1={point.x} y1={point.balanceY ?? 0} x2={point.x + 0.001} y2={point.balanceY ?? 0} stroke="currentColor" strokeWidth={selected === point ? 9 : 4} strokeLinecap="round" vectorEffect="non-scaling-stroke" className="text-blue-600 dark:text-blue-400">
-                  <title>{`${point.isOpening ? t('期初 · ', 'Opening · ') : ''}${formatTreasuryTimestamp(point.timestamp)} (UTC+8): ${t('国库余额', 'Treasury balance')} ${formatSpendingCkb(point.balanceShannons ?? '0', numberLocale)} CKB`}</title>
-                </line>
-              ))}
-            </svg>
-          </div>
-          <div className="ml-14 mt-1 flex justify-between gap-4 text-xs text-muted-foreground">
-            <span>{dateFormatter.format(new Date(first.timestamp))}</span>
-            <span>{dateFormatter.format(new Date(last.timestamp))}</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max={Math.max(points.length - 1, 0)}
-            step="1"
-            value={selectedIndex ?? points.length - 1}
-            onChange={(event) => setSelectedIndex(Number(event.currentTarget.value))}
-            aria-label={t('查看期初及各次交易后的余额与累计支出，使用方向键选择', 'Inspect the opening balance and subsequent transactions using the arrow keys')}
-            aria-valuetext={selected ? `${selected.isOpening ? t('期初 · ', 'Opening · ') : ''}${formatTreasuryTimestamp(selected.timestamp)} (UTC+8), ${t('累计支出', 'Cumulative spending')} ${formatSpendingCkb(selected.cumulativeShannons, numberLocale)} CKB${selected.balanceShannons === null ? '' : `, ${t('国库余额', 'Treasury balance')} ${formatSpendingCkb(selected.balanceShannons, numberLocale)} CKB`}` : undefined}
-            className="sr-only accent-primary focus:not-sr-only focus:mt-2 focus:h-11 focus:w-full"
-          />
-          {selected && (
-            <figcaption className="mt-4 flex min-h-6 flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground">
-              <time dateTime={selected.timestamp}>{selected.isOpening ? t('期初 · ', 'Opening · ') : ''}{formatTreasuryTimestamp(selected.timestamp)} (UTC+8)</time>
-              <span>{t('累计支出', 'Cumulative spending')}: <span className="font-mono font-semibold text-emerald-700 tabular-nums dark:text-emerald-400">{formatSpendingCkb(selected.cumulativeShannons, numberLocale)} CKB</span></span>
-              {selected.balanceShannons !== null && <span>{t('余额', 'Balance')}: <span className="font-mono font-semibold text-blue-700 tabular-nums dark:text-blue-400">{formatSpendingCkb(selected.balanceShannons, numberLocale)} CKB</span></span>}
-            </figcaption>
+        <div className="mt-5 space-y-4">
+          {balancePoints.length > 0 && (
+            <figure aria-label={t('国库余额', 'Treasury balance')}>
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
+                <h3 className="inline-flex items-center gap-2 font-medium"><span aria-hidden="true" className="size-2 rounded-full bg-primary" />{t('国库余额', 'Treasury balance')}</h3>
+                <span className="font-mono font-medium tabular-nums">{formatSpendingCkb(latestBalanceShannons ?? '0', numberLocale)} <span className="text-xs font-normal text-muted-foreground">CKB</span></span>
+              </div>
+              <div className="relative mt-2 h-32 sm:h-36">
+                {ticks.map((tick) => <span key={tick.value} aria-hidden="true" style={{ top: `${(tick.y / 230) * 100}%` }} className="absolute left-0 w-12 -translate-y-1/2 text-right text-xs leading-none text-muted-foreground">{tickFormatter.format(tick.value)}</span>)}
+                {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Native SVG charts require explicit image semantics. */}
+                <svg role="img" viewBox="76 0 662 230" preserveAspectRatio="none"
+                  aria-label={t('国库余额历史，绿色实线与浅绿色面积表示各次交易后的真实余额。', 'Historical treasury balance: the solid green line and pale green area show the actual balance after each transaction.')}
+                  className="absolute inset-y-0 left-14 h-full w-[calc(100%_-_3.5rem)] touch-pan-y overflow-visible"
+                  onPointerMove={(event) => { if (event.pointerType === 'mouse') selectNearest(event.clientX, event.clientY, event.currentTarget, 'balance'); }}
+                  onPointerDown={(event) => selectNearest(event.clientX, event.clientY, event.currentTarget, 'balance')}
+                >
+                  {ticks.map((tick) => <line key={tick.value} x1="76" y1={tick.y} x2="738" y2={tick.y} stroke="currentColor" vectorEffect="non-scaling-stroke" className="text-border/70" />)}
+                  <polygon data-series="balance-area" points={balanceArea} fill="currentColor" className="text-primary opacity-[0.07]" />
+                  <polyline data-series="balance" points={balanceLine} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" className="text-primary" />
+                  {balancePoints.map((point) => (
+                    <line key={point.txHash ?? 'opening'} x1={point.x} y1={point.balanceY ?? 0} x2={point.x + 0.001} y2={point.balanceY ?? 0} stroke="currentColor" strokeWidth={selectedBalance === point || point === balancePoints.at(-1) ? 7 : 0} strokeLinecap="round" vectorEffect="non-scaling-stroke" className="text-primary">
+                      <title>{`${point.isOpening ? t('期初 · ', 'Opening · ') : ''}${formatTreasuryTimestamp(point.timestamp)} (UTC+8): ${t('国库余额', 'Treasury balance')} ${formatSpendingCkb(point.balanceShannons ?? '0', numberLocale)} CKB`}</title>
+                    </line>
+                  ))}
+                </svg>
+              </div>
+              <div className="ml-14 flex justify-between gap-4 text-xs text-muted-foreground"><span>{dateFormatter.format(new Date(first.timestamp))}</span><span>{dateFormatter.format(new Date(last.timestamp))}</span></div>
+              <input type="range" min="0" max={Math.max(balancePoints.length - 1, 0)} step="1" value={selectedBalanceIndex ?? balancePoints.length - 1}
+                onChange={(event) => setSelectedBalanceIndex(Number(event.currentTarget.value))}
+                aria-label={t('查看期初及各次交易后的余额，使用方向键选择', 'Inspect the opening and post-transaction balances using the arrow keys')}
+                aria-valuetext={selectedBalance ? `${formatTreasuryTimestamp(selectedBalance.timestamp)} (UTC+8), ${t('国库余额', 'Treasury balance')} ${formatSpendingCkb(selectedBalance.balanceShannons ?? '0', numberLocale)} CKB` : undefined}
+                className="sr-only accent-primary focus:not-sr-only focus:mt-2 focus:h-11 focus:w-full" />
+              {selectedBalance && <figcaption className="mt-2 flex min-h-5 flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground"><time dateTime={selectedBalance.timestamp}>{selectedBalance.isOpening ? t('期初 · ', 'Opening · ') : ''}{formatTreasuryTimestamp(selectedBalance.timestamp)} (UTC+8)</time><span>{t('余额', 'Balance')} <span className="font-mono text-primary tabular-nums">{formatSpendingCkb(selectedBalance.balanceShannons ?? '0', numberLocale)} CKB</span></span></figcaption>}
+            </figure>
           )}
-        </figure>
+
+          <figure aria-label={t('月度支出', 'Monthly spending')} className="border-t border-border pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <h3 className="inline-flex items-center gap-2 font-medium"><span aria-hidden="true" className="size-2 rounded-sm bg-primary/70" />{t('月度支出', 'Monthly spending')}</h3>
+              <span className="text-xs text-muted-foreground">{t('按月汇总', 'By month')}</span>
+            </div>
+            <div className="relative mt-2 h-32 sm:h-36">
+              {monthly.ticks.map((tick) => <span key={tick.value} aria-hidden="true" style={{ top: `${(tick.y / 230) * 100}%` }} className="absolute left-0 w-12 -translate-y-1/2 text-right text-xs leading-none text-muted-foreground">{tickFormatter.format(tick.value)}</span>)}
+              {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Native SVG charts require explicit image semantics. */}
+              <svg role="img" viewBox="76 0 662 230" preserveAspectRatio="none"
+                aria-label={t(`自 2023 年 1 月 12 日起的月度支出柱状图，包含 ${periodEntries.length} 次支出。选择月份查看当月及截至该月的累计支出。`, `Monthly expenditures since 12 January 2023, including ${periodEntries.length} expenditures. Select a month to inspect that month's spending and the cumulative total through that month.`)}
+                className="absolute inset-y-0 left-14 h-full w-[calc(100%_-_3.5rem)] touch-pan-y overflow-visible"
+                onPointerMove={(event) => { if (event.pointerType === 'mouse') selectNearest(event.clientX, event.clientY, event.currentTarget, 'monthly'); }}
+                onPointerDown={(event) => selectNearest(event.clientX, event.clientY, event.currentTarget, 'monthly')}
+              >
+                {monthly.ticks.map((tick) => <line key={tick.value} x1="76" y1={tick.y} x2="738" y2={tick.y} stroke="currentColor" vectorEffect="non-scaling-stroke" className="text-border/70" />)}
+                {monthly.months.map((month) => (
+                  <rect key={month.key} data-month={month.key} data-series="monthly-spending" x={month.x - month.width / 2} y={month.y} width={month.width} height={210 - month.y} rx="2" fill="currentColor" className={selectedMonth === month ? 'text-primary' : 'text-primary/65'}>
+                    <title>{`${monthFormatter.format(new Date(month.startAt))} · ${t('当月支出', 'Monthly spending')} ${formatSpendingCkb(month.amountShannons, numberLocale)} CKB · ${t('累计支出', 'Cumulative spending')} ${formatSpendingCkb(month.cumulativeShannons, numberLocale)} CKB`}</title>
+                  </rect>
+                ))}
+              </svg>
+            </div>
+            <div className="ml-14 flex justify-between gap-4 text-xs text-muted-foreground"><span>{dateFormatter.format(new Date(first.timestamp))}</span><span>{dateFormatter.format(new Date(last.timestamp))}</span></div>
+            <input type="range" min="0" max={Math.max(monthly.months.length - 1, 0)} step="1" value={selectedMonthIndex ?? monthly.months.length - 1}
+              onChange={(event) => setSelectedMonthIndex(Number(event.currentTarget.value))}
+              aria-label={t('查看每月及累计支出，使用方向键选择月份', 'Inspect monthly and cumulative spending using the arrow keys')}
+              aria-valuetext={monthReadout}
+              className="sr-only accent-primary focus:not-sr-only focus:mt-2 focus:h-11 focus:w-full" />
+            {selectedMonth && <figcaption data-month-readout={selectedMonth.key} className="mt-2 flex min-h-5 flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground"><span>{monthFormatter.format(new Date(selectedMonth.startAt))}</span><span>{t('当月支出', 'Monthly spending')} <span className="font-mono text-primary tabular-nums">{formatSpendingCkb(selectedMonth.amountShannons, numberLocale)} CKB</span></span><span>{t('累计支出', 'Cumulative spending')} <span className="font-mono text-primary tabular-nums">{formatSpendingCkb(selectedMonth.cumulativeShannons, numberLocale)} CKB</span></span></figcaption>}
+          </figure>
+        </div>
       ) : (
         <p className="mt-5 rounded-xl border border-border px-4 py-6 text-sm text-muted-foreground">{t('暂无已核验的链上记录', 'No verified on-chain history yet')}</p>
       )}

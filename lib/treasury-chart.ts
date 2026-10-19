@@ -157,3 +157,103 @@ export function buildSpendingChart(entries: readonly TreasuryChartEntry[]) {
   const ticks = buildTicks(scale);
   return { points, ticks, totalShannons: cumulative.toString() };
 }
+
+export type TreasuryMonthlyChartMonth = {
+  key: string;
+  /** Inclusive bounds of the observed part of this Beijing calendar month. */
+  startAt: string;
+  endAt: string;
+  amountShannons: string;
+  /** Spending since the reporting cutoff, through this month only. */
+  cumulativeShannons: string;
+  count: number;
+  /** Centre and visible width on the shared elapsed-time axis, from 76 to 738. */
+  x: number;
+  y: number;
+  width: number;
+};
+
+const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1_000;
+
+function beijingMonthStart(time: number) {
+  const date = new Date(time + BEIJING_OFFSET_MS);
+  date.setUTCDate(1);
+  date.setUTCHours(0, 0, 0, 0);
+  return date.getTime() - BEIJING_OFFSET_MS;
+}
+
+function nextBeijingMonth(time: number) {
+  const date = new Date(time + BEIJING_OFFSET_MS);
+  date.setUTCMonth(date.getUTCMonth() + 1);
+  return date.getTime() - BEIJING_OFFSET_MS;
+}
+
+/**
+ * Group verified external expenditures, not balance changes, by Beijing month.
+ * The caller supplies an explicit observation horizon so server/client rendering
+ * cannot disagree around midnight. Empty months are real zeroes, not predictions.
+ */
+export function buildTreasuryMonthlyChart(entries: readonly TreasuryChartEntry[], endAt: string, startAt = TREASURY_CHART_START_AT) {
+  const startTime = Date.parse(startAt);
+  const endTime = Date.parse(endAt);
+  if (!Number.isFinite(startTime)) throw new Error('The treasury reporting period needs a valid start timestamp.');
+  if (!Number.isFinite(endTime)) throw new Error('The treasury reporting period needs a valid end timestamp.');
+
+  const seen = new Set<string>();
+  const periodEntries: Array<{ time: number; amount: bigint }> = [];
+  for (const entry of entries) {
+    const time = Date.parse(entry.timestamp);
+    if (!Number.isFinite(time)) throw new Error('Every treasury expenditure needs a valid timestamp.');
+    if (typeof entry.amountShannons !== 'string' || !/^[1-9]\d*$/.test(entry.amountShannons)) throw new Error('Every treasury expenditure must have a positive integer shannon amount string.');
+    if (seen.has(entry.txHash)) throw new Error('A treasury expenditure transaction cannot be duplicated.');
+    seen.add(entry.txHash);
+    if (time >= startTime && time <= endTime) periodEntries.push({ time, amount: BigInt(entry.amountShannons) });
+  }
+  // A copied collection is sorted, never the authoritative ledger itself.
+  periodEntries.sort((a, b) => a.time - b.time);
+
+  const values: Array<Omit<TreasuryMonthlyChartMonth, 'x' | 'y' | 'width'> & { startTime: number; endTime: number }> = [];
+  let cumulative = BigInt(0);
+  let maximum = BigInt(0);
+  let entryIndex = 0;
+  for (let monthTime = beijingMonthStart(startTime); monthTime <= endTime && startTime <= endTime; monthTime = nextBeijingMonth(monthTime)) {
+    if (values.length >= 12_000) throw new Error('The monthly treasury reporting period is too long.');
+    const nextMonthTime = nextBeijingMonth(monthTime);
+    if (!Number.isFinite(nextMonthTime) || nextMonthTime <= monthTime) throw new Error('The treasury reporting period exceeds the supported calendar range.');
+    const observedStart = Math.max(monthTime, startTime);
+    const observedEnd = Math.min(nextMonthTime - 1, endTime);
+    let amount = BigInt(0);
+    let count = 0;
+    while (entryIndex < periodEntries.length && periodEntries[entryIndex].time < nextMonthTime) {
+      amount += periodEntries[entryIndex].amount;
+      count += 1;
+      entryIndex += 1;
+    }
+    cumulative += amount;
+    if (amount > maximum) maximum = amount;
+    const date = new Date(monthTime + BEIJING_OFFSET_MS);
+    values.push({
+      key: `${date.getUTCFullYear().toString().padStart(4, '0')}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}`,
+      startAt: new Date(observedStart).toISOString(), endAt: new Date(observedEnd).toISOString(),
+      startTime: observedStart, endTime: observedEnd,
+      amountShannons: amount.toString(), cumulativeShannons: cumulative.toString(), count,
+    });
+  }
+
+  const scale = chartCeiling(toChartCkb(maximum));
+  const duration = endTime - startTime;
+  const months: TreasuryMonthlyChartMonth[] = values.map(({ startTime: observedStart, endTime: observedEnd, ...month }) => {
+    // A same-instant observation still has a focusable one-unit mark, without
+    // stretching the observed period or assigning it a full calendar month's width.
+    const width = duration <= 0 ? 1 : Math.max(1, ((observedEnd - observedStart) / duration) * 662 * 0.76);
+    const centre = duration <= 0 ? 76 : 76 + ((observedStart + (observedEnd - observedStart) / 2 - startTime) / duration) * 662;
+    return {
+      ...month,
+      // Keep even an endpoint-only minimum-width mark inside the plot area.
+      x: Math.min(738 - width / 2, Math.max(76 + width / 2, centre)),
+      y: 210 - (toChartCkb(BigInt(month.amountShannons)) / scale.maximum) * 190,
+      width,
+    };
+  });
+  return { months, ticks: buildTicks(scale), totalShannons: cumulative.toString() };
+}

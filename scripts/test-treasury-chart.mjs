@@ -126,12 +126,14 @@ const compiled = await build({
     import { renderToStaticMarkup } from 'react-dom/server';
     import { TreasuryHistoryChart } from './components/treasury-history.tsx';
     import history from './data/treasury-spending.generated.json';
-    import { buildTreasuryChart, filterTreasuryDisplayPeriod, TREASURY_CHART_START_AT } from './lib/treasury-chart.ts';
+    import { buildTreasuryChart, buildTreasuryMonthlyChart, filterTreasuryDisplayPeriod, TREASURY_CHART_START_AT } from './lib/treasury-chart.ts';
     export const render = (fixture = history) => renderToStaticMarkup(createElement(TreasuryHistoryChart, { history: fixture }));
     const period = filterTreasuryDisplayPeriod(history.entries);
     const chart = buildTreasuryChart(history.entries, history.balances, TREASURY_CHART_START_AT);
+    const monthly = buildTreasuryMonthlyChart(history.entries, chart.points.at(-1).timestamp);
     export const transactionCount = period.length;
-    export const titleCount = chart.points.length + chart.points.filter((point) => point.balanceY !== null).length;
+    export const titleCount = monthly.months.length + chart.points.filter((point) => point.balanceY !== null).length;
+    export const months = monthly.months;
     export const latestBalanceShannons = history.balances.at(-1).balanceShannons;
     export const latestTimestamp = history.entries.at(-1).timestamp;
     export const totalShannons = period.reduce((total, entry) => total + BigInt(entry.amountShannons), BigInt(0)).toString();
@@ -159,17 +161,30 @@ try {
     assert.doesNotMatch(markup, /View daily records|查看每日记录|Treasury balance history|国库余额记录/);
     assert.equal([...markup.matchAll(/https:\/\/explorer\.nervos\.org\/transaction\//g)].length, output.exports.transactionCount, 'Every in-period expenditure has its own source transaction link; the opening state does not.');
     assert.match(markup, /href="https:\/\/explorer\.nervos\.org\/address\//, 'The source action opens the human-readable explorer, not a JSON API.');
-    assert.match(markup, /type="range"/, 'Keyboard users can inspect individual chart points.');
-    assert.match(markup, /data-series="spending"/, 'Render the cumulative spending curve.');
+    assert.equal([...markup.matchAll(/type="range"/g)].length, 2, 'Keyboard users can inspect balance events and every month independently.');
+    assert.doesNotMatch(markup, /data-series="spending"/, 'Do not overlay the former cumulative spending curve.');
+    assert.match(markup, /data-series="monthly-spending"/, 'Aggregate expenditures into monthly columns.');
     assert.match(markup, /data-series="balance"/, 'Render the historical balance curve.');
-    assert.doesNotMatch(markup, /stroke-dasharray|border-dashed|虚线|dashed/, 'Both curves, legend swatches, and gridlines are solid.');
-    assert.match(markup, /text-emerald-600/, 'Spending has a green line.');
-    assert.match(markup, /text-blue-600/, 'Balance has a blue line.');
+    assert.match(markup, /data-series="balance-area"/, 'The balance curve has the selected reference style’s subtle area.');
+    assert.doesNotMatch(markup, /stroke-dasharray|border-dashed|虚线|dashed/, 'Balance line and gridlines are solid.');
+    assert.match(markup, /data-series="balance"[^>]*class="text-primary"/, 'The balance curve uses the website’s actual green theme token.');
+    assert.doesNotMatch(markup, /(?:text|bg|border|fill|stroke)-blue|蓝色|\bblue\b/, 'Balance, icons, dots, and spending never introduce blue.');
+    assert.match(markup, /bg-primary/, 'The balance and monthly-spending legend icons match the green theme.');
+    assert.equal([...markup.matchAll(/data-series="monthly-spending"/g)].length, output.exports.months.length, 'Retain a selectable column slot for every month, including zero-spending months.');
+    for (const month of output.exports.months) {
+      const amount = formatSpendingCkb(month.amountShannons, locale === 'en' ? 'en-US' : 'zh-CN');
+      const cumulative = formatSpendingCkb(month.cumulativeShannons, locale === 'en' ? 'en-US' : 'zh-CN');
+      const column = markup.match(new RegExp(`<rect[^>]*data-month="${month.key}"[^>]*><title>([^<]+)</title>`));
+      assert.ok(column, `Render the ${month.key} column with a plain-text native hover title.`);
+      assert.ok(column[1].includes(amount) && column[1].includes(cumulative), 'Every monthly hover title includes its own spending AND cumulative spending through that month.');
+      assert.match(column[1], locale === 'en' ? /Monthly spending.*Cumulative spending/ : /当月支出.*累计支出/);
+    }
+    assert.match(markup, /data-month-readout=/, 'A persistent readout supports pointer, tap, and keyboard inspection, not hover-only information.');
     assert.match(markup, /<th[^>]*>(?:Transaction details|交易详情)<\/th>/, 'The last column has a visible bilingual heading, not screen-reader-only text.');
     assert.ok(markup.includes(formatTreasuryTimestamp(output.exports.latestTimestamp)), 'Each expenditure displays full Beijing date and seconds.');
     assert.ok(markup.includes(formatSpendingCkb(output.exports.totalShannons, locale === 'en' ? 'en-US' : 'zh-CN')), 'The in-period cumulative total is rendered with three decimal places.');
     assert.ok(markup.includes(formatSpendingCkb(output.exports.latestBalanceShannons, locale === 'en' ? 'en-US' : 'zh-CN')), 'The exact latest balance is rendered with three decimal places.');
-    assert.equal([...markup.matchAll(/<title>[^<]+<\/title>/g)].length, output.exports.titleCount, 'Both series contain each in-period event plus a separately identified opening state; SVG titles remain single text nodes.');
+    assert.equal([...markup.matchAll(/<title>[^<]+<\/title>/g)].length, output.exports.titleCount, 'Each balance event and calendar month has a single-text-node SVG title.');
     assert.match(markup, locale === 'en' ? /Jan 12, 2023/ : /2023年1月12日/, 'The displayed x-axis starts on 12 January 2023 in Beijing time.');
     assert.ok([...markup.matchAll(/<time dateTime="([^"]+)"/g)].every((match) => Date.parse(match[1]) >= Date.parse(TREASURY_CHART_START_AT)), 'All displayed table and selected timestamps are within the reporting period.');
     const fixtureMarkup = output.exports.render({ complete: true, entries: boundaryExpenses.map((entry) => ({ ...entry, recipients: [] })), balances: boundaryBalances });
@@ -184,4 +199,4 @@ try {
 }
 assert.deepEqual(renderWarnings, [], 'SVG point titles and the complete chart must render without React hydration warnings.');
 
-console.log('Validated inclusive Beijing reporting cutoff, real opening and ending balances, period-only spending/counts/rows, solid chart lines, exact amounts, and bilingual accessible rendering.');
+console.log('Validated inclusive Beijing cutoff, real balances, green balance-area and monthly-column panels, exact monthly/cumulative hover values, complete expenditure rows, and bilingual accessible rendering.');
