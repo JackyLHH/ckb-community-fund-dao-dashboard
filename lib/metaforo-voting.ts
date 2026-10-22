@@ -19,8 +19,32 @@ function closingTimeFromCountdown(text: string, observedAt: Date) {
     : undefined;
 }
 
+// Metaforo editors return either Markdown or a JSON Quill delta. Decode
+// formatting before matching URLs; escaped slashes are not literal URL paths.
+function sourceText(content: string): string {
+  try {
+    const parsed = JSON.parse(content);
+    if (typeof parsed === 'string') return sourceText(parsed);
+    const ops = Array.isArray(parsed) ? parsed : parsed?.ops;
+    if (Array.isArray(ops)) return ops.map((op) => {
+      const text = typeof op.insert === 'string' ? op.insert : '';
+      const link = typeof op.attributes?.link === 'string' ? op.attributes.link : '';
+      return link ? `[${text}](${link})` : text;
+    }).join('').replace(/\\+\//g, '/').replace(/\\+n/g, '\n');
+  } catch { /* Plain Markdown is also supported. */ }
+  return content.replace(/\\+\//g, '/').replace(/\\+n/g, '\n');
+}
+
 export function sourceProposalId(content: string) {
-  const links = [...content.matchAll(/https:\/\/talk\.nervos\.org\/t\/(?:([^\s/"<>]+)\/)?(\d+)(?:\/\d+)?/g)];
+  const text = sourceText(content);
+  const linkPattern = /https:\/\/talk\.nervos\.org\/t\/(?:(?!\d+(?:[/?#\s)"<>]|$))([^\s/"<>]+)\/)?(\d+)(?:\/\d+)?/g;
+  const links = [...text.matchAll(linkPattern)];
+  // An explicitly labelled discussion link identifies the current proposal,
+  // even when the body also cites a previous grant or other projects.
+  const labelled = text.split(/\r?\n/).filter((line) =>
+    /^\s*(?:[-*#>]\s*)*(?:\*\*)?(?:discussion\s+(?:thread|link)|community\s+discussion|DIS\s+link|讨论帖(?:链接)?|讨论链接)\s*(?:\*\*)?\s*[:：]/i.test(line));
+  const explicitIds = [...new Set(labelled.flatMap((line) => [...line.matchAll(linkPattern)].map((match) => match[2])))];
+  if (explicitIds.length) return explicitIds.length === 1 ? explicitIds[0] : null;
   const discussions = links.filter((match) => /^dis-/i.test(match[1] || ''));
   const ids = [...new Set((discussions.length ? discussions : links).map((match) => match[2]))];
   return ids.length === 1 ? ids[0] : null;

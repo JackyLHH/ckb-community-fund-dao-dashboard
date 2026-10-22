@@ -145,3 +145,23 @@ assert.match(liveSource, /liveVotes\s*=\s*mergeVoteSnapshots\(liveVotes,\s*lates
 assert.equal(sourceProposalId('https://talk.nervos.org/t/example/10687 https://talk.nervos.org/t/dis-kaze-proposal/10736'), '10736');
 assert.equal(sourceProposalId('https://talk.nervos.org/t/dis-a/1 https://talk.nervos.org/t/dis-b/2'), null);
 console.log('Validated Metaforo quorum parsing, safe countdowns, source-backed deadlines, stale CDN merges, final-result lifecycle, and proposal matching.');
+
+const crowdCurrent = 'https://talk.nervos.org/t/dis-crowdcell-from-testnet-demo-to-a-crowdfunding-product-on-ckb-crowdcell-ckb/10937';
+const crowdOld = 'https://talk.nervos.org/t/dis-crowdcell-mainnet-launch-of-trustless-all-or-nothing-crowdfunding-on-ckb/10609';
+assert.equal(sourceProposalId(`**Discussion thread:** ${crowdCurrent} (33 likes)\nThis rescopes the [first proposal](${crowdOld}).`), '10937');
+assert.equal(sourceProposalId(`First proposal: ${crowdOld}\n**Discussion thread:** [current proposal](${crowdCurrent})`), '10937', 'Link order must not select the old grant');
+assert.equal(sourceProposalId(`${crowdOld}\n${crowdCurrent}`), null, 'Unlabelled multiple grants remain ambiguous');
+assert.equal(sourceProposalId(`Discussion thread: ${crowdCurrent}\nDIS link: ${crowdOld}`), null, 'Conflicting explicit source links must not be guessed');
+assert.equal(sourceProposalId('Discussion thread: https://talk.nervos.org/t/10937/3'), '10937', 'Numeric post links retain the topic ID, not the post number');
+const kireaLink = 'https://talk.nervos.org/t/dis-kirea-finance-native-rwa-lending-infrastructure-for-ckb-dis-kirea-finance-ckb-rwa/10809';
+const kireaOps = [
+  { insert: 'Community discussion: ' },
+  { insert: 'Original proposal', attributes: { link: kireaLink.replaceAll('/', '\\/') } },
+  { insert: '\\nPrevious Nervos Spark project: https:\\/\\/talk.nervos.org\\/t\\/spark-fiber-checkout\\/10045' },
+];
+assert.equal(sourceProposalId(JSON.stringify(kireaOps)), '10809', 'Decode the rich-text link attribute even when its text is not a URL');
+assert.equal(sourceProposalId(JSON.stringify({ ops: kireaOps })), '10809');
+assert.equal(sourceProposalId(JSON.stringify(JSON.stringify(kireaOps))), '10809');
+assert.equal(sourceProposalId(kireaLink.replaceAll('/', '\\\\/')), '10809', 'Decode multiply escaped URL slashes');
+assert.equal(sourceProposalId('No source link'), null);
+console.log('Validated current-versus-historical proposal links, Quill escaped URLs, ambiguous sources, and numeric post URLs.');

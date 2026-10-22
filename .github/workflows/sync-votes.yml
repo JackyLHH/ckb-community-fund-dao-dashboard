@@ -21,6 +21,8 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/vote-sync" --no-package-lock --ignore-scripts playwright@1.56.1
           "$RUNNER_TEMP/vote-sync/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Test vote discovery and lifecycle parsing
+        run: node --experimental-strip-types scripts/test-metaforo-voting.mjs
       - name: Read public vote cards
         id: collect
         continue-on-error: true
