@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-19T15:46:47.961Z",
+  "checkedAt": "2026-10-22T03:34:47.595Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -10,6 +10,20 @@
       "likes": 33,
       "occurredAt": "2026-10-19T08:26:15.402Z",
       "sourceUrl": "https://talk.nervos.org/t/dis-crowdcell-from-testnet-demo-to-a-crowdfunding-product-on-ckb-crowdcell-ckb/10937/1"
+    },
+    {
+      "id": "vote-started:10937:80561",
+      "topicId": 10937,
+      "kind": "vote-started",
+      "occurredAt": "2026-10-20T14:15:22.000Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-crowdcell-from-testnet-demo-to-a-crowdfunding-product-on-ckb-crowdcell-ckb-80561"
+    },
+    {
+      "id": "vote-started:10809:80639",
+      "topicId": 10809,
+      "kind": "vote-started",
+      "occurredAt": "2026-10-22T01:44:49.000Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-kirea-finance-native-rwa-lending-infrastructure-for-ckb-80639"
     }
   ],
   "discussions": {}
