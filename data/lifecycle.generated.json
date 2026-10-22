@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-22T15:24:25.952Z",
+  "checkedAt": "2026-10-22T19:33:24.231Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -29,8 +29,12 @@
   "discussions": {
     "11025": {
       "postId": 26820,
-      "timestamps": {},
-      "seenBeforeDeadline": []
+      "timestamps": {
+        "fillmyckbag": "2026-10-22T18:59:44.000Z"
+      },
+      "seenBeforeDeadline": [
+        "fillmyckbag"
+      ]
     }
   }
 }
