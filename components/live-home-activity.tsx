@@ -42,8 +42,8 @@ export function LiveHomeActivity() {
                 <Link key={proposal.id} href={`/project?id=${proposal.id}`} aria-labelledby={`activity-title-${proposal.id}`} className="group grid min-w-0 gap-4 rounded-2xl border border-border bg-background p-5 transition hover:border-primary/60 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className={`size-2 rounded-full ${leadStatus.dotClassName}`} aria-hidden="true" />
-                      <span title={locale === 'en' ? 'Latest forum activity may include community replies.' : '更新时间可能包含社区回复。'} className="text-xs font-semibold text-muted-foreground">{tags.map((tag) => locale === 'en' ? statusMeta[tag].en : statusMeta[tag].zh).join(' · ')} · <I18nText zh="更新于" en="Updated" /> <time dateTime={proposal.updatedAt}>{formatDate(proposal.updatedAt, locale === 'en' ? 'en-US' : 'zh-CN')}</time></span>
+                      {leadStatus && <span className={`size-2 rounded-full ${leadStatus.dotClassName}`} aria-hidden="true" />}
+                      <span title={locale === 'en' ? 'Latest forum activity may include community replies.' : '更新时间可能包含社区回复。'} className="text-xs font-semibold text-muted-foreground">{tags.length > 0 && <>{tags.map((tag) => locale === 'en' ? statusMeta[tag].en : statusMeta[tag].zh).join(' · ')} · </>}<I18nText zh="更新于" en="Updated" /> <time dateTime={proposal.updatedAt}>{formatDate(proposal.updatedAt, locale === 'en' ? 'en-US' : 'zh-CN')}</time></span>
                     </div>
                     <h3 id={`activity-title-${proposal.id}`} className="mt-2 font-bold group-hover:text-primary">{getProposalTitle(proposal, locale)}</h3>
                     <p className="mt-1 line-clamp-1 text-sm leading-6 text-muted-foreground">{getProposalOverview(proposal, locale)}</p>
