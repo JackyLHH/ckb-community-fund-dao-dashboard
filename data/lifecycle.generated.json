@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-22T03:34:47.595Z",
+  "checkedAt": "2026-10-22T15:24:25.952Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -26,5 +26,11 @@
       "sourceUrl": "https://dao.ckb.community/thread/vot-kirea-finance-native-rwa-lending-infrastructure-for-ckb-80639"
     }
   ],
-  "discussions": {}
+  "discussions": {
+    "11025": {
+      "postId": 26820,
+      "timestamps": {},
+      "seenBeforeDeadline": []
+    }
+  }
 }
