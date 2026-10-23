@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-22T19:33:24.231Z",
+  "checkedAt": "2026-10-23T01:35:23.144Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -24,6 +24,16 @@
       "kind": "vote-started",
       "occurredAt": "2026-10-22T01:44:49.000Z",
       "sourceUrl": "https://dao.ckb.community/thread/vot-kirea-finance-native-rwa-lending-infrastructure-for-ckb-80639"
+    },
+    {
+      "id": "vote-ended:10736:80384",
+      "topicId": 10736,
+      "kind": "vote-ended",
+      "occurredAt": "2026-10-23T01:35:19.896Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-kaze-x-ckb-unitour-continuation-proposal-80384",
+      "totalVotes": 183340273,
+      "yesPercent": 100,
+      "approved": true
     }
   ],
   "discussions": {
