@@ -25,14 +25,14 @@
     },
     "10809": {
       "url": "https://dao.ckb.community/thread/vot-kirea-finance-native-rwa-lending-infrastructure-for-ckb-80639",
-      "totalVotes": 1976451,
+      "totalVotes": 2076553,
       "minimumVotes": 13982642,
       "yesPercent": 100,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-23T12:11:53.365Z",
-      "closesAt": "2026-10-30T00:00:53.365Z",
+      "verifiedAt": "2026-10-23T20:30:50.584Z",
+      "closesAt": "2026-10-30T00:00:50.584Z",
       "openedAt": "2026-10-22T01:44:49.000Z"
     },
     "10937": {
@@ -43,8 +43,8 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-23T12:11:56.386Z",
-      "closesAt": "2026-10-28T00:00:56.386Z",
+      "verifiedAt": "2026-10-23T20:30:53.668Z",
+      "closesAt": "2026-10-28T00:00:53.668Z",
       "openedAt": "2026-10-20T14:15:22.000Z"
     }
   }

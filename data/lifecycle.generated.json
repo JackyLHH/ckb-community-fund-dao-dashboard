@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-23T17:25:00.955Z",
+  "checkedAt": "2026-10-23T20:30:59.003Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -65,7 +65,9 @@
         "ayoub_lesfer": "2026-10-23T15:56:27.000Z",
         "dondara": "2026-10-23T13:45:35.000Z",
         "ebubedev": "2026-10-23T13:18:43.000Z",
-        "ajay": "2026-10-23T15:16:50.000Z"
+        "ajay": "2026-10-23T15:16:50.000Z",
+        "ophiuchus": "2026-10-23T18:58:47.000Z",
+        "3m1n3nc3": "2026-10-23T17:41:33.000Z"
       },
       "seenBeforeDeadline": [
         "arthurzhang",
@@ -84,7 +86,9 @@
         "ebubedev",
         "dondara",
         "ajay",
-        "ayoub_lesfer"
+        "ayoub_lesfer",
+        "3m1n3nc3",
+        "ophiuchus"
       ]
     }
   }
