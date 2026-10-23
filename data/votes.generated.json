@@ -31,8 +31,8 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-23T01:35:14.334Z",
-      "closesAt": "2026-10-30T00:00:14.334Z",
+      "verifiedAt": "2026-10-23T06:33:26.047Z",
+      "closesAt": "2026-10-30T00:00:26.047Z",
       "openedAt": "2026-10-22T01:44:49.000Z"
     },
     "10937": {
@@ -43,8 +43,8 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-23T01:35:17.181Z",
-      "closesAt": "2026-10-28T00:00:17.181Z",
+      "verifiedAt": "2026-10-23T06:33:29.404Z",
+      "closesAt": "2026-10-28T00:00:29.404Z",
       "openedAt": "2026-10-20T14:15:22.000Z"
     }
   }
