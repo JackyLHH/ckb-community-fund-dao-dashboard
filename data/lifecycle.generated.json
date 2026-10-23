@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-23T12:12:00.558Z",
+  "checkedAt": "2026-10-23T17:25:00.955Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -61,7 +61,11 @@
         "zubbee": "2026-10-23T07:54:54.000Z",
         "beebozy": "2026-10-23T07:52:44.000Z",
         "kaylah": "2026-10-23T07:51:46.000Z",
-        "birdmannn": "2026-10-23T07:46:48.000Z"
+        "birdmannn": "2026-10-23T07:46:48.000Z",
+        "ayoub_lesfer": "2026-10-23T15:56:27.000Z",
+        "dondara": "2026-10-23T13:45:35.000Z",
+        "ebubedev": "2026-10-23T13:18:43.000Z",
+        "ajay": "2026-10-23T15:16:50.000Z"
       },
       "seenBeforeDeadline": [
         "arthurzhang",
@@ -76,7 +80,11 @@
         "werd_lost",
         "truthixify",
         "matt_ckb",
-        "ticoworld"
+        "ticoworld",
+        "ebubedev",
+        "dondara",
+        "ajay",
+        "ayoub_lesfer"
       ]
     }
   }
