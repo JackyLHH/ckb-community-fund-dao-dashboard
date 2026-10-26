@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-25T19:43:09.679Z",
+  "checkedAt": "2026-10-26T11:34:52.113Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -73,7 +73,10 @@
         "salmandev": "2026-10-23T21:45:51.000Z",
         "vibes": "2026-10-24T18:23:10.000Z",
         "victor_okenwa": "2026-10-24T20:44:32.000Z",
-        "mulandi_cecilia": "2026-10-25T16:59:32.000Z"
+        "mulandi_cecilia": "2026-10-25T16:59:32.000Z",
+        "robaireth": "2026-10-26T06:12:19.000Z",
+        "jnr6": "2026-10-26T09:35:20.000Z",
+        "jayrodri088": "2026-10-26T06:17:57.000Z"
       },
       "seenBeforeDeadline": [
         "arthurzhang",
@@ -98,7 +101,10 @@
         "salmandev",
         "vibes",
         "victor_okenwa",
-        "mulandi_cecilia"
+        "mulandi_cecilia",
+        "robaireth",
+        "jayrodri088",
+        "jnr6"
       ]
     }
   }
