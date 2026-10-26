@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-26T11:34:52.113Z",
+  "checkedAt": "2026-10-26T17:40:23.085Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -76,7 +76,8 @@
         "mulandi_cecilia": "2026-10-25T16:59:32.000Z",
         "robaireth": "2026-10-26T06:12:19.000Z",
         "jnr6": "2026-10-26T09:35:20.000Z",
-        "jayrodri088": "2026-10-26T06:17:57.000Z"
+        "jayrodri088": "2026-10-26T06:17:57.000Z",
+        "hallab": "2026-10-26T15:59:52.000Z"
       },
       "seenBeforeDeadline": [
         "arthurzhang",
@@ -104,7 +105,49 @@
         "mulandi_cecilia",
         "robaireth",
         "jayrodri088",
-        "jnr6"
+        "jnr6",
+        "hallab"
+      ]
+    },
+    "11051": {
+      "postId": 26892,
+      "timestamps": {
+        "fillmyckbag": "2026-10-26T17:34:13.000Z",
+        "sanusi_az": "2026-10-26T17:34:00.000Z",
+        "jessica_omugo": "2026-10-26T16:18:42.000Z",
+        "ebubedev": "2026-10-26T16:04:56.000Z",
+        "hallab": "2026-10-26T16:02:10.000Z",
+        "truthixify": "2026-10-26T15:53:51.000Z",
+        "lusocryptolabs": "2026-10-26T15:45:04.000Z",
+        "zipporah_solomon": "2026-10-26T15:40:12.000Z",
+        "tiago_morcego": "2026-10-26T15:37:28.000Z",
+        "beebozy": "2026-10-26T15:36:36.000Z",
+        "sagegreggs": "2026-10-26T15:33:26.000Z",
+        "arthurzhang": "2026-10-26T15:12:00.000Z",
+        "khairat_muftau": "2026-10-26T16:05:32.000Z",
+        "birdmannn": "2026-10-26T15:56:21.000Z",
+        "owk50ga": "2026-10-26T15:49:49.000Z",
+        "ajay": "2026-10-26T15:45:09.000Z",
+        "teslimbalogun664": "2026-10-26T15:32:16.000Z"
+      },
+      "seenBeforeDeadline": [
+        "arthurzhang",
+        "teslimbalogun664",
+        "sagegreggs",
+        "beebozy",
+        "tiago_morcego",
+        "zipporah_solomon",
+        "lusocryptolabs",
+        "ajay",
+        "owk50ga",
+        "truthixify",
+        "birdmannn",
+        "hallab",
+        "ebubedev",
+        "khairat_muftau",
+        "jessica_omugo",
+        "sanusi_az",
+        "fillmyckbag"
       ]
     }
   }
