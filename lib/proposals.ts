@@ -6,8 +6,8 @@ import { proposalOverviewTranslationsById } from './proposal-overview-translatio
 import { proposalOverridesById } from './proposal-overrides.js';
 import { applyPersistedMilestoneTranslations } from './proposal-milestone-translation.js';
 import { applyPersistedTitleTranslation } from './proposal-title-translation.js';
-import { isProposalProgressUpdate } from './proposal-progress.ts';
-export { isProposalProgressUpdate } from './proposal-progress.ts';
+import { isProposalProgressUpdate } from './proposal-progress.js';
+export { isProposalProgressUpdate } from './proposal-progress.js';
 
 export type ProposalStatusTag =
   | 'discussion'
