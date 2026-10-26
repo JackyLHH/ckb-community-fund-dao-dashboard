@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-26T17:40:23.085Z",
+  "checkedAt": "2026-10-26T21:56:13.013Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -77,7 +77,8 @@
         "robaireth": "2026-10-26T06:12:19.000Z",
         "jnr6": "2026-10-26T09:35:20.000Z",
         "jayrodri088": "2026-10-26T06:17:57.000Z",
-        "hallab": "2026-10-26T15:59:52.000Z"
+        "hallab": "2026-10-26T15:59:52.000Z",
+        "ksa_1971": "2026-10-26T18:36:28.000Z"
       },
       "seenBeforeDeadline": [
         "arthurzhang",
@@ -106,7 +107,9 @@
         "robaireth",
         "jayrodri088",
         "jnr6",
-        "hallab"
+        "hallab",
+        "xiaomao",
+        "ksa_1971"
       ]
     },
     "11051": {
@@ -128,7 +131,11 @@
         "birdmannn": "2026-10-26T15:56:21.000Z",
         "owk50ga": "2026-10-26T15:49:49.000Z",
         "ajay": "2026-10-26T15:45:09.000Z",
-        "teslimbalogun664": "2026-10-26T15:32:16.000Z"
+        "teslimbalogun664": "2026-10-26T15:32:16.000Z",
+        "ophiuchus": "2026-10-26T21:54:12.000Z",
+        "daniel_asaboro": "2026-10-26T21:46:28.000Z",
+        "chris": "2026-10-26T21:03:11.000Z",
+        "ajayi_victor": "2026-10-26T17:59:39.000Z"
       },
       "seenBeforeDeadline": [
         "arthurzhang",
@@ -147,7 +154,11 @@
         "khairat_muftau",
         "jessica_omugo",
         "sanusi_az",
-        "fillmyckbag"
+        "fillmyckbag",
+        "ajayi_victor",
+        "chris",
+        "daniel_asaboro",
+        "ophiuchus"
       ]
     }
   }
