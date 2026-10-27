@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-27T13:18:33.827Z",
+  "checkedAt": "2026-10-27T19:00:42.781Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -144,7 +144,9 @@
         "mulandi_cecilia": "2026-10-27T11:53:23.000Z",
         "salmandev": "2026-10-27T08:58:23.000Z",
         "divine": "2026-10-27T07:46:32.000Z",
-        "charlie_kong_b": "2026-10-27T06:55:54.000Z"
+        "charlie_kong_b": "2026-10-27T06:55:54.000Z",
+        "0x_mahrezhatake": "2026-10-27T16:18:25.000Z",
+        "ayoub_lesfer": "2026-10-27T15:44:04.000Z"
       },
       "seenBeforeDeadline": [
         "arthurzhang",
@@ -173,7 +175,9 @@
         "charlie_kong_b",
         "divine",
         "salmandev",
-        "mulandi_cecilia"
+        "mulandi_cecilia",
+        "ayoub_lesfer",
+        "0x_mahrezhatake"
       ]
     }
   }
