@@ -24,16 +24,16 @@
       "verifiedAt": "2026-10-19T00:00:00.000Z"
     },
     "10809": {
-      "url": "https://dao.ckb.community/thread/vot-kirea-finance-native-rwa-lending-infrastructure-for-ckb-80639",
+      "url": "https://dao.ckb.community/thread/vot-kirea-finance-native-rwa-lending-infrastructure-for-ckb-kirea-finance-ckb-rwa-80639",
       "totalVotes": 110568864,
       "minimumVotes": 13982642,
       "yesPercent": 29.1,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-27T06:52:06.057Z",
-      "closesAt": "2026-10-30T00:00:06.057Z",
-      "openedAt": "2026-10-22T01:44:49.000Z"
+      "verifiedAt": "2026-10-27T13:18:25.533Z",
+      "closesAt": "2026-10-30T00:00:25.533Z",
+      "openedAt": "2026-10-25T01:50:24.000Z"
     },
     "10937": {
       "url": "https://dao.ckb.community/thread/vot-crowdcell-from-testnet-demo-to-a-crowdfunding-product-on-ckb-crowdcell-ckb-80561",
@@ -43,8 +43,8 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-27T06:52:09.047Z",
-      "closesAt": "2026-10-28T00:00:09.047Z",
+      "verifiedAt": "2026-10-27T13:18:28.652Z",
+      "closesAt": "2026-10-28T00:00:28.652Z",
       "openedAt": "2026-10-20T14:15:22.000Z"
     }
   }
