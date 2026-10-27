@@ -1,3 +1,4 @@
+import { preserveTechnicalTerms, translationPolicyVersion } from './translation-terms.js';
 import type { Proposal, ProposalOverview } from '@/lib/proposals';
 import rawTranslations from '../data/proposal-overview-translations.json' with { type: 'json' };
 
@@ -17,7 +18,7 @@ function cacheKey(proposalId: string, target: TargetLocale, source: string) {
     hash ^= source.charCodeAt(index);
     hash = Math.imul(hash, 16777619);
   }
-  return `proposal-overview-translation:v1:${proposalId}:${target}:${(hash >>> 0).toString(36)}`;
+  return `proposal-overview-translation:v2:${proposalId}:${target}:${(hash >>> 0).toString(36)}`;
 }
 
 function readBrowserCache(key: string) {
@@ -46,16 +47,16 @@ async function requestTranslation(
 ) {
   const key = cacheKey(proposalId, target, source);
   const cached = readBrowserCache(key);
-  if (cached) return cached;
+  if (cached) return preserveTechnicalTerms(cached, source);
   const pending = translationsInFlight.get(key);
   if (pending) return pending;
 
-  const query = new URLSearchParams({ proposalId, target, text: source });
+  const query = new URLSearchParams({ policy: translationPolicyVersion, proposalId, target, text: source });
   const request = fetcher(`/api/translation?${query}`)
     .then(async (response) => {
       if (!response.ok) return null;
       const result = await response.json() as TranslationResponse;
-      const translation = result.translation?.trim() ?? '';
+      const translation = preserveTechnicalTerms(result.translation?.trim() ?? '', source);
       if (!result.ok || !translation) return null;
       writeBrowserCache(key, translation);
       return translation;

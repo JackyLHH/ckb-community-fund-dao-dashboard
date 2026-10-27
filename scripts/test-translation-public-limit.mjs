@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { splitTranslationText, preserveTechnicalTerms } from '../lib/translation-terms.js';
 import { GET } from '../api/translation.ts';
 
 const previousGatewayKey = process.env.AI_GATEWAY_API_KEY;
@@ -36,9 +37,26 @@ try {
   const longResponse = await GET(new Request(translationUrl(longText)));
   const longBody = await longResponse.json();
   assert.equal(longResponse.status, 200);
-  assert.equal(longBody.ok, false);
-  assert.equal(longBody.code, 'public_query_too_long');
-  assert.equal(fetchUrls.length, 0);
+  assert.equal(longBody.ok, true);
+  assert.equal(fetchUrls.length, 2);
+  assert.ok(fetchUrls.every(url => new TextEncoder().encode(new URL(url).searchParams.get('q')).length <= 500));
+  assert.equal(longBody.translation, '测试译文 测试译文');
+  for (const source of ['中'.repeat(330), 'a'.repeat(999), 'Fiber Network integration. '.repeat(25)]) {
+    const parts = splitTranslationText(source);
+    assert.ok(parts.every(part => new TextEncoder().encode(part).length <= 500));
+    assert.equal(parts.join('').replace(/\s/g, ''), source.replace(/\s/g, ''));
+  }
+  assert.equal(preserveTechnicalTerms('光纤上的支付与光线网络集成', 'Payments over Fiber and Fiber Network'), 'Fiber上的支付与Fiber Network集成');
+  assert.equal(preserveTechnicalTerms('普通光纤电缆', 'Optical cable'), '普通光纤电缆');
+  globalThis.fetch = async () => Response.json({ responseStatus: 200, responseData: { translatedText: '光纤支付与光纤网络' } });
+  const terms = await (await GET(new Request(translationUrl('Fiber payment and Fiber Network')))).json();
+  assert.equal(terms.translation, 'Fiber支付与Fiber Network');
+  let calls = 0;
+  globalThis.fetch = async () => ++calls === 1
+    ? Response.json({ responseStatus: 200, responseData: { translatedText: '成功部分' } })
+    : Response.json({ responseStatus: 403, quotaFinished: true });
+  const partial = await (await GET(new Request(translationUrl('Unique segment. '.repeat(60))))).json();
+  assert.equal(partial.ok, false, 'Never cache a partially translated milestone');
 } finally {
   globalThis.fetch = originalFetch;
   if (previousGatewayKey === undefined) delete process.env.AI_GATEWAY_API_KEY;
