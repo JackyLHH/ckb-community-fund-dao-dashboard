@@ -31,8 +31,8 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-10-27T22:59:58.503Z",
-      "closesAt": "2026-10-30T00:59:58.503Z",
+      "verifiedAt": "2026-10-28T02:21:50.064Z",
+      "closesAt": "2026-10-30T00:00:50.064Z",
       "openedAt": "2026-10-25T01:50:24.000Z"
     },
     "10937": {
@@ -41,11 +41,11 @@
       "minimumVotes": 10568813,
       "yesPercent": 100,
       "passPercent": 51,
-      "closed": false,
-      "status": "active",
-      "verifiedAt": "2026-10-27T23:00:06.284Z",
-      "closesAt": "2026-10-28T00:00:06.284Z",
-      "openedAt": "2026-10-20T14:15:22.000Z"
+      "closed": true,
+      "status": "approved",
+      "verifiedAt": "2026-10-28T02:21:53.089Z",
+      "openedAt": "2026-10-20T14:15:22.000Z",
+      "closedAt": "2026-10-28T02:21:53.089Z"
     }
   }
 }
