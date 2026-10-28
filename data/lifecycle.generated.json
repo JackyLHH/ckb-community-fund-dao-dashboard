@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-28T02:21:58.036Z",
+  "checkedAt": "2026-10-28T09:00:57.161Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -122,7 +122,8 @@
         "ksa_1971",
         "psawyerberlin",
         "jeremic_arose",
-        "bolaji1729"
+        "bolaji1729",
+        "retricsu"
       ]
     },
     "11051": {
@@ -187,7 +188,8 @@
         "salmandev",
         "mulandi_cecilia",
         "ayoub_lesfer",
-        "0x_mahrezhatake"
+        "0x_mahrezhatake",
+        "werd_lost"
       ]
     }
   }
