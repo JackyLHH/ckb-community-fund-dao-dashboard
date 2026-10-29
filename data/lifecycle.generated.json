@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-28T21:09:27.755Z",
+  "checkedAt": "2026-10-29T14:26:30.103Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -44,20 +44,17 @@
       "totalVotes": 184132635,
       "yesPercent": 100,
       "approved": true
+    },
+    {
+      "id": "discussion-ended:11025",
+      "kind": "discussion-ended",
+      "topicId": 11025,
+      "likes": 2,
+      "occurredAt": "2026-10-29T13:23:30.732Z",
+      "sourceUrl": "https://talk.nervos.org/t/dis-ckb-poker-a-texas-hold-em-game-and-open-source-multiplayer-components-built-on-ckb/11025/1"
     }
   ],
   "discussions": {
-    "11025": {
-      "postId": 26820,
-      "timestamps": {
-        "fillmyckbag": "2026-10-22T18:59:44.000Z",
-        "ophiuchus": "2026-10-25T10:08:11.000Z"
-      },
-      "seenBeforeDeadline": [
-        "fillmyckbag",
-        "ophiuchus"
-      ]
-    },
     "11031": {
       "postId": 26839,
       "timestamps": {
