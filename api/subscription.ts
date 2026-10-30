@@ -808,11 +808,12 @@ async function lifecycleDigestTopics(topics: Topic[]): Promise<DigestTopic[]> {
   const snapshot = await response.json() as LifecycleSnapshot;
   if (snapshot.version !== 1 || !Array.isArray(snapshot.events)) throw new Error('Invalid lifecycle source');
   const events = pendingLifecycleEvents(snapshot);
-  const existing = new Set(events.map((event) => event.id));
+  const existing = new Set(snapshot.events.map((event) => event.id));
+  const votingTopics = new Set(events.filter((event) => event.kind !== 'discussion-ended').map((event) => event.topicId));
   const enabled = Date.parse(snapshot.enabledAt || '');
   const now = Date.now();
   const due = topics.filter((topic) => discussionDeadline(topic.created_at) >= enabled
-    && discussionDeadline(topic.created_at) <= now && !existing.has(`discussion-ended:${topic.id}`));
+    && discussionDeadline(topic.created_at) <= now && !votingTopics.has(topic.id) && !existing.has(`discussion-ended:${topic.id}`));
   // Catch a discussion that expired between the last scheduled observation and
   // the 16:00 digest. Bound the extra work to leave time for actual delivery.
   const budgetEnd = now + 12_000;
@@ -835,7 +836,7 @@ async function lifecycleDigestTopics(topics: Topic[]): Promise<DigestTopic[]> {
     }
   }
   const byId = new Map(topics.map((topic) => [topic.id, topic]));
-  return events.flatMap((event) => {
+  return pendingLifecycleEvents({ ...snapshot, events }, now).flatMap((event) => {
     const topic = byId.get(event.topicId);
     if (!topic) return [];
     const proposal = proposalById.get(String(topic.id));

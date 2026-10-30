@@ -52,9 +52,21 @@ assert.notEqual(events[0].id, voteLifecycleEvents(999993, { ...vote, url: 'https
 assert.equal(events[0].id, voteLifecycleEvents(999993, { ...vote, url: 'https://dao.ckb.community/thread/vot-renamed-title-12345' }, createdAt)[0].id, 'Renaming a poll must not emit a second start notification');
 const openEvent = { ...events[0], id: 'vote-started:999993:67890', sourceUrl: 'https://dao.ckb.community/thread/vot-still-open-67890' };
 const snapshot = { version: 1, enabledAt: createdAt, checkedAt: before, discussions: {}, events: [below, below, eligible, openEvent, events[1]] };
-assert.equal(pendingLifecycleEvents(snapshot, deadline + 864000000).length, 4, 'Durable, unique events survive an outage longer than 24 hours');
+assert.equal(pendingLifecycleEvents(snapshot, deadline + 864000000).length, 3, 'Durable, unique events survive an outage longer than 24 hours');
 assert.equal(pendingLifecycleEvents(snapshot, Date.parse(createdAt)).length, 0, 'No premature day-8 or future events');
 assert.deepEqual(pendingLifecycleEvents({ ...snapshot, events }, deadline + 864000000).map((event) => event.kind), ['vote-ended'], 'Do not invite people to an already closed poll after an outage');
+
+// A delayed discussion verification must not resurrect a superseded notice.
+const discussionForVote = { ...below, topicId: events[1].topicId, id: `discussion-ended:${events[1].topicId}` };
+for (const order of [[discussionForVote, ...events], [...events, discussionForVote]]) {
+  assert.deepEqual(pendingLifecycleEvents({ ...snapshot, events: order }, deadline + 864000000).map(e => e.kind), ['vote-ended']);
+}
+const laterOpen = { ...openEvent, occurredAt: new Date(Date.parse(events[1].occurredAt) + 1000).toISOString() };
+assert.deepEqual(pendingLifecycleEvents({ ...snapshot, events: [...events, laterOpen] }, deadline + 864000000).map(e => e.id), [laterOpen.id], 'A later new poll replaces a previous poll result');
+
+const savedSnapshot = JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../data/lifecycle.generated.json', import.meta.url), 'utf8'));
+assert.deepEqual(pendingLifecycleEvents(savedSnapshot).filter(e => e.topicId === 10937).map(e => e.kind), ['vote-ended'], 'CrowdCell sends its final result without its obsolete discussion notification');
+assert.deepEqual(pendingLifecycleEvents({ ...snapshot, events: [events[1], { ...events[0], occurredAt: laterOpen.occurredAt }] }, deadline + 864000000).map(e => e.kind), ['vote-ended'], 'Edited start timestamps must never reopen a closed poll invitation');
 
 // Bundle the real endpoint and renderers, rather than duplicate template logic.
 const bundled = await build({ entryPoints: [new URL('../api/subscription.ts', import.meta.url).pathname],
@@ -120,9 +132,9 @@ try {
   initial = false;
   const first = await GET(request());
   assert.equal(first.status, 200); assert.equal(emails.length, 2); assert.equal(telegram.length, 2);
-  assert.equal(receipts.size, 16, 'Four events are receipted independently for two subscribers and two channels');
-  assert.match(emails.find((message) => message.to[0] === 'zh@example.test').subject, /4 条进展更新/);
-  assert.match(emails.find((message) => message.to[0] === 'en@example.test').subject, /4 proposal updates/);
+  assert.equal(receipts.size, 12, 'Only three current governance events are receipted for each destination');
+  assert.match(emails.find((message) => message.to[0] === 'zh@example.test').subject, /3 条进展更新/);
+  assert.match(emails.find((message) => message.to[0] === 'en@example.test').subject, /3 proposal updates/);
   const repeated = await GET(request());
   assert.equal((await repeated.json()).updatedProposals, 0, 'Old receipted events must not inflate daily statistics');
   assert.equal(emails.length, 2, 'Delivered events must not be sent again the next day');
@@ -130,15 +142,15 @@ try {
   receipts.clear(); failEnglish = true;
   const partial = await GET(request());
   assert.equal(partial.status, 207);
-  assert.equal(receipts.size, 12, 'A failed email must not be acknowledged as delivered');
+  assert.equal(receipts.size, 9, 'A failed email must not be acknowledged as delivered');
   failEnglish = false;
   const retry = await GET(request());
   assert.equal(retry.status, 200); assert.equal((await retry.json()).email.sent, 1, 'Only the failed subscriber is retried');
-  assert.equal(receipts.size, 16);
+  assert.equal(receipts.size, 12);
   receipts.clear(); omitDiscussion = true;
   const catchUp = await GET(request());
   assert.equal(catchUp.status, 200);
-  assert.equal((await catchUp.json()).updatedProposals, 4, 'A deadline after the latest background scan must be checked by the daily digest itself');
+  assert.equal((await catchUp.json()).updatedProposals, 3, 'A deadline after the latest background scan must be checked by the daily digest itself');
   assert.ok(emails.findLast((message) => message.to[0] === 'zh@example.test').html.includes('0 个赞，未达到 30'));
   omitDiscussion = false;
   lease = true;

@@ -198,10 +198,23 @@ export function pendingLifecycleEvents(snapshot: LifecycleSnapshot, now = Date.n
     // prevent repeats. The rollout baseline prevents historical notification floods.
     return Number.isFinite(time) && time >= enabled && time <= now;
   }).map((event) => [event.id, event])).values()];
+  // Retain all source events for auditing, but deliver only the current
+  // governance phase per proposal, even after outages or recipient retries.
   const pollKey = (event: LifecycleEvent) => `${event.topicId}:${event.sourceUrl.match(/-(\d+)$/)?.[1] || event.sourceUrl}`;
-  const closed = new Set(eligible.filter((event) => event.kind === 'vote-ended').map(pollKey));
-  // A delayed/retried digest must never invite users to vote in a closed poll.
-  // Keep the complete audit log, but send only the final result in this case.
-  return eligible.filter((event) => event.kind !== 'vote-started' || !closed.has(pollKey(event)))
+  const closed = new Set(eligible.filter(event => event.kind === 'vote-ended').map(pollKey));
+  const rank = { 'discussion-ended': 0, 'vote-started': 1, 'vote-ended': 2 };
+  const latest = new Map<number, LifecycleEvent>();
+  for (const event of eligible) {
+    if (event.kind === 'vote-started' && closed.has(pollKey(event))) continue;
+    const previous = latest.get(event.topicId);
+    const votingSupersedesDiscussion = previous?.kind === 'discussion-ended' && event.kind !== 'discussion-ended';
+    const discussionAfterVoting = previous && previous.kind !== 'discussion-ended' && event.kind === 'discussion-ended';
+    const difference = previous ? Date.parse(event.occurredAt) - Date.parse(previous.occurredAt) : 0;
+    if (!previous || votingSupersedesDiscussion || (!discussionAfterVoting
+      && (difference > 0 || (difference === 0 && rank[event.kind] > rank[previous.kind])))) {
+      latest.set(event.topicId, event);
+    }
+  }
+  return [...latest.values()]
     .sort((a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt) || a.id.localeCompare(b.id));
 }

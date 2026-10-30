@@ -108,3 +108,5 @@ TELEGRAM_CHANNEL_URL_EN
 ```
 
 The bot must be a channel administrator with permission to post messages. Never commit the bot token to the repository.
+
+Daily digests keep the complete lifecycle audit log but send only the latest governance phase per proposal. Voting supersedes discussion-deadline notifications; final results supersede invitations for the same poll, including during outage recovery and per-recipient retries. Proposer progress reports remain independent.
