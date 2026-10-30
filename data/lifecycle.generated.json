@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-29T14:26:30.103Z",
+  "checkedAt": "2026-10-30T05:56:53.580Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -52,6 +52,16 @@
       "likes": 2,
       "occurredAt": "2026-10-29T13:23:30.732Z",
       "sourceUrl": "https://talk.nervos.org/t/dis-ckb-poker-a-texas-hold-em-game-and-open-source-multiplayer-components-built-on-ckb/11025/1"
+    },
+    {
+      "id": "vote-ended:10809:80639",
+      "topicId": 10809,
+      "kind": "vote-ended",
+      "occurredAt": "2026-10-30T05:56:49.598Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-kirea-finance-native-rwa-lending-infrastructure-for-ckb-kirea-finance-ckb-rwa-80639",
+      "totalVotes": 155002245,
+      "yesPercent": 21.08,
+      "approved": false
     }
   ],
   "discussions": {

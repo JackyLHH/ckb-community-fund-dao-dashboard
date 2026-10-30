@@ -29,11 +29,11 @@
       "minimumVotes": 13982642,
       "yesPercent": 21.08,
       "passPercent": 51,
-      "closed": false,
-      "status": "active",
-      "verifiedAt": "2026-10-29T19:54:18.047Z",
-      "closesAt": "2026-10-30T00:00:18.047Z",
-      "openedAt": "2026-10-25T01:50:24.000Z"
+      "closed": true,
+      "status": "rejected",
+      "verifiedAt": "2026-10-30T05:56:49.598Z",
+      "openedAt": "2026-10-25T01:50:24.000Z",
+      "closedAt": "2026-10-30T05:56:49.598Z"
     },
     "10937": {
       "url": "https://dao.ckb.community/thread/vot-crowdcell-from-testnet-demo-to-a-crowdfunding-product-on-ckb-crowdcell-ckb-80561",
