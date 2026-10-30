@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-30T05:56:53.580Z",
+  "checkedAt": "2026-10-30T13:04:05.781Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -62,78 +62,17 @@
       "totalVotes": 155002245,
       "yesPercent": 21.08,
       "approved": false
+    },
+    {
+      "id": "discussion-ended:11031",
+      "kind": "discussion-ended",
+      "topicId": 11031,
+      "likes": 34,
+      "occurredAt": "2026-10-30T07:41:30.545Z",
+      "sourceUrl": "https://talk.nervos.org/t/dis-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts/11031/1"
     }
   ],
   "discussions": {
-    "11031": {
-      "postId": 26839,
-      "timestamps": {
-        "truthixify": "2026-10-23T10:09:41.000Z",
-        "code3ks": "2026-10-23T09:30:57.000Z",
-        "longdevbf": "2026-10-23T09:11:39.000Z",
-        "jedi_dtechmaker": "2026-10-23T07:55:05.000Z",
-        "arthurzhang": "2026-10-23T07:46:14.000Z",
-        "ticoworld": "2026-10-23T10:36:40.000Z",
-        "matt_ckb": "2026-10-23T10:28:37.000Z",
-        "werd_lost": "2026-10-23T10:07:04.000Z",
-        "neon.bit": "2026-10-23T09:01:36.000Z",
-        "zubbee": "2026-10-23T07:54:54.000Z",
-        "beebozy": "2026-10-23T07:52:44.000Z",
-        "kaylah": "2026-10-23T07:51:46.000Z",
-        "birdmannn": "2026-10-23T07:46:48.000Z",
-        "ayoub_lesfer": "2026-10-23T15:56:27.000Z",
-        "dondara": "2026-10-23T13:45:35.000Z",
-        "ebubedev": "2026-10-23T13:18:43.000Z",
-        "ajay": "2026-10-23T15:16:50.000Z",
-        "ophiuchus": "2026-10-23T18:58:47.000Z",
-        "3m1n3nc3": "2026-10-23T17:41:33.000Z",
-        "salmandev": "2026-10-23T21:45:51.000Z",
-        "vibes": "2026-10-24T18:23:10.000Z",
-        "victor_okenwa": "2026-10-24T20:44:32.000Z",
-        "mulandi_cecilia": "2026-10-25T16:59:32.000Z",
-        "robaireth": "2026-10-26T06:12:19.000Z",
-        "jnr6": "2026-10-26T09:35:20.000Z",
-        "jayrodri088": "2026-10-26T06:17:57.000Z",
-        "hallab": "2026-10-26T15:59:52.000Z",
-        "ksa_1971": "2026-10-26T18:36:28.000Z"
-      },
-      "seenBeforeDeadline": [
-        "arthurzhang",
-        "birdmannn",
-        "kaylah",
-        "beebozy",
-        "zubbee",
-        "jedi_dtechmaker",
-        "neon.bit",
-        "longdevbf",
-        "code3ks",
-        "werd_lost",
-        "truthixify",
-        "matt_ckb",
-        "ticoworld",
-        "ebubedev",
-        "dondara",
-        "ajay",
-        "ayoub_lesfer",
-        "3m1n3nc3",
-        "ophiuchus",
-        "salmandev",
-        "vibes",
-        "victor_okenwa",
-        "mulandi_cecilia",
-        "robaireth",
-        "jayrodri088",
-        "jnr6",
-        "hallab",
-        "xiaomao",
-        "ksa_1971",
-        "psawyerberlin",
-        "jeremic_arose",
-        "bolaji1729",
-        "retricsu",
-        "fillmyckbag"
-      ]
-    },
     "11051": {
       "postId": 26892,
       "timestamps": {
@@ -198,7 +137,8 @@
         "ayoub_lesfer",
         "0x_mahrezhatake",
         "werd_lost",
-        "konquest"
+        "konquest",
+        "jackylhh"
       ]
     }
   }
