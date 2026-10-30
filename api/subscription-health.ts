@@ -5,6 +5,8 @@ export async function GET() {
   const checks: Record<string, unknown> = {
     configured: Object.fromEntries(['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'CRON_SECRET', 'RESEND_API_KEY', 'TELEGRAM_BOT_TOKEN'].map(name => [name, Boolean(process.env[name])])),
   };
+  const failure = (error: unknown) => ({ unavailable: true, name: (error as Error)?.name, cause: (error as { cause?: { code?: string } })?.cause?.code });
+  try { checks.databaseHost = new URL(base ?? '').hostname; } catch { checks.invalidDatabaseUrl = true; }
   const respond = () => Response.json(checks, { headers: { 'Cache-Control': 'no-store' } });
   if (!base || !key) return respond();
   const get = async (path: string) => {
@@ -21,11 +23,11 @@ export async function GET() {
     try {
       const result = await get(path);
       checks[name] = { status: result.status, ...(name === 'runs' && result.status === 200 ? { recent: result.body } : {}) };
-    } catch { checks[name] = { unavailable: true }; }
+    } catch (error) { checks[name] = failure(error); }
   }
   try {
     const result = await get('');
     checks.leaseFunctionPresent = Boolean(result.body?.paths?.['/rpc/claim_digest_delivery']);
-  } catch { checks.leaseFunctionPresent = null; }
+  } catch (error) { checks.leaseFunctionPresent = failure(error); }
   return respond();
 }
