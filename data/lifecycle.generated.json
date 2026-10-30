@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-30T13:04:05.781Z",
+  "checkedAt": "2026-10-30T18:40:04.522Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -138,7 +138,8 @@
         "0x_mahrezhatake",
         "werd_lost",
         "konquest",
-        "jackylhh"
+        "jackylhh",
+        "jedi_dtechmaker"
       ]
     }
   }
