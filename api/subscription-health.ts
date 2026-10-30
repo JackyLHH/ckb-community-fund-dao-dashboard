@@ -22,7 +22,7 @@ export async function GET() {
   ]) {
     try {
       const result = await get(path);
-      checks[name] = { status: result.status, ...(name === 'runs' && result.status === 200 ? { recent: result.body } : {}) };
+      checks[name] = { status: result.status, ...(result.status >= 400 ? { code: result.body?.code, message: typeof result.body?.message === 'string' ? result.body.message.slice(0,200) : undefined } : {}), ...(name === 'runs' && result.status === 200 ? { recent: result.body } : {}) };
     } catch (error) { checks[name] = failure(error); }
   }
   try {
