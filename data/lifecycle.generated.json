@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-10-31T01:52:30.653Z",
+  "checkedAt": "2026-10-31T08:29:10.784Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -140,7 +140,9 @@
         "konquest",
         "jackylhh",
         "jedi_dtechmaker",
-        "yeti"
+        "yeti",
+        "two_dogs_li",
+        "retricsu"
       ]
     }
   }
