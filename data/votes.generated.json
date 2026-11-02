@@ -46,6 +46,18 @@
       "verifiedAt": "2026-10-28T02:21:53.089Z",
       "openedAt": "2026-10-20T14:15:22.000Z",
       "closedAt": "2026-10-28T02:21:53.089Z"
+    },
+    "11031": {
+      "url": "https://dao.ckb.community/thread/vot-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts-81389",
+      "totalVotes": 760924,
+      "minimumVotes": 12254902,
+      "yesPercent": 100,
+      "passPercent": 51,
+      "closed": false,
+      "status": "active",
+      "verifiedAt": "2026-11-02T17:28:28.223Z",
+      "closesAt": "2026-11-10T00:00:28.223Z",
+      "openedAt": "2026-11-02T09:55:09.000Z"
     }
   }
 }

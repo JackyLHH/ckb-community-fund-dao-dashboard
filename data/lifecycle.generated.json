@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-02T07:44:30.035Z",
+  "checkedAt": "2026-11-02T17:28:33.860Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -70,83 +70,24 @@
       "likes": 34,
       "occurredAt": "2026-10-30T07:41:30.545Z",
       "sourceUrl": "https://talk.nervos.org/t/dis-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts/11031/1"
+    },
+    {
+      "id": "vote-started:11031:81389",
+      "topicId": 11031,
+      "kind": "vote-started",
+      "occurredAt": "2026-11-02T09:55:09.000Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts-81389"
+    },
+    {
+      "id": "discussion-ended:11051",
+      "kind": "discussion-ended",
+      "topicId": 11051,
+      "likes": 38,
+      "occurredAt": "2026-11-02T14:46:54.713Z",
+      "sourceUrl": "https://talk.nervos.org/t/dis-fibernuts-reliable-cashu-over-fiber-payments-with-hosted-lsp-onboarding/11051/1"
     }
   ],
   "discussions": {
-    "11051": {
-      "postId": 26892,
-      "timestamps": {
-        "fillmyckbag": "2026-10-26T17:34:13.000Z",
-        "sanusi_az": "2026-10-26T17:34:00.000Z",
-        "jessica_omugo": "2026-10-26T16:18:42.000Z",
-        "ebubedev": "2026-10-26T16:04:56.000Z",
-        "hallab": "2026-10-26T16:02:10.000Z",
-        "truthixify": "2026-10-26T15:53:51.000Z",
-        "lusocryptolabs": "2026-10-26T15:45:04.000Z",
-        "zipporah_solomon": "2026-10-26T15:40:12.000Z",
-        "tiago_morcego": "2026-10-26T15:37:28.000Z",
-        "beebozy": "2026-10-26T15:36:36.000Z",
-        "sagegreggs": "2026-10-26T15:33:26.000Z",
-        "arthurzhang": "2026-10-26T15:12:00.000Z",
-        "khairat_muftau": "2026-10-26T16:05:32.000Z",
-        "birdmannn": "2026-10-26T15:56:21.000Z",
-        "owk50ga": "2026-10-26T15:49:49.000Z",
-        "ajay": "2026-10-26T15:45:09.000Z",
-        "teslimbalogun664": "2026-10-26T15:32:16.000Z",
-        "ophiuchus": "2026-10-26T21:54:12.000Z",
-        "daniel_asaboro": "2026-10-26T21:46:28.000Z",
-        "chris": "2026-10-26T21:03:11.000Z",
-        "ajayi_victor": "2026-10-26T17:59:39.000Z",
-        "ticoworld": "2026-10-27T05:05:42.000Z",
-        "bolaji1729": "2026-10-27T06:28:25.000Z",
-        "mulandi_cecilia": "2026-10-27T11:53:23.000Z",
-        "salmandev": "2026-10-27T08:58:23.000Z",
-        "divine": "2026-10-27T07:46:32.000Z",
-        "charlie_kong_b": "2026-10-27T06:55:54.000Z",
-        "0x_mahrezhatake": "2026-10-27T16:18:25.000Z",
-        "ayoub_lesfer": "2026-10-27T15:44:04.000Z"
-      },
-      "seenBeforeDeadline": [
-        "arthurzhang",
-        "teslimbalogun664",
-        "sagegreggs",
-        "beebozy",
-        "tiago_morcego",
-        "zipporah_solomon",
-        "lusocryptolabs",
-        "ajay",
-        "owk50ga",
-        "truthixify",
-        "birdmannn",
-        "hallab",
-        "ebubedev",
-        "khairat_muftau",
-        "jessica_omugo",
-        "sanusi_az",
-        "fillmyckbag",
-        "ajayi_victor",
-        "chris",
-        "daniel_asaboro",
-        "ophiuchus",
-        "ticoworld",
-        "bolaji1729",
-        "charlie_kong_b",
-        "divine",
-        "salmandev",
-        "mulandi_cecilia",
-        "ayoub_lesfer",
-        "0x_mahrezhatake",
-        "werd_lost",
-        "konquest",
-        "jackylhh",
-        "jedi_dtechmaker",
-        "yeti",
-        "two_dogs_li",
-        "retricsu",
-        "joshyates1980",
-        "psawyerberlin"
-      ]
-    },
     "11089": {
       "postId": 27050,
       "timestamps": {
@@ -156,7 +97,16 @@
         "ebubedev": "2026-11-02T03:09:42.000Z",
         "psawyerberlin": "2026-11-02T07:13:59.000Z",
         "yeti": "2026-11-02T07:07:23.000Z",
-        "ticoworld": "2026-11-02T05:35:44.000Z"
+        "ticoworld": "2026-11-02T05:35:44.000Z",
+        "ayoub_lesfer": "2026-11-02T16:33:13.000Z",
+        "ksa_1971": "2026-11-02T13:04:55.000Z",
+        "matt_ckb": "2026-11-02T11:37:45.000Z",
+        "jackylhh": "2026-11-02T08:32:14.000Z",
+        "t_silva": "2026-11-02T15:47:58.000Z",
+        "two_dogs_li": "2026-11-02T15:40:01.000Z",
+        "lawliet_chan": "2026-11-02T15:24:27.000Z",
+        "ophiuchus": "2026-11-02T15:18:35.000Z",
+        "jeff_bones": "2026-11-02T08:38:19.000Z"
       },
       "seenBeforeDeadline": [
         "ebubedev",
@@ -165,7 +115,16 @@
         "9527",
         "yeti",
         "psawyerberlin",
-        "fillmyckbag"
+        "fillmyckbag",
+        "jackylhh",
+        "jeff_bones",
+        "matt_ckb",
+        "ksa_1971",
+        "ophiuchus",
+        "lawliet_chan",
+        "two_dogs_li",
+        "t_silva",
+        "ayoub_lesfer"
       ]
     }
   }
