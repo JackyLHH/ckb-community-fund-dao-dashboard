@@ -42,6 +42,63 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '11089': {
+    "budgetLabel": "$22,258.48",
+    "milestoneStructureZh": "5 个里程碑",
+    "milestoneStructureEn": "5 Milestones",
+    "overview": {
+      "objective": "Cellula offers a wallet people open with their face or fingerprint, a checkout any shop adds with two lines, and an agent that lets AI pay for what it uses within limits a person sets. All three pay in seconds over Fiber, and all three already run on testnet. This proposal takes them to mainnet, on a public LSP (the node that opens payment channels for wallets, so they never need one of their own) that any Fiber wallet or app can use. LusoCryptoLabs asks for $22,258.48 (and up to $1,664 of contingency, paid only if used), in CKB over five payments to complete this.",
+      "objectiveEn": "Cellula offers a wallet people open with their face or fingerprint, a checkout any shop adds with two lines, and an agent that lets AI pay for what it uses within limits a person sets. All three pay in seconds over Fiber, and all three already run on testnet. This proposal takes them to mainnet, on a public LSP (the node that opens payment channels for wallets, so they never need one of their own) that any Fiber wallet or app can use. LusoCryptoLabs asks for $22,258.48 (and up to $1,664 of contingency, paid only if used), in CKB over five payments to complete this.",
+      "objectiveZh": "Cellula 提供一款通过人脸或指纹打开的钱包、任何商店只需两行代码即可接入的结账工具，以及一个让 AI 在用户设定的额度内为其使用的服务付款的 agent。三者均通过 Fiber 在数秒内完成支付，目前都已在测试网上运行。本提案将它们部署到主网，并运行一个任何 Fiber 钱包或应用都可使用的公共 LSP（为钱包开通支付通道的节点，让钱包无需自行运行此类节点）。LusoCryptoLabs 为此申请 22,258.48 美元（另有最多 1,664 美元的应急预算，仅在实际使用时支付），以 CKB 分五次支付。",
+      "milestones": [
+        {
+          "title": "AT Approval",
+          "titleEn": "AT Approval",
+          "titleZh": "获批时",
+          "description": "Servers ordered and set up; plan and status page address posted.",
+          "descriptionEn": "Servers ordered and set up; plan and status page address posted.",
+          "descriptionZh": "订购并配置服务器；公布计划和状态页面地址。",
+          "budget": "$3,458.48"
+        },
+        {
+          "title": "M1",
+          "titleEn": "M1",
+          "titleZh": "M1",
+          "description": "The mainnet LSP, its gateway and watchtower running; the wallet’s scripts deployed; All scripts made public.",
+          "descriptionEn": "The mainnet LSP, its gateway and watchtower running; the wallet’s scripts deployed; All scripts made public.",
+          "descriptionZh": "运行主网 LSP、其网关和 watchtower；部署钱包脚本；公开所有脚本。",
+          "budget": "$2,800"
+        },
+        {
+          "title": "M2",
+          "titleEn": "M2",
+          "titleZh": "M2",
+          "description": "Cellula Checkout and the Cellula agent on mainnet: the seller kit, cellula-agent and cellula-mcp for mainnet, the approvals relay.",
+          "descriptionEn": "Cellula Checkout and the Cellula agent on mainnet: the seller kit, cellula-agent and cellula-mcp for mainnet, the approvals relay.",
+          "descriptionZh": "在主网上线 Cellula Checkout 和 Cellula agent：提供卖家工具包、主网版 cellula-agent 和 cellula-mcp，以及授权中继。",
+          "budget": "$2,400"
+        },
+        {
+          "title": "M3",
+          "titleEn": "M3",
+          "titleZh": "M3",
+          "description": "The Cellula wallet on mainnet, web and Android, checked end to end with small amounts.",
+          "descriptionEn": "The Cellula wallet on mainnet, web and Android, checked end to end with small amounts.",
+          "descriptionZh": "在主网上线 Cellula 钱包的 Web 和 Android 版本，并使用小额资金完成端到端验证。",
+          "budget": "$4,800"
+        },
+        {
+          "title": "Month 6",
+          "titleEn": "Month 6",
+          "titleZh": "第 6 个月",
+          "description": "Six months of operation after M1; help for other projects; work on Fiber.",
+          "descriptionEn": "Six months of operation after M1; help for other projects; work on Fiber.",
+          "descriptionZh": "M1 后运营六个月；为其他项目提供支持；开展 Fiber 相关工作。",
+          "budget": "$8,800"
+        }
+      ]
+    }
+  },
   '10739': {
     milestoneStructureZh: '2 个里程碑',
     milestoneStructureEn: '2 Milestones',
