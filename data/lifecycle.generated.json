@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-02T17:28:33.860Z",
+  "checkedAt": "2026-11-03T00:04:02.783Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -106,7 +106,10 @@
         "two_dogs_li": "2026-11-02T15:40:01.000Z",
         "lawliet_chan": "2026-11-02T15:24:27.000Z",
         "ophiuchus": "2026-11-02T15:18:35.000Z",
-        "jeff_bones": "2026-11-02T08:38:19.000Z"
+        "jeff_bones": "2026-11-02T08:38:19.000Z",
+        "inkhaven": "2026-11-02T22:11:24.000Z",
+        "knmo": "2026-11-02T21:32:21.000Z",
+        "dbcryptocooper": "2026-11-02T18:07:36.000Z"
       },
       "seenBeforeDeadline": [
         "ebubedev",
@@ -124,7 +127,10 @@
         "lawliet_chan",
         "two_dogs_li",
         "t_silva",
-        "ayoub_lesfer"
+        "ayoub_lesfer",
+        "dbcryptocooper",
+        "knmo",
+        "inkhaven"
       ]
     }
   }
