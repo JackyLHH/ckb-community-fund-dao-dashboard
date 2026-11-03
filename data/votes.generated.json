@@ -49,15 +49,27 @@
     },
     "11031": {
       "url": "https://dao.ckb.community/thread/vot-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts-81389",
-      "totalVotes": 11482476,
+      "totalVotes": 11584476,
       "minimumVotes": 12254902,
       "yesPercent": 100,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-03T15:15:55.796Z",
-      "closesAt": "2026-11-10T00:00:55.796Z",
+      "verifiedAt": "2026-11-03T21:06:28.274Z",
+      "closesAt": "2026-11-10T00:00:28.274Z",
       "openedAt": "2026-11-02T09:55:09.000Z"
+    },
+    "11051": {
+      "url": "https://dao.ckb.community/thread/vot-fibernuts-reliable-cashu-over-fiber-payments-with-hosted-lsp-onboarding-81525",
+      "totalVotes": 11181451,
+      "minimumVotes": 15339253,
+      "yesPercent": 100,
+      "passPercent": 51,
+      "closed": false,
+      "status": "active",
+      "verifiedAt": "2026-11-03T21:06:24.316Z",
+      "closesAt": "2026-11-11T00:00:24.316Z",
+      "openedAt": "2026-11-03T16:08:43.000Z"
     }
   }
 }
