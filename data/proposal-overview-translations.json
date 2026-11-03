@@ -288,6 +288,10 @@
     "10739": {
       "zh": "Rivet 是一个使用 CKB、IPFS 和 Arweave 备份、时间戳记录并恢复 GitHub 历史记录的去中心化开发者平台。本提案为第一阶段申请 5,000 美元，涵盖 CoTA 无摩擦入门、主权护照以及 Rivet CLI 恢复工具的生产版本发布。",
       "en": "Rivet is a decentralized developer platform that backs up, timestamps, and restores GitHub history using CKB, IPFS, and Arweave. This proposal requests $5,000 for Phase 1, covering CoTA frictionless onboarding, the Sovereign Passport, and the production release of the Rivet CLI restore tooling."
+    },
+    "11089": {
+      "zh": "Cellula 提供一款通过人脸或指纹打开的钱包、任何商店只需两行代码即可接入的结账工具，以及一个让 AI 在用户设定的额度内为其使用的服务付款的 agent。三者均通过 Fiber 在数秒内完成支付，目前都已在测试网上运行。本提案将它们部署到主网，并运行一个任何 Fiber 钱包或应用都可使用的公共 LSP（为钱包开通支付通道的节点，让钱包无需自行运行此类节点）。LusoCryptoLabs 为此申请 22,258.48 美元（另有最多 1,664 美元的应急预算，仅在实际使用时支付），以 CKB 分五次支付。",
+      "en": "Cellula offers a wallet people open with their face or fingerprint, a checkout any shop adds with two lines, and an agent that lets AI pay for what it uses within limits a person sets. All three pay in seconds over Fiber, and all three already run on testnet. This proposal takes them to mainnet, on a public LSP (the node that opens payment channels for wallets, so they never need one of their own) that any Fiber wallet or app can use. LusoCryptoLabs asks for $22,258.48 (and up to $1,664 of contingency, paid only if used), in CKB over five payments to complete this."
     }
   }
 }

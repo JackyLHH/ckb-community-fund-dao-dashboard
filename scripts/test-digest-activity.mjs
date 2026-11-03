@@ -106,4 +106,17 @@ assert.deepEqual(
   'An operational CKB amount in ordinary deliverable text must not become the milestone budget',
 );
 
+// CKB IDL 11031: stage zero and Week 0 are identifiers, not funding amounts.
+const idlAmounts = [500, 1000, 1500, 1000, 1000];
+const idlBudgets = idlAmounts.map((amount, index) => extractMilestoneBudget(
+  `Milestone ${index}: ${index === 0 ? 'Initial Funding' : 'Delivery'}`,
+  ['Deliverables:', 'Public roadmap and issue board', `ETA: Week ${index}`, `Budget: $${amount}`],
+));
+assert.deepEqual(idlBudgets.map((item) => item.value), idlAmounts.map((amount) => `$${amount}`));
+assert.equal(idlBudgets.reduce((total, item) => total + Number(item.value.slice(1)), 0), 5000);
+assert.deepEqual(extractMilestoneBudget('Milestone 10: Initial Funding', ['ETA: Week 0']), { value: null, confidence: 0 });
+assert.equal(extractMilestoneBudget('Milestone 0: Initial Funding', ['Budget: 0']).value, '0');
+assert.equal(extractMilestoneBudget('Milestone 0', [], '0').value, '0');
+assert.equal(extractMilestoneBudget('Milestone 0 ($0)', []).value, '$0');
+
 console.log('Validated daily digest activity classification.');

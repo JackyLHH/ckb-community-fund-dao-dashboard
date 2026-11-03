@@ -1570,6 +1570,48 @@
         "etaZh": "第 5–8 周",
         "etaEn": "Weeks 5–8"
       }
+    ],
+    "11089": [
+      {
+        "titleZh": "获批时",
+        "titleEn": "AT Approval",
+        "descriptionZh": "订购并配置服务器；公布计划和状态页面地址。",
+        "descriptionEn": "Servers ordered and set up; plan and status page address posted.",
+        "budgetZh": "$3,458.48",
+        "budgetEn": "$3,458.48"
+      },
+      {
+        "titleZh": "M1",
+        "titleEn": "M1",
+        "descriptionZh": "运行主网 LSP、其网关和 watchtower；部署钱包脚本；公开所有脚本。",
+        "descriptionEn": "The mainnet LSP, its gateway and watchtower running; the wallet’s scripts deployed; All scripts made public.",
+        "budgetZh": "$2,800",
+        "budgetEn": "$2,800"
+      },
+      {
+        "titleZh": "M2",
+        "titleEn": "M2",
+        "descriptionZh": "在主网上线 Cellula Checkout 和 Cellula agent：提供卖家工具包、主网版 cellula-agent 和 cellula-mcp，以及授权中继。",
+        "descriptionEn": "Cellula Checkout and the Cellula agent on mainnet: the seller kit, cellula-agent and cellula-mcp for mainnet, the approvals relay.",
+        "budgetZh": "$2,400",
+        "budgetEn": "$2,400"
+      },
+      {
+        "titleZh": "M3",
+        "titleEn": "M3",
+        "descriptionZh": "在主网上线 Cellula 钱包的 Web 和 Android 版本，并使用小额资金完成端到端验证。",
+        "descriptionEn": "The Cellula wallet on mainnet, web and Android, checked end to end with small amounts.",
+        "budgetZh": "$4,800",
+        "budgetEn": "$4,800"
+      },
+      {
+        "titleZh": "第 6 个月",
+        "titleEn": "Month 6",
+        "descriptionZh": "M1 后运营六个月；为其他项目提供支持；开展 Fiber 相关工作。",
+        "descriptionEn": "Six months of operation after M1; help for other projects; work on Fiber.",
+        "budgetZh": "$8,800",
+        "budgetEn": "$8,800"
+      }
     ]
   }
 }

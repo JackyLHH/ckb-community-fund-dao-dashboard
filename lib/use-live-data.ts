@@ -9,7 +9,7 @@ import { proposalOverridesById } from '@/lib/proposal-overrides';
 const detailMemory = new Map<string, Proposal>();
 // v3 discards cached automatic translations from before Fiber terminology
 // preservation and long-milestone translation support.
-const detailCacheKey = (id: string) => `ckb-proposal-detail:v3:${id}`;
+const detailCacheKey = (id: string) => `ckb-proposal-detail:v4:${id}`;
 
 function readDetailCache(id: string) {
   const currentRecord = dataset.proposals.find((entry) => entry.id === id);

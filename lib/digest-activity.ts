@@ -117,7 +117,7 @@ export function extractProposalObjective(cooked = '', fallbackSummary = '') {
   return cleanProposalObjective(selected || fallbackSummary);
 }
 
-const moneyValue = String.raw`(?:USD|USDT|INR)\s*\$?\s*[\d,.]+|\$\s*[\d,.]+(?:\s*(?:USD|USDT))?|[\d,.]+\s*(?:USD|USDT|CKB(?:s)?|U)\b|0\s*(?:CKB)?`;
+const moneyValue = String.raw`(?:USD|USDT|INR)\s*\$?\s*[\d,.]+|\$\s*[\d,.]+(?:\s*(?:USD|USDT))?|[\d,.]+\s*(?:USD|USDT|CKB(?:s)?|U)\b|\b0\s*CKB\b`;
 
 function normalizedMoney(value?: string) {
   return value?.replace(/\s+/g, ' ').trim() ?? null;
@@ -126,7 +126,7 @@ function normalizedMoney(value?: string) {
 // Keep the requested-budget value identical across the detail page, proposal
 // directory, email digest, and Telegram digest.
 export function extractProposalBudget(text: string) {
-  const value = `(${moneyValue})`;
+  const value = `(${moneyValue}|0(?![\\d.,]))`;
   const labels = [
     String.raw`(?:grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
     String.raw`(?:this proposal requests|we (?:are requesting|request)|our budget is|apply for|the budget for this project is)\s*(?:a grant of|a total budget of|a total of)?\s*${value}`,
@@ -154,8 +154,10 @@ export function extractMilestoneBudget(
   pieces: string[],
   tableBudgetText = '',
 ): MilestoneBudgetEvidence {
+  // Bare zero is valid only in a structured monetary field, never a stage number.
+  const fieldMoneyValue = `(?:${moneyValue}|0(?![\\d.,]))`;
   const money = new RegExp(`(${moneyValue})`, 'i');
-  const tableBudget = normalizedMoney(tableBudgetText.match(money)?.[1]);
+  const tableBudget = normalizedMoney(tableBudgetText.match(money)?.[1] ?? (/^\s*0\s*$/.test(tableBudgetText) ? '0' : undefined));
   if (tableBudget) return { value: tableBudget, confidence: 4 };
 
   const titleBudget = normalizedMoney(markerTitle.match(money)?.[1]);
@@ -170,7 +172,10 @@ export function extractMilestoneBudget(
   if (labelledBudget) return { value: labelledBudget, confidence: 2 };
 
   for (const piece of pieces) {
-    const standalone = piece.match(new RegExp(String.raw`^\s*(${moneyValue})\s*$`, 'i'));
+    if (/^(?:budget|amount|payment|grant|funding|预算|金额|支付|拨款)\s*[:：]\s*0\s*$/i.test(piece.trim())) {
+      return { value: '0', confidence: 2 };
+    }
+    const standalone = piece.match(new RegExp(String.raw`^\s*(${fieldMoneyValue})\s*$`, 'i'));
     const standaloneBudget = normalizedMoney(standalone?.[1]);
     if (standaloneBudget) return { value: standaloneBudget, confidence: 2 };
   }
