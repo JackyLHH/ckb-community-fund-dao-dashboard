@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-03T00:04:02.783Z",
+  "checkedAt": "2026-11-03T06:55:38.842Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -109,7 +109,10 @@
         "jeff_bones": "2026-11-02T08:38:19.000Z",
         "inkhaven": "2026-11-02T22:11:24.000Z",
         "knmo": "2026-11-02T21:32:21.000Z",
-        "dbcryptocooper": "2026-11-02T18:07:36.000Z"
+        "dbcryptocooper": "2026-11-02T18:07:36.000Z",
+        "janx": "2026-11-03T00:06:55.000Z",
+        "charlie_kong_b": "2026-11-03T05:46:06.000Z",
+        "raja": "2026-11-03T04:49:30.000Z"
       },
       "seenBeforeDeadline": [
         "ebubedev",
@@ -130,7 +133,10 @@
         "ayoub_lesfer",
         "dbcryptocooper",
         "knmo",
-        "inkhaven"
+        "inkhaven",
+        "janx",
+        "raja",
+        "charlie_kong_b"
       ]
     }
   }
