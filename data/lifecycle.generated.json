@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-03T06:55:38.842Z",
+  "checkedAt": "2026-11-03T15:15:59.422Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -112,7 +112,12 @@
         "dbcryptocooper": "2026-11-02T18:07:36.000Z",
         "janx": "2026-11-03T00:06:55.000Z",
         "charlie_kong_b": "2026-11-03T05:46:06.000Z",
-        "raja": "2026-11-03T04:49:30.000Z"
+        "raja": "2026-11-03T04:49:30.000Z",
+        "rustic_art": "2026-11-03T09:33:34.000Z",
+        "tiago_morcego": "2026-11-03T14:37:39.000Z",
+        "freakah": "2026-11-03T11:28:57.000Z",
+        "chris": "2026-11-03T07:55:40.000Z",
+        "silenceport": "2026-11-03T09:56:30.000Z"
       },
       "seenBeforeDeadline": [
         "ebubedev",
@@ -136,7 +141,12 @@
         "inkhaven",
         "janx",
         "raja",
-        "charlie_kong_b"
+        "charlie_kong_b",
+        "chris",
+        "rustic_art",
+        "silenceport",
+        "freakah",
+        "tiago_morcego"
       ]
     }
   }
