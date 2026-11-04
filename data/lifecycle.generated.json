@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-03T21:06:31.441Z",
+  "checkedAt": "2026-11-04T01:27:33.385Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -126,7 +126,8 @@
         "chris": "2026-11-03T07:55:40.000Z",
         "silenceport": "2026-11-03T09:56:30.000Z",
         "owk50ga": "2026-11-03T17:10:20.000Z",
-        "notoriousckb": "2026-11-03T15:30:09.000Z"
+        "notoriousckb": "2026-11-03T15:30:09.000Z",
+        "dondara": "2026-11-03T23:15:07.000Z"
       },
       "seenBeforeDeadline": [
         "ebubedev",
@@ -157,7 +158,8 @@
         "freakah",
         "tiago_morcego",
         "notoriousckb",
-        "owk50ga"
+        "owk50ga",
+        "dondara"
       ]
     }
   }
