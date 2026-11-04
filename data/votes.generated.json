@@ -55,20 +55,20 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-04T01:27:29.808Z",
-      "closesAt": "2026-11-10T00:00:29.808Z",
+      "verifiedAt": "2026-11-04T08:06:23.414Z",
+      "closesAt": "2026-11-10T00:00:23.414Z",
       "openedAt": "2026-11-02T09:55:09.000Z"
     },
     "11051": {
       "url": "https://dao.ckb.community/thread/vot-fibernuts-reliable-cashu-over-fiber-payments-with-hosted-lsp-onboarding-81525",
-      "totalVotes": 11181451,
+      "totalVotes": 11281553,
       "minimumVotes": 15339253,
       "yesPercent": 100,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-04T01:27:26.349Z",
-      "closesAt": "2026-11-11T00:00:26.349Z",
+      "verifiedAt": "2026-11-04T08:06:19.284Z",
+      "closesAt": "2026-11-11T00:00:19.284Z",
       "openedAt": "2026-11-03T16:08:43.000Z"
     }
   }
