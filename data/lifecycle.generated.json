@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-05T09:53:46.327Z",
+  "checkedAt": "2026-11-05T18:05:54.660Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -166,7 +166,8 @@
         "astro",
         "jnr6",
         "fishell",
-        "woodbury.bit"
+        "woodbury.bit",
+        "truthixify"
       ]
     }
   }
