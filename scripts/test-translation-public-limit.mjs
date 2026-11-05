@@ -48,6 +48,15 @@ try {
   }
   assert.equal(preserveTechnicalTerms('光纤上的支付与光线网络集成', 'Payments over Fiber and Fiber Network'), 'Fiber上的支付与Fiber Network集成');
   assert.equal(preserveTechnicalTerms('普通光纤电缆', 'Optical cable'), '普通光纤电缆');
+  const discoverySource = 'Initial candidate discovery and revalidation for code cells carrying recognizable IDL binding trailers.';
+  const discoveryZh = '对带有可识别的 IDL 绑定尾部数据的代码 Cell，进行初步候选发现与重新验证。';
+  assert.equal(preserveTechnicalTerms('携带可识别IDL绑定预告片的代码单元格的初始候选发现和重新验证。', discoverySource), discoveryZh);
+  assert.equal(preserveTechnicalTerms('绑定尾部验证', 'Binding trailer validation'), '绑定尾部数据验证');
+  assert.equal(preserveTechnicalTerms('绑定预告片', 'Movie trailer'), '绑定预告片', 'Scope the terminology correction to binding-trailer source text');
+  assert.equal(preserveTechnicalTerms(discoverySource, discoverySource), discoverySource, 'Preserve the English milestone');
+  globalThis.fetch = async () => Response.json({ responseStatus: 200, responseData: { translatedText: '携带可识别IDL绑定预告片的代码单元格的初始候选发现和重新验证。' } });
+  const idlTerms = await (await GET(new Request(translationUrl(discoverySource)))).json();
+  assert.equal(idlTerms.translation, discoveryZh, 'The API corrects the provider output before caching it');
   globalThis.fetch = async () => Response.json({ responseStatus: 200, responseData: { translatedText: '光纤支付与光纤网络' } });
   const terms = await (await GET(new Request(translationUrl('Fiber payment and Fiber Network')))).json();
   assert.equal(terms.translation, 'Fiber支付与Fiber Network');
