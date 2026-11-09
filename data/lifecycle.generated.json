@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-09T09:54:17.403Z",
+  "checkedAt": "2026-11-09T20:49:23.551Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -100,6 +100,13 @@
       "likes": 40,
       "occurredAt": "2026-11-09T03:01:28.937Z",
       "sourceUrl": "https://talk.nervos.org/t/dis-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp/11089/1"
+    },
+    {
+      "id": "vote-started:11089:81853",
+      "topicId": 11089,
+      "kind": "vote-started",
+      "occurredAt": "2026-11-09T12:55:44.000Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp-81853"
     }
   ],
   "discussions": {}

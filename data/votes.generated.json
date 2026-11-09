@@ -49,14 +49,14 @@
     },
     "11031": {
       "url": "https://dao.ckb.community/thread/vot-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts-81389",
-      "totalVotes": 184644644,
+      "totalVotes": 191644644,
       "minimumVotes": 12254902,
-      "yesPercent": 57.54,
+      "yesPercent": 59.09,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-09T09:54:13.097Z",
-      "closesAt": "2026-11-10T00:00:13.097Z",
+      "verifiedAt": "2026-11-09T20:49:21.077Z",
+      "closesAt": "2026-11-10T00:00:21.077Z",
       "openedAt": "2026-11-02T09:55:09.000Z"
     },
     "11051": {
@@ -67,9 +67,21 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-09T09:54:09.326Z",
-      "closesAt": "2026-11-11T00:00:09.326Z",
+      "verifiedAt": "2026-11-09T20:49:17.544Z",
+      "closesAt": "2026-11-11T00:00:17.544Z",
       "openedAt": "2026-11-03T16:08:43.000Z"
+    },
+    "11089": {
+      "url": "https://dao.ckb.community/thread/vot-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp-81853",
+      "totalVotes": 552862,
+      "minimumVotes": 59100000,
+      "yesPercent": 100,
+      "passPercent": 51,
+      "closed": false,
+      "status": "active",
+      "verifiedAt": "2026-11-09T20:49:14.130Z",
+      "closesAt": "2026-11-17T00:00:14.130Z",
+      "openedAt": "2026-11-09T12:55:44.000Z"
     }
   }
 }
