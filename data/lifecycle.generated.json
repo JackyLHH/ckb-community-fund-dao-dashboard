@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-05T23:41:24.820Z",
+  "checkedAt": "2026-11-09T09:54:17.403Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -92,85 +92,15 @@
       "kind": "vote-started",
       "occurredAt": "2026-11-03T16:08:43.000Z",
       "sourceUrl": "https://dao.ckb.community/thread/vot-fibernuts-reliable-cashu-over-fiber-payments-with-hosted-lsp-onboarding-81525"
+    },
+    {
+      "id": "discussion-ended:11089",
+      "kind": "discussion-ended",
+      "topicId": 11089,
+      "likes": 40,
+      "occurredAt": "2026-11-09T03:01:28.937Z",
+      "sourceUrl": "https://talk.nervos.org/t/dis-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp/11089/1"
     }
   ],
-  "discussions": {
-    "11089": {
-      "postId": 27050,
-      "timestamps": {
-        "9527": "2026-11-02T06:20:34.000Z",
-        "fillmyckbag": "2026-11-02T07:39:22.000Z",
-        "code3ks": "2026-11-02T05:25:54.000Z",
-        "ebubedev": "2026-11-02T03:09:42.000Z",
-        "psawyerberlin": "2026-11-02T07:13:59.000Z",
-        "yeti": "2026-11-02T07:07:23.000Z",
-        "ticoworld": "2026-11-02T05:35:44.000Z",
-        "ayoub_lesfer": "2026-11-02T16:33:13.000Z",
-        "ksa_1971": "2026-11-02T13:04:55.000Z",
-        "matt_ckb": "2026-11-02T11:37:45.000Z",
-        "jackylhh": "2026-11-02T08:32:14.000Z",
-        "t_silva": "2026-11-02T15:47:58.000Z",
-        "two_dogs_li": "2026-11-02T15:40:01.000Z",
-        "lawliet_chan": "2026-11-02T15:24:27.000Z",
-        "ophiuchus": "2026-11-02T15:18:35.000Z",
-        "jeff_bones": "2026-11-02T08:38:19.000Z",
-        "inkhaven": "2026-11-02T22:11:24.000Z",
-        "knmo": "2026-11-02T21:32:21.000Z",
-        "dbcryptocooper": "2026-11-02T18:07:36.000Z",
-        "janx": "2026-11-03T00:06:55.000Z",
-        "charlie_kong_b": "2026-11-03T05:46:06.000Z",
-        "raja": "2026-11-03T04:49:30.000Z",
-        "rustic_art": "2026-11-03T09:33:34.000Z",
-        "tiago_morcego": "2026-11-03T14:37:39.000Z",
-        "freakah": "2026-11-03T11:28:57.000Z",
-        "chris": "2026-11-03T07:55:40.000Z",
-        "silenceport": "2026-11-03T09:56:30.000Z",
-        "owk50ga": "2026-11-03T17:10:20.000Z",
-        "notoriousckb": "2026-11-03T15:30:09.000Z",
-        "dondara": "2026-11-03T23:15:07.000Z"
-      },
-      "seenBeforeDeadline": [
-        "ebubedev",
-        "code3ks",
-        "ticoworld",
-        "9527",
-        "yeti",
-        "psawyerberlin",
-        "fillmyckbag",
-        "jackylhh",
-        "jeff_bones",
-        "matt_ckb",
-        "ksa_1971",
-        "ophiuchus",
-        "lawliet_chan",
-        "two_dogs_li",
-        "t_silva",
-        "ayoub_lesfer",
-        "dbcryptocooper",
-        "knmo",
-        "inkhaven",
-        "janx",
-        "raja",
-        "charlie_kong_b",
-        "chris",
-        "rustic_art",
-        "silenceport",
-        "freakah",
-        "tiago_morcego",
-        "notoriousckb",
-        "owk50ga",
-        "dondara",
-        "flipforthewin",
-        "jaichism",
-        "ajay",
-        "astro",
-        "jnr6",
-        "fishell",
-        "woodbury.bit",
-        "truthixify",
-        "coingetterd",
-        "joshyates1980"
-      ]
-    }
-  }
+  "discussions": {}
 }
