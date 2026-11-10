@@ -67,8 +67,8 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-10T03:37:35.662Z",
-      "closesAt": "2026-11-11T00:00:35.662Z",
+      "verifiedAt": "2026-11-10T11:50:12.517Z",
+      "closesAt": "2026-11-11T00:00:12.517Z",
       "openedAt": "2026-11-03T16:08:43.000Z"
     },
     "11089": {
@@ -79,8 +79,8 @@
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-10T03:37:33.226Z",
-      "closesAt": "2026-11-17T00:00:33.226Z",
+      "verifiedAt": "2026-11-10T11:50:09.547Z",
+      "closesAt": "2026-11-17T00:00:09.547Z",
       "openedAt": "2026-11-09T12:55:44.000Z"
     }
   }
