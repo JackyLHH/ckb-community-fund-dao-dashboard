@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-09T20:49:23.551Z",
+  "checkedAt": "2026-11-10T03:37:41.577Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -107,6 +107,16 @@
       "kind": "vote-started",
       "occurredAt": "2026-11-09T12:55:44.000Z",
       "sourceUrl": "https://dao.ckb.community/thread/vot-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp-81853"
+    },
+    {
+      "id": "vote-ended:11031:81389",
+      "topicId": 11031,
+      "kind": "vote-ended",
+      "occurredAt": "2026-11-10T03:37:38.535Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts-81389",
+      "totalVotes": 191744644,
+      "yesPercent": 59.11,
+      "approved": true
     }
   ],
   "discussions": {}

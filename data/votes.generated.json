@@ -49,38 +49,38 @@
     },
     "11031": {
       "url": "https://dao.ckb.community/thread/vot-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts-81389",
-      "totalVotes": 191644644,
+      "totalVotes": 191744644,
       "minimumVotes": 12254902,
-      "yesPercent": 59.09,
+      "yesPercent": 59.11,
       "passPercent": 51,
-      "closed": false,
-      "status": "active",
-      "verifiedAt": "2026-11-09T20:49:21.077Z",
-      "closesAt": "2026-11-10T00:00:21.077Z",
-      "openedAt": "2026-11-02T09:55:09.000Z"
+      "closed": true,
+      "status": "approved",
+      "verifiedAt": "2026-11-10T03:37:38.535Z",
+      "openedAt": "2026-11-02T09:55:09.000Z",
+      "closedAt": "2026-11-10T03:37:38.535Z"
     },
     "11051": {
       "url": "https://dao.ckb.community/thread/vot-fibernuts-reliable-cashu-over-fiber-payments-with-hosted-lsp-onboarding-81525",
-      "totalVotes": 184849817,
+      "totalVotes": 184949817,
       "minimumVotes": 15339253,
       "yesPercent": 100,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-09T20:49:17.544Z",
-      "closesAt": "2026-11-11T00:00:17.544Z",
+      "verifiedAt": "2026-11-10T03:37:35.662Z",
+      "closesAt": "2026-11-11T00:00:35.662Z",
       "openedAt": "2026-11-03T16:08:43.000Z"
     },
     "11089": {
       "url": "https://dao.ckb.community/thread/vot-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp-81853",
-      "totalVotes": 552862,
+      "totalVotes": 42212463,
       "minimumVotes": 59100000,
       "yesPercent": 100,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-09T20:49:14.130Z",
-      "closesAt": "2026-11-17T00:00:14.130Z",
+      "verifiedAt": "2026-11-10T03:37:33.226Z",
+      "closesAt": "2026-11-17T00:00:33.226Z",
       "openedAt": "2026-11-09T12:55:44.000Z"
     }
   }
