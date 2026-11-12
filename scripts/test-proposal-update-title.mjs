@@ -111,3 +111,13 @@ for (const [id, override] of Object.entries(proposalOverridesById)) {
 }
 
 console.log('Validated bilingual report-title extraction, safe excerpt fallback, and manual update provenance.');
+
+// Actual Cellula reply: retain the test report even without a report heading.
+const cellulaReport = {"post_number": 15, "username": "LusoCryptoLabs", "created_at": "2026-11-06T00:49:59.562Z", "cooked": "<p>Thanks Arthur, good list. We ran all three, and all three passed.</p>\n<ol>\n<li>Payment cut off halfway, a crash, then a retry. The person paid once, the shop was paid once, and the retry was refused. We also found a small bug in Fiber and reported it: nervosnetwork/fiber#1724.</li>\n<li>Connection lost until the channel is closed. Every payment ended correctly, and the payer ended with exactly the right balance.</li>\n<li>Leaving with the LSP switched off. With only the recovery file, the wallet got all its money back.<br>\nWe also did the same exit from the wallet’s own recovery page, on the public testnet: all the money came back within three hours. One small payment was still in progress when the LSP went down. It comes back when it expires, on 9 November, and we will post that result then.</li>\n</ol>"};
+const cellulaSelected = selectForumProgressUpdates([cellulaReport], 'LusoCryptoLabs', '11089', 'dis-cellula');
+assert.equal(cellulaSelected.length, 1);
+assert.equal(cellulaSelected[0].date, cellulaReport.created_at);
+assert.equal(selectForumProgressUpdates([{ ...cellulaReport, username: 'community' }], 'LusoCryptoLabs', '11089', 'dis-cellula').length, 0, 'Keep author verification');
+for (const cooked of ['<p>We will run all three testnet recovery scenarios and hope all three pass.</p>', '<p>Thanks, all three passed.</p>', '<p>We ran all three, and all three passed. Great movie recommendations!</p>']) {
+  assert.equal(selectForumProgressUpdates([{ ...cellulaReport, cooked }], 'LusoCryptoLabs', '11089', 'dis-cellula').length, 0, 'Do not infer a test report from plans or vague replies');
+}

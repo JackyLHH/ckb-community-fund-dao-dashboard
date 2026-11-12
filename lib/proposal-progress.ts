@@ -8,5 +8,9 @@ const proposalEditOnlyPattern = /^(?:\s*(?:proposal update|proposal amendment|Êè
 export function isProposalProgressUpdate(text = '') {
   const normalized = text.replace(/\s+/g, ' ').trim();
   if (nonProgressReplyPattern.test(normalized) || governanceOnlyUpdatePattern.test(normalized) || proposalEditOnlyPattern.test(normalized)) return false;
-  return progressUpdatePattern.test(normalized);
+  // A proposer may publish concrete test results as a reply without a report
+  // heading. Require both an executed successful run and technical evidence.
+  const completedTestRun = /\bwe\s+(?:ran|tested)\s+[^.!?]{0,60}\ball\s+(?:\w+\s+)?passed\b/i.test(normalized)
+    && /\b(?:testnet|retry|recovery|watchtower|channel)\b/i.test(normalized);
+  return progressUpdatePattern.test(normalized) || completedTestRun;
 }

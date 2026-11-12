@@ -43,6 +43,7 @@ export type ProposalOverride = {
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
   '11089': {
+    updates: [{"title": "Cellula test report: payment retry, channel closure and LSP-offline recovery", "titleZh": "Cellula 测试报告：支付重试、通道关闭与 LSP 离线恢复", "titleEn": "Cellula test report: payment retry, channel closure and LSP-offline recovery", "date": "2026-11-06T00:49:59.562Z", "url": "https://talk.nervos.org/t/dis-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp/11089/15", "author": "LusoCryptoLabs"}],
     "budgetLabel": "$22,258.48",
     "milestoneStructureZh": "5 个里程碑",
     "milestoneStructureEn": "5 Milestones",
@@ -100,6 +101,7 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
     }
   },
   '10739': {
+    updates: [{"title": "Rivet Phase 1 Delivery Report", "titleZh": "RIVET 第一阶段交付报告", "titleEn": "RIVET Phase 1 Delivery Report", "date": "2026-11-06T22:14:44.911Z", "url": "https://talk.nervos.org/t/dis-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb/10739/16", "author": "Jedi_dtechmaker"}],
     milestoneStructureZh: '2 个里程碑',
     milestoneStructureEn: '2 Milestones',
     overview: {

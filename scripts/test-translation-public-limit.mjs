@@ -48,6 +48,8 @@ try {
   }
   assert.equal(preserveTechnicalTerms('光纤上的支付与光线网络集成', 'Payments over Fiber and Fiber Network'), 'Fiber上的支付与Fiber Network集成');
   assert.equal(preserveTechnicalTerms('普通光纤电缆', 'Optical cable'), '普通光纤电缆');
+  assert.equal(preserveTechnicalTerms('铆钉第一阶段交付报告', 'Rivet Phase 1 Delivery Report'), 'RIVET第一阶段交付报告');
+  assert.equal(preserveTechnicalTerms('铆钉', 'Metal fastener'), '铆钉');
   const discoverySource = 'Initial candidate discovery and revalidation for code cells carrying recognizable IDL binding trailers.';
   const discoveryZh = '对带有可识别的 IDL 绑定尾部数据的代码 Cell，进行初步候选发现与重新验证。';
   assert.equal(preserveTechnicalTerms('携带可识别IDL绑定预告片的代码单元格的初始候选发现和重新验证。', discoverySource), discoveryZh);
