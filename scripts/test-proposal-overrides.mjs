@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { proposalOverridesById } from '../lib/proposal-overrides.ts';
+import { applyProposalMilestoneCorrections, proposalOverridesById } from '../lib/proposal-overrides.ts';
 
 const kaze = proposalOverridesById['10736'];
 assert.ok(kaze, 'Proposal 10736 must have a reviewed data override');
@@ -26,3 +26,19 @@ assert.match(september21?.titleEn ?? '', /L1 censorship-resistance/);
 assert.match(september28?.titleEn ?? '', /CKB contract/);
 
 console.log('Validated reviewed proposal overrides.');
+
+const before = {
+  id: '10937', budgetLabel: '$5,000', approvedBudget: 'unchanged',
+  overview: { objective: 'Live source overview', milestones: [
+    { title: 'M3', descriptionEn: 'Another milestone', descriptionZh: '其他里程碑', budget: '$1,000' },
+    { title: 'M4: Keeper tip, pledge window and early finalization', description: 'Original English', descriptionEn: 'Original English', descriptionZh: '显示在活动中 page.', budget: '$800', eta: 'Week 12' },
+  ] },
+};
+const corrected = applyProposalMilestoneCorrections(before);
+assert.equal(corrected.overview.milestones[0], before.overview.milestones[0]);
+assert.deepEqual({ ...corrected.overview.milestones[1], descriptionZh: before.overview.milestones[1].descriptionZh }, before.overview.milestones[1], 'Only the requested Chinese description changes');
+assert.ok(corrected.overview.milestones[1].descriptionZh.endsWith('创作者可在目标达成后提前结算；该选项在创建活动时设置，此后不可更改，并在活动页面展示。'));
+assert.equal(corrected.overview.objective, before.overview.objective);
+assert.equal(before.overview.milestones[1].descriptionZh, '显示在活动中 page.', 'Do not mutate source data');
+assert.equal(proposalOverridesById['10739'].budgetLabel, '$5,000');
+assert.equal(applyProposalMilestoneCorrections({ id: 'unknown' }).id, 'unknown');

@@ -3,7 +3,7 @@ import { cleanProposalTitle } from './proposal-title.js';
 import { executionStatusTags } from './proposal-lifecycle.js';
 import { proposalCardSummariesById } from './proposal-card-summaries.js';
 import { proposalOverviewTranslationsById } from './proposal-overview-translations.js';
-import { proposalOverridesById } from './proposal-overrides.js';
+import { applyProposalMilestoneCorrections, proposalOverridesById } from './proposal-overrides.js';
 import { applyPersistedMilestoneTranslations } from './proposal-milestone-translation.js';
 import { applyPersistedTitleTranslation } from './proposal-title-translation.js';
 import { isProposalProgressUpdate } from './proposal-progress.js';
@@ -155,7 +155,7 @@ export const dataset: ProposalDataset = {
         ? merged.updates.map((update) => ({ ...update, source: 'manual' as const }))
         : merged.updates.filter((update) => override?.allowNonAuthorUpdates || isUpdateByProposalAuthor(update, merged)),
     };
-    return applyPersistedMilestoneTranslations(applyPersistedTitleTranslation(normalized));
+    return applyPersistedMilestoneTranslations(applyPersistedTitleTranslation(applyProposalMilestoneCorrections(normalized)));
   }),
 };
 

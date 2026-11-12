@@ -6,6 +6,7 @@ export type ProposalOverride = {
   titleEn?: string;
   author?: string;
   budgetLabel?: string;
+  milestoneDescriptionZhByTitle?: Record<string, string>;
   projectType?: string;
   statusTags?: Array<'discussion' | 'voting' | 'vote-passed' | 'executing' | 'vote-failed' | 'completed' | 'ended'>;
   statusExplanationZh?: string;
@@ -42,6 +43,9 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '10937': {
+    milestoneDescriptionZhByTitle: {"M4: Keeper tip, pledge window and early finalization": "有关质押锁定中释放和退款的提示、截止日期后质押的修复（§6.5）、测试、测试网重新部署和端到端运行，以及任何人都可以运行的独立守护者脚本。在测试网上进行了两次管理员测试，结果发布在此帖中：两个管理员同时结算同一活动，以及一个管理员在周期中途被终止并重新启动（§6.5）。创作者可在目标达成后提前结算；该选项在创建活动时设置，此后不可更改，并在活动页面展示。"},
+  },
   '11089': {
     updates: [{"title": "Cellula test report: payment retry, channel closure and LSP-offline recovery", "titleZh": "Cellula 测试报告：支付重试、通道关闭与 LSP 离线恢复", "titleEn": "Cellula test report: payment retry, channel closure and LSP-offline recovery", "date": "2026-11-06T00:49:59.562Z", "url": "https://talk.nervos.org/t/dis-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp/11089/15", "author": "LusoCryptoLabs"}],
     "budgetLabel": "$22,258.48",
@@ -101,6 +105,7 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
     }
   },
   '10739': {
+    budgetLabel: '$5,000',
     updates: [{"title": "Rivet Phase 1 Delivery Report", "titleZh": "RIVET 第一阶段交付报告", "titleEn": "RIVET Phase 1 Delivery Report", "date": "2026-11-06T22:14:44.911Z", "url": "https://talk.nervos.org/t/dis-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb/10739/16", "author": "Jedi_dtechmaker"}],
     milestoneStructureZh: '2 个里程碑',
     milestoneStructureEn: '2 Milestones',
@@ -2991,3 +2996,23 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
     },
   },
 };
+
+// Apply a reviewed translation to its named source milestone without replacing
+// the live overview, English text, budgets, timing, or other milestones.
+export function applyProposalMilestoneCorrections<T extends {
+  id: string;
+  overview?: { milestones: Array<{ title: string; descriptionZh?: string }> };
+}>(proposal: T): T {
+  const corrections = proposalOverridesById[proposal.id]?.milestoneDescriptionZhByTitle;
+  if (!corrections || !proposal.overview) return proposal;
+  return {
+    ...proposal,
+    overview: {
+      ...proposal.overview,
+      milestones: proposal.overview.milestones.map((milestone) => {
+        const descriptionZh = corrections[milestone.title];
+        return descriptionZh ? { ...milestone, descriptionZh } : milestone;
+      }),
+    },
+  };
+}

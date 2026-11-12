@@ -13,7 +13,7 @@ import {
   invalidVotingProposalIds,
   voteEvidenceByProposalId,
 } from '@/lib/status-evidence';
-import { proposalOverridesById } from '@/lib/proposal-overrides';
+import { applyProposalMilestoneCorrections, proposalOverridesById } from '@/lib/proposal-overrides';
 import { mergeLiveTopicEnrichment } from '@/lib/live-data-enrichment';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
 import { translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
@@ -598,7 +598,7 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
       const withOverview = isRecentProposal(withTitle)
         ? await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview })
         : withTitle;
-      return await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
+      return await translateMissingProposalMilestones(applyProposalMilestoneCorrections(withOverview), fetch, { useHistorical: useHistoricalOverview });
     } catch {
       // One unavailable translation must never make the whole directory fail.
       return proposal;
@@ -738,7 +738,7 @@ export async function loadLiveProjectWithState(id: string, options: { forceRefre
     const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
     const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
     const withOverview = await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview });
-    const withMilestones = await translateMissingProposalMilestones(withOverview, fetch, { useHistorical: useHistoricalOverview });
+    const withMilestones = await translateMissingProposalMilestones(applyProposalMilestoneCorrections(withOverview), fetch, { useHistorical: useHistoricalOverview });
     return await translateMissingProposalUpdates(withMilestones, fetch);
   }, (known) => translateMissingProposalUpdates(known, fetch));
   return data.meta.usedFallback && result.state === 'live' ? { ...result, state: 'fallback' } : result;
