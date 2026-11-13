@@ -110,3 +110,13 @@ TELEGRAM_CHANNEL_URL_EN
 The bot must be a channel administrator with permission to post messages. Never commit the bot token to the repository.
 
 Daily digests keep the complete lifecycle audit log but send only the latest governance phase per proposal. Voting supersedes discussion-deadline notifications; final results supersede invitations for the same poll, including during outage recovery and per-recipient retries. Proposer progress reports remain independent.
+
+### Translation availability and truthful digest status
+
+Live proposal loaders return source data and persisted/reviewed translations without waiting for external translation. The UI fills missing translations in the background (four proposals at a time), ignores stale completions after navigation/refresh, and preserves the displayed source on timeout or 504. Browser translation deadlines are 8 seconds; each API provider has a 3.5-second deadline. Failed, partial, and late translations are not cached as successes.
+
+Offline regression checks: `node --experimental-strip-types scripts/test-progressive-translation.mjs` and `node --experimental-strip-types scripts/test-digest-no-changes.mjs`. These checks use mocked services and never send real email or Telegram messages.
+
+Database deployment is a separate, explicitly authorized action. First run the read-only `supabase/inspect-digest-runs-status.sql` against the intended production database and review the exact constraint definition. Only then apply `supabase/migrations/20261113_digest_no_changes.sql`. It retains the old check expression and ORs in `status = 'no_changes'`, validates it before replacing the old constraint, and changes no existing rows. It aborts on missing/unexpected constraints, lock contention, validation failure, or timeout. Git/Vercel deployment does not apply this migration.
+
+After applying the migration, inspect the next regular 16:00 Beijing daily digest and its `digest_runs` record. A no-change run must record `no_changes` with no channel sends; do not invoke the production digest endpoint for testing or label an unsent run `completed`. No production constraint inspection or migration execution is implied by offline tests.

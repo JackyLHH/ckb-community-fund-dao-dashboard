@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { dataset, type Proposal, type ProposalDataset } from '@/lib/proposals';
-import { loadLiveDataset, loadLiveProjectWithState, type LiveDataState } from '@/lib/live-data';
+import { loadLiveDataset, loadLiveProjectWithState, translateLiveDataset, translateLiveProposal, type LiveDataState } from '@/lib/live-data';
 import { reviewedDetailCache, validProposalId } from '@/lib/proposal-detail-ux';
 import { proposalOverridesById } from '@/lib/proposal-overrides';
 
@@ -29,13 +29,19 @@ export function useLiveDataset() {
   useEffect(() => {
     let active = true;
     let refreshing = false;
+    let generation = 0;
     const refresh = () => {
       if (refreshing) return;
       refreshing = true;
+      const currentGeneration = ++generation;
       void loadLiveDataset().then((next) => {
         if (!active) return;
         setData(next);
         setState(next.meta.usedFallback ? 'fallback' : 'live');
+        void translateLiveDataset(next, (translated) => {
+          if (!active || generation !== currentGeneration) return;
+          setData((current) => ({ ...current, proposals: current.proposals.map((entry) => entry.id === translated.id ? translated : entry) }));
+        }, () => active && generation === currentGeneration);
       }).catch(() => {
         if (active) setState('fallback');
       }).finally(() => { refreshing = false; });
@@ -64,6 +70,7 @@ export function useLiveProject(id: string | null, initialProposal?: Proposal) {
     const proposalId = id as string;
     let active = true;
     let refreshing = false;
+    let generation = 0;
     const cached = initialProposal?.id === proposalId ? initialProposal : readDetailCache(proposalId);
     queueMicrotask(() => {
       if (!active) return;
@@ -75,6 +82,7 @@ export function useLiveProject(id: string | null, initialProposal?: Proposal) {
     const refresh = async () => {
       if (refreshing) return;
       refreshing = true;
+      const currentGeneration = ++generation;
       if (active) setState('loading');
       try {
         const result = await loadLiveProjectWithState(proposalId, { forceRefresh });
@@ -87,6 +95,12 @@ export function useLiveProject(id: string | null, initialProposal?: Proposal) {
           try { window.sessionStorage.setItem(detailCacheKey(proposalId), JSON.stringify(next)); } catch { /* Still usable without storage. */ }
           setError(result.error);
           setState(result.state);
+          void translateLiveProposal(next).then((translated) => {
+            if (!active || generation !== currentGeneration) return;
+            setProposal(translated);
+            detailMemory.set(proposalId, translated);
+            try { window.sessionStorage.setItem(detailCacheKey(proposalId), JSON.stringify(translated)); } catch { /* Storage is optional. */ }
+          }).catch(() => { /* Keep the source record already displayed. */ });
         } else {
           setError(result.error ?? 'unavailable');
           setState('fallback');

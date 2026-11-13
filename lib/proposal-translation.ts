@@ -1,3 +1,4 @@
+import { fetchTranslationResult } from './translation-timeout.js';
 import { preserveTechnicalTerms, translationPolicyVersion } from './translation-terms.js';
 import type { Proposal, ProposalOverview } from '@/lib/proposals';
 import rawTranslations from '../data/proposal-overview-translations.json' with { type: 'json' };
@@ -52,10 +53,9 @@ async function requestTranslation(
   if (pending) return pending;
 
   const query = new URLSearchParams({ policy: translationPolicyVersion, proposalId, target, text: source });
-  const request = fetcher(`/api/translation?${query}`)
-    .then(async (response) => {
-      if (!response.ok) return null;
-      const result = await response.json() as TranslationResponse;
+  const request = fetchTranslationResult(fetcher, `/api/translation?${query}`)
+    .then((result: TranslationResponse | null) => {
+      if (!result) return null;
       const translation = preserveTechnicalTerms(result.translation?.trim() ?? '', source);
       if (!result.ok || !translation) return null;
       writeBrowserCache(key, translation);

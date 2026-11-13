@@ -16,8 +16,8 @@ import {
 import { applyProposalMilestoneCorrections, proposalOverridesById } from '@/lib/proposal-overrides';
 import { mergeLiveTopicEnrichment } from '@/lib/live-data-enrichment';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
-import { translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
-import { translateMissingProposalTitle } from '@/lib/proposal-title-translation';
+import { applyPersistedMilestoneTranslations, translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
+import { applyPersistedTitleTranslation, translateMissingProposalTitle } from '@/lib/proposal-title-translation';
 import { translateMissingProposalUpdates } from '@/lib/proposal-update-translation';
 import {
   extractMilestoneBudget,
@@ -94,7 +94,7 @@ let datasetExpiresAt = 0;
 let liveVotes: Record<string, ProposalVoting> = savedVotes.votes as Record<string, ProposalVoting>;
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, { ...init, cache: 'no-store' });
+  const response = await fetch(url, { ...init, signal: init?.signal ?? AbortSignal.timeout(15_000), cache: 'no-store' });
   if (!response.ok) throw new PublicSourceError(response.status, response.statusText);
   return response.json() as Promise<T>;
 }
@@ -589,21 +589,8 @@ async function buildLiveDataset(): Promise<ProposalDataset> {
   const enrichedProposals = await Promise.all(category.topics
     .map((topic) => mapCategoryTopic(topic, category.usernames, funded.entries, fetchedAt))
     .map(enrichProposalFromTopic));
-  const proposals = (await Promise.all(enrichedProposals.map(async (proposal) => {
-    try {
-      const proposalOverride = proposalOverridesById[proposal.id];
-      const useHistoricalOverview = !proposalOverride?.overview;
-      const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
-      const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
-      const withOverview = isRecentProposal(withTitle)
-        ? await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview })
-        : withTitle;
-      return await translateMissingProposalMilestones(applyProposalMilestoneCorrections(withOverview), fetch, { useHistorical: useHistoricalOverview });
-    } catch {
-      // One unavailable translation must never make the whole directory fail.
-      return proposal;
-    }
-  })))
+  // Publish factual source data without waiting for translation providers.
+  const proposals = enrichedProposals.map(prepareLiveProposal)
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const usedSlugs = new Set<string>();
   for (const proposal of proposals) {
@@ -734,17 +721,58 @@ export async function loadLiveProjectWithState(id: string, options: { forceRefre
         ...(completionEvidence ? [completionEvidence] : []),
       ],
     };
-    const useHistoricalOverview = !proposalOverride?.overview;
-    const useHistoricalTitle = !proposalOverride?.titleZh && !proposalOverride?.titleEn;
-    const withTitle = await translateMissingProposalTitle(proposal, fetch, { useHistorical: useHistoricalTitle });
-    const withOverview = await translateMissingProposalOverview(withTitle, fetch, { useHistorical: useHistoricalOverview });
-    const withMilestones = await translateMissingProposalMilestones(applyProposalMilestoneCorrections(withOverview), fetch, { useHistorical: useHistoricalOverview });
-    return await translateMissingProposalUpdates(withMilestones, fetch);
-  }, (known) => translateMissingProposalUpdates(known, fetch));
+    return prepareLiveProposal(proposal);
+  });
   return data.meta.usedFallback && result.state === 'live' ? { ...result, state: 'fallback' } : result;
 }
 
 // Preserve the existing public return shape for other callers.
 export async function loadLiveProject(id: string): Promise<Proposal | null> {
   return (await loadLiveProjectWithState(id)).proposal;
+}
+
+function prepareLiveProposal(proposal: Proposal): Proposal {
+  const override = proposalOverridesById[proposal.id];
+  return applyPersistedMilestoneTranslations(
+    applyPersistedTitleTranslation(applyProposalMilestoneCorrections(proposal), !override?.titleZh && !override?.titleEn),
+    !override?.overview,
+  );
+}
+
+// Called after the hook has rendered source data. Independent fields translate
+// together, while explicit bilingual fields keep their existing precedence.
+export async function translateLiveProposal(proposal: Proposal): Promise<Proposal> {
+  const prepared = prepareLiveProposal(proposal);
+  const override = proposalOverridesById[proposal.id];
+  const options = { useHistorical: !override?.overview };
+  const [title, overview, milestones, updates] = await Promise.all([
+    translateMissingProposalTitle(prepared, fetch, { useHistorical: !override?.titleZh && !override?.titleEn }),
+    translateMissingProposalOverview(prepared, fetch, options),
+    translateMissingProposalMilestones(prepared, fetch, options),
+    translateMissingProposalUpdates(prepared, fetch),
+  ]);
+  return {
+    ...prepared,
+    titleZh: title.titleZh, titleEn: title.titleEn,
+    overview: overview.overview ? { ...overview.overview, milestones: milestones.overview?.milestones ?? overview.overview.milestones } : prepared.overview,
+    updates: updates.updates,
+  };
+}
+
+export async function translateLiveDataset(
+  data: ProposalDataset,
+  onProposal: (proposal: Proposal) => void,
+  isActive: () => boolean,
+) {
+  let index = 0;
+  // Bound fan-out; a slow proposal cannot stop other ready translations.
+  await Promise.all(Array.from({ length: 4 }, async () => {
+    while (isActive() && index < data.proposals.length) {
+      const source = data.proposals[index++];
+      try {
+        const translated = await translateLiveProposal(source);
+        if (isActive()) onProposal(translated);
+      } catch { /* The already rendered source remains usable. */ }
+    }
+  }));
 }
