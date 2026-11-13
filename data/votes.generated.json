@@ -73,14 +73,14 @@
     },
     "11089": {
       "url": "https://dao.ckb.community/thread/vot-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp-81853",
-      "totalVotes": 112567181,
+      "totalVotes": 113857181,
       "minimumVotes": 59100000,
       "yesPercent": 100,
       "passPercent": 51,
       "closed": false,
       "status": "active",
-      "verifiedAt": "2026-11-13T08:05:23.663Z",
-      "closesAt": "2026-11-17T00:00:23.663Z",
+      "verifiedAt": "2026-11-13T16:30:28.660Z",
+      "closesAt": "2026-11-17T00:00:28.660Z",
       "openedAt": "2026-11-09T12:55:44.000Z"
     }
   }
