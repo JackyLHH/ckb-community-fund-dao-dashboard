@@ -43,6 +43,18 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '11031': {
+    updates: [
+      {
+        "title": "CKB IDL — Milestone 0 Foundation Report",
+        "titleEn": "CKB IDL — Milestone 0 Foundation Report",
+        "titleZh": "CKB IDL — 里程碑 0 基础工作报告",
+        "author": "OWK50GA",
+        "date": "2026-11-14T03:58:59.570Z",
+        "url": "https://talk.nervos.org/t/dis-ckb-idl-interface-description-language-and-discoverability-for-ckb-scripts/11031/12"
+      },
+    ],
+  },
   '10937': {
     milestoneDescriptionZhByTitle: {"M4: Keeper tip, pledge window and early finalization": "有关质押锁定中释放和退款的提示、截止日期后质押的修复（§6.5）、测试、测试网重新部署和端到端运行，以及任何人都可以运行的独立守护者脚本。在测试网上进行了两次管理员测试，结果发布在此帖中：两个管理员同时结算同一活动，以及一个管理员在周期中途被终止并重新启动（§6.5）。创作者可在目标达成后提前结算；该选项在创建活动时设置，此后不可更改，并在活动页面展示。"},
   },
