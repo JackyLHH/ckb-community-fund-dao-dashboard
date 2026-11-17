@@ -6,6 +6,7 @@ export type ProposalOverride = {
   titleEn?: string;
   author?: string;
   budgetLabel?: string;
+  overviewObjective?: { zh: string; en: string };
   milestoneDescriptionZhByTitle?: Record<string, string>;
   projectType?: string;
   statusTags?: Array<'discussion' | 'voting' | 'vote-passed' | 'executing' | 'vote-failed' | 'completed' | 'ended'>;
@@ -43,6 +44,9 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '11228': {
+    overviewObjective: {"zh": "Twine 让买卖双方用 CKB 兑换本地法币，而 CKB 始终留在双方原本就自行控制的 Fiber 通道中。买家直接向卖家付款。Twine 记录付款方式和交易时限，不托管现金，也不处理付款。", "en": "Twine lets a seller and a buyer trade CKB for local currency while the CKB stays in Fiber channels they already control. The buyer pays the seller directly. Twine records the payment method and the clock. It does not hold the cash or process the payment."},
+  },
   '11031': {
     updates: [
       {
@@ -3025,6 +3029,24 @@ export function applyProposalMilestoneCorrections<T extends {
         const descriptionZh = corrections[milestone.title];
         return descriptionZh ? { ...milestone, descriptionZh } : milestone;
       }),
+    },
+  };
+}
+
+// An objective-only correction leaves the live roadmap and funding fields intact.
+export function applyProposalObjectiveOverride<T extends {
+  id: string;
+  overview?: { milestones: unknown[] };
+}>(proposal: T): T {
+  const objective = proposalOverridesById[proposal.id]?.overviewObjective;
+  if (!objective || !proposal.overview) return proposal;
+  return {
+    ...proposal,
+    overview: {
+      ...proposal.overview,
+      objective: objective.en,
+      objectiveEn: objective.en,
+      objectiveZh: objective.zh,
     },
   };
 }

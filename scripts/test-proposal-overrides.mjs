@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { applyProposalMilestoneCorrections, proposalOverridesById } from '../lib/proposal-overrides.ts';
+import { applyProposalObjectiveOverride, applyProposalMilestoneCorrections, proposalOverridesById } from '../lib/proposal-overrides.ts';
 
 const kaze = proposalOverridesById['10736'];
 assert.ok(kaze, 'Proposal 10736 must have a reviewed data override');
@@ -42,3 +42,13 @@ assert.equal(corrected.overview.objective, before.overview.objective);
 assert.equal(before.overview.milestones[1].descriptionZh, '显示在活动中 page.', 'Do not mutate source data');
 assert.equal(proposalOverridesById['10739'].budgetLabel, '$5,000');
 assert.equal(applyProposalMilestoneCorrections({ id: 'unknown' }).id, 'unknown');
+
+const twineSource = { id: '11228', budgetLabel: '$15,000', status: 'discussion', updates: [{ url: 'source' }], overview: { objective: 'Forum source overview', milestones: [{ title: 'M1', description: 'Live roadmap', budget: '$3,000' }] } };
+const twine = applyProposalObjectiveOverride(twineSource);
+assert.equal(twine.overview.milestones, twineSource.overview.milestones, 'An objective correction preserves the original roadmap');
+assert.equal(twine.budgetLabel, twineSource.budgetLabel);
+assert.equal(twine.status, twineSource.status);
+assert.equal(twine.updates, twineSource.updates);
+assert.equal(twineSource.overview.objective, 'Forum source overview', 'Source data is immutable');
+assert.equal(twine.overview.objectiveEn, proposalOverridesById['11228'].overviewObjective.en);
+assert.equal(twine.overview.objectiveZh, proposalOverridesById['11228'].overviewObjective.zh);

@@ -13,7 +13,7 @@ import {
   invalidVotingProposalIds,
   voteEvidenceByProposalId,
 } from '@/lib/status-evidence';
-import { applyProposalMilestoneCorrections, proposalOverridesById } from '@/lib/proposal-overrides';
+import { applyProposalObjectiveOverride, applyProposalMilestoneCorrections, proposalOverridesById } from '@/lib/proposal-overrides';
 import { mergeLiveTopicEnrichment } from '@/lib/live-data-enrichment';
 import { translateMissingProposalOverview } from '@/lib/proposal-translation';
 import { applyPersistedMilestoneTranslations, translateMissingProposalMilestones } from '@/lib/proposal-milestone-translation';
@@ -734,7 +734,7 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
 function prepareLiveProposal(proposal: Proposal): Proposal {
   const override = proposalOverridesById[proposal.id];
   return applyPersistedMilestoneTranslations(
-    applyPersistedTitleTranslation(applyProposalMilestoneCorrections(proposal), !override?.titleZh && !override?.titleEn),
+    applyPersistedTitleTranslation(applyProposalObjectiveOverride(applyProposalMilestoneCorrections(proposal)), !override?.titleZh && !override?.titleEn),
     !override?.overview,
   );
 }

@@ -236,6 +236,8 @@ function clipped(value: string, length = 320) {
 }
 
 function savedDigestOverview(id: string, locale: Locale) {
+  const objective = proposalOverridesById[id]?.overviewObjective?.[locale];
+  if (objective?.trim()) return objective.trim();
   const override = proposalOverridesById[id]?.overview;
   const localized = locale === 'en' ? override?.objectiveEn : override?.objectiveZh;
   if (localized?.trim()) return localized.trim();

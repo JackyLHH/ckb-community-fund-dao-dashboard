@@ -3,7 +3,7 @@ import { cleanProposalTitle } from './proposal-title.js';
 import { executionStatusTags } from './proposal-lifecycle.js';
 import { proposalCardSummariesById } from './proposal-card-summaries.js';
 import { proposalOverviewTranslationsById } from './proposal-overview-translations.js';
-import { applyProposalMilestoneCorrections, proposalOverridesById } from './proposal-overrides.js';
+import { applyProposalObjectiveOverride, applyProposalMilestoneCorrections, proposalOverridesById } from './proposal-overrides.js';
 import { applyPersistedMilestoneTranslations } from './proposal-milestone-translation.js';
 import { applyPersistedTitleTranslation } from './proposal-title-translation.js';
 import { isProposalProgressUpdate } from './proposal-progress.js';
@@ -155,7 +155,8 @@ export const dataset: ProposalDataset = {
         ? merged.updates.map((update) => ({ ...update, source: 'manual' as const }))
         : merged.updates.filter((update) => override?.allowNonAuthorUpdates || isUpdateByProposalAuthor(update, merged)),
     };
-    return applyPersistedMilestoneTranslations(applyPersistedTitleTranslation(applyProposalMilestoneCorrections(normalized)));
+    const reviewed = applyProposalObjectiveOverride(applyProposalMilestoneCorrections(normalized));
+    return applyPersistedMilestoneTranslations(applyPersistedTitleTranslation(reviewed));
   }),
 };
 
@@ -322,6 +323,8 @@ export function getProposalTitle(proposal: Proposal, locale: 'zh' | 'en') {
 // Cards and detail pages share the same unabridged, localized objective.
 // Reviewed objectives take precedence over older card summaries and forum excerpts.
 export function getProposalOverview(proposal: Proposal, locale: 'zh' | 'en') {
+  const objective = proposalOverridesById[proposal.id]?.overviewObjective?.[locale];
+  if (objective?.trim()) return objective.trim();
   const overview = proposalOverridesById[proposal.id]?.overview;
   const localized = locale === 'en' ? overview?.objectiveEn : overview?.objectiveZh;
   if (localized?.trim()) return localized.trim();
