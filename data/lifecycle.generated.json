@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-11T00:42:12.324Z",
+  "checkedAt": "2026-11-17T09:16:36.038Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -129,5 +129,17 @@
       "approved": true
     }
   ],
-  "discussions": {}
+  "discussions": {
+    "11228": {
+      "postId": 27455,
+      "timestamps": {
+        "psawyerberlin": "2026-11-17T08:49:11.000Z",
+        "ticoworld": "2026-11-17T06:49:14.000Z"
+      },
+      "seenBeforeDeadline": [
+        "ticoworld",
+        "psawyerberlin"
+      ]
+    }
+  }
 }
