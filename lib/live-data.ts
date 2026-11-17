@@ -21,6 +21,7 @@ import { applyPersistedTitleTranslation, translateMissingProposalTitle } from '@
 import { translateMissingProposalUpdates } from '@/lib/proposal-update-translation';
 import {
   extractMilestoneBudget,
+  kickoffPaymentMarker,
   extractProposalBudget as extractBudget,
   extractProposalObjective,
 } from '@/lib/digest-activity';
@@ -263,6 +264,10 @@ function milestoneMarker(element: Element) {
     ? element.querySelector('th, td')?.textContent ?? ''
     : element.textContent ?? '';
   const text = raw.replace(/\s+/g, ' ').trim();
+  if (element.tagName === 'TR') {
+    const kickoff = kickoffPaymentMarker(text, tableBudgetCell(element), tableTimelineCell(element));
+    if (kickoff) return kickoff;
+  }
   if (/^(?:initial funding|initial payment|资助启动|初始资金|首笔拨款)\b/i.test(text)) {
     return { key: 'initial', title: text.slice(0, 180) };
   }
@@ -305,6 +310,14 @@ function tableBudgetCell(element: Element) {
   return cells[budgetIndex]?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
 }
 
+function tableTimelineCell(element: Element) {
+  const table = element.closest('table');
+  if (!table) return '';
+  const headers = [...table.querySelectorAll('thead th')].map((node) => node.textContent?.trim() ?? '');
+  const index = headers.findIndex((header) => /^(?:timeline|eta|time|时间|时间表|预计时间)$/i.test(header));
+  return index < 0 ? '' : element.querySelectorAll(':scope > th, :scope > td')[index]?.textContent?.trim() ?? '';
+}
+
 function parseProposalOverview(cooked: string, fallbackSummary: string): ProposalOverview {
   const objective = extractProposalObjective(cooked, fallbackSummary);
   if (typeof DOMParser === 'undefined') return { objective, milestones: [] };
@@ -321,6 +334,13 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
   for (const candidate of candidates) {
     const pieces: string[] = [];
     if (candidate.element.tagName === 'TR') pieces.push(...elementPieces(candidate.element));
+    if (candidate.marker.key === 'kickoff') {
+      const table = candidate.element.closest('table');
+      const introduction = (table?.closest('.md-table') ?? table)?.previousElementSibling;
+      const terms = introduction?.tagName === 'P' ? introduction.textContent?.replace(/\s+/g, ' ').trim() ?? '' : '';
+      // Keep the actual payment/report terms with the table's startup row.
+      if (/each payment.*public progress report/i.test(terms)) pieces.push(terms);
+    }
     let sibling = candidate.element.nextElementSibling;
     while (sibling && pieces.join(' ').length < 1800) {
       if (milestoneMarker(sibling)) break;
@@ -337,9 +357,10 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
       pieces,
       tableBudgetCell(candidate.element),
     );
-    const eta = source.match(/(?:ETA|duration|delivery|timeline|预计|周期|交付时间)\s*[:：-]?\s*([^.;。；]{2,80})/i)?.[1]?.trim()
+    const eta = (candidate.marker.key === 'kickoff' ? tableTimelineCell(candidate.element) : null)
+      || (source.match(/(?:ETA|duration|delivery|timeline|预计|周期|交付时间)\s*[:：-]?\s*([^.;。；]{2,80})/i)?.[1]?.trim()
       ?? source.match(/(?:~\s*Month\s*\d+|weeks?\s*\d+(?:\s*[-–]\s*\d+)?|约第\s*\d+\s*个月)/i)?.[0]?.trim()
-      ?? null;
+      ?? null);
     const deliverableSections = [...block.matchAll(/deliverables?\s*[:：]\s*([\s\S]*?)(?=\s+(?:ETA|budget|acceptance criteria|milestone|phase)\s*[:：]|$)/gi)]
       .map((match) => match[1].replace(/\s+/g, ' ').trim())
       .filter((value) => value.length > 18)
@@ -352,7 +373,9 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
     if (lastDeliverablesLabel >= 0) {
       rawDescription = rawDescription.slice(lastDeliverablesLabel).replace(/^(?:deliverables?|交付内容)\s*[:：]\s*/i, '');
     }
-    const description = trimMilestoneDescription(rawDescription.replace(/\bckb1[a-z0-9]{30,}\b/gi, ''));
+    const description = candidate.marker.key === 'kickoff'
+      ? trimMilestoneDescription(rawDescription, 1_000, Infinity)
+      : trimMilestoneDescription(rawDescription.replace(/\bckb1[a-z0-9]{30,}\b/gi, ''));
     const title = candidate.marker.title
       .replace(/\s*[-–—]\s*(?:\d+(?:\.\d+)?%\s+of (?:the )?grant paid|支付\s*\d+(?:\.\d+)?%\s*资金).*$/i, '')
       .slice(0, 180);

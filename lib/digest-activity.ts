@@ -139,6 +139,12 @@ export function extractProposalBudget(text: string) {
   return null;
 }
 
+// Kickoff is a payment stage only when it is a structured, funded table row.
+export function kickoffPaymentMarker(text: string, budgetCell: string, timeline = '') {
+  if (!/^kick[ -]?off$/i.test(text.trim()) || !extractMilestoneBudget('', [], budgetCell).value) return null;
+  return { key: 'kickoff', title: `${text.trim()}${timeline.trim() ? ` (${timeline.trim()})` : ''}` };
+}
+
 export type MilestoneBudgetEvidence = {
   value: string | null;
   confidence: number;

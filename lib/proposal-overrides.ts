@@ -8,6 +8,7 @@ export type ProposalOverride = {
   budgetLabel?: string;
   overviewObjective?: { zh: string; en: string };
   milestoneDescriptionZhByTitle?: Record<string, string>;
+  milestoneTitleZhByTitle?: Record<string, string>;
   projectType?: string;
   statusTags?: Array<'discussion' | 'voting' | 'vote-passed' | 'executing' | 'vote-failed' | 'completed' | 'ended'>;
   statusExplanationZh?: string;
@@ -45,6 +46,8 @@ export type ProposalOverride = {
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
   '11228': {
+    milestoneTitleZhByTitle: {"Kickoff (Month 0)": "启动阶段（第 0 个月）"},
+    milestoneDescriptionZhByTitle: {"Kickoff (Month 0)": "在已可进行交易的测试网上开始工作（Month 0，第 0 个月）。每笔付款前都需在 Nervos Talk 发布公开进展报告，由提案人逐项标明验收事项已完成或仍待完成。当前里程碑仍有未完成验收事项时，不申请下一笔付款。", "Milestone 4 — Website, guides, and store listings (Month 4)": "twine-web：提供指南与帮助、实时的 kind 31420 交易挂单簿，以及根据 kind 31421 中的容量和健康状态生成的枢纽目录。目前网站仅为下载页面。支持中继故障转移和挂单方中继列表（NIP-65），避免单个中继失效导致挂单簿不可见。由守护进程时钟控制未刷新挂单的到期，并添加 NIP-40 expiration 标签。"},
     overviewObjective: {"zh": "Twine 让买卖双方用 CKB 兑换本地法币，而 CKB 始终留在双方原本就自行控制的 Fiber 通道中。买家直接向卖家付款。Twine 记录付款方式和交易时限，不托管现金，也不处理付款。", "en": "Twine lets a seller and a buyer trade CKB for local currency while the CKB stays in Fiber channels they already control. The buyer pays the seller directly. Twine records the payment method and the clock. It does not hold the cash or process the payment."},
   },
   '11031': {
@@ -3020,14 +3023,18 @@ export function applyProposalMilestoneCorrections<T extends {
   overview?: { milestones: Array<{ title: string; descriptionZh?: string }> };
 }>(proposal: T): T {
   const corrections = proposalOverridesById[proposal.id]?.milestoneDescriptionZhByTitle;
-  if (!corrections || !proposal.overview) return proposal;
+  const titles = proposalOverridesById[proposal.id]?.milestoneTitleZhByTitle;
+  if ((!corrections && !titles) || !proposal.overview) return proposal;
   return {
     ...proposal,
     overview: {
       ...proposal.overview,
       milestones: proposal.overview.milestones.map((milestone) => {
-        const descriptionZh = corrections[milestone.title];
-        return descriptionZh ? { ...milestone, descriptionZh } : milestone;
+        const descriptionZh = corrections?.[milestone.title];
+        const titleZh = titles?.[milestone.title];
+        return descriptionZh || titleZh
+          ? { ...milestone, ...(descriptionZh ? { descriptionZh } : {}), ...(titleZh ? { titleZh } : {}) }
+          : milestone;
       }),
     },
   };

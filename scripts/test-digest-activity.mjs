@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {
   classifyProgressUpdate,
   extractMilestoneBudget,
+  kickoffPaymentMarker,
   extractProposalBudget,
   extractProposalObjective,
   isMeaningfulProgressUpdate,
@@ -120,3 +121,9 @@ assert.equal(extractMilestoneBudget('Milestone 0', [], '0').value, '0');
 assert.equal(extractMilestoneBudget('Milestone 0 ($0)', []).value, '$0');
 
 console.log('Validated daily digest activity classification.');
+
+assert.deepEqual(kickoffPaymentMarker('Kickoff', '$3,000', 'Month 0'), { key: 'kickoff', title: 'Kickoff (Month 0)' });
+assert.equal(kickoffPaymentMarker('Kickoff', '', 'Month 0'), null, 'A prose kickoff without a structured budget is not a payment stage');
+assert.equal(kickoffPaymentMarker('Project Kickoff and Design Document V1', '$3,000'), null);
+assert.equal(kickoffPaymentMarker('Milestone 0', '$500', 'Week 0'), null, 'Existing numbered-stage parsing is unchanged');
+assert.equal(kickoffPaymentMarker('Total', '$15,000'), null, 'Do not count the payment-table total as a stage');
