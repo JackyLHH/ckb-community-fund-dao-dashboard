@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-17T09:16:36.038Z",
+  "checkedAt": "2026-11-17T18:40:28.225Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -134,12 +134,31 @@
       "postId": 27455,
       "timestamps": {
         "psawyerberlin": "2026-11-17T08:49:11.000Z",
-        "ticoworld": "2026-11-17T06:49:14.000Z"
+        "ticoworld": "2026-11-17T06:49:14.000Z",
+        "jnr6": "2026-11-17T18:38:08.000Z",
+        "cipher_kage": "2026-11-17T15:26:49.000Z",
+        "ophiuchus": "2026-11-17T10:48:20.000Z",
+        "ayoub_lesfer": "2026-11-17T16:13:58.000Z",
+        "t_silva": "2026-11-17T14:03:49.000Z",
+        "ajay": "2026-11-17T11:54:59.000Z",
+        "jedi_dtechmaker": "2026-11-17T11:19:47.000Z"
       },
       "seenBeforeDeadline": [
         "ticoworld",
-        "psawyerberlin"
+        "psawyerberlin",
+        "ophiuchus",
+        "jedi_dtechmaker",
+        "ajay",
+        "t_silva",
+        "cipher_kage",
+        "ayoub_lesfer",
+        "jnr6"
       ]
+    },
+    "11244": {
+      "postId": 27488,
+      "timestamps": {},
+      "seenBeforeDeadline": []
     }
   }
 }
