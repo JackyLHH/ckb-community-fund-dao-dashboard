@@ -43,7 +43,7 @@ assert.equal(before.overview.milestones[1].descriptionZh, '显示在活动中 pa
 assert.equal(proposalOverridesById['10739'].budgetLabel, '$5,000');
 assert.equal(applyProposalMilestoneCorrections({ id: 'unknown' }).id, 'unknown');
 
-const twineSource = { id: '11228', budgetLabel: '$15,000', status: 'discussion', updates: [{ url: 'source' }], overview: { objective: 'Forum source overview', milestones: [{ title: 'M1', description: 'Live roadmap', budget: '$3,000' }] } };
+const twineSource = { id: '11228', budgetLabel: '$12,000', status: 'discussion', updates: [{ url: 'source' }], overview: { objective: 'Forum source overview', milestones: [{ title: 'M1', description: 'Live roadmap', budget: '$2,400' }] } };
 const twine = applyProposalObjectiveOverride(twineSource);
 assert.equal(twine.overview.milestones, twineSource.overview.milestones, 'An objective correction preserves the original roadmap');
 assert.equal(twine.budgetLabel, twineSource.budgetLabel);

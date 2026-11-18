@@ -1,3 +1,5 @@
+import { isProposalScopeRevision } from './proposal-revision.js';
+
 // Classify the complete, unquoted source post before extracting its display
 // title. A concise report title may not itself contain every progress keyword.
 const progressUpdatePattern = /(?:\b(?:status|project|development|progress|product delivery|delivery|completion|final|weekly|monthly|month\s*\d+)\s+(?:updates?|reports?)\b|\b(?:update|report)\s*[:：#-]|\bmilestone\s*#?\s*\d+[^.!?]{0,100}\b(?:complete|completed|delivered|report|update|testing)\b|\b(?:is|are|was|were|has been|have been)\s+(?:now\s+)?(?:completed|delivered|deployed|launched|released)\b|\b(?:we|i)\s+(?:have\s+)?(?:completed|delivered|deployed|launched|released|shipped)\b|\b(?:game|project|product|platform|development)\s+(?:is|remains)\s+still\s+(?:in|under)\s+development\b|项目(?:进展|更新|交付|完结)(?:报告|说明|更新)?|周报|(?:进展|状态|交付|完工|完成|最终|月度|周度)(?:更新|报告)|里程碑\s*[#第]?\s*[\d一二三四五六七八九十]+[^。！？]{0,80}(?:完成|交付|报告|更新|测试)|(?:游戏|项目|产品|平台)[^。！？]{0,16}(?:仍在|正在)开发)/i;
@@ -6,6 +8,7 @@ const governanceOnlyUpdatePattern = /^(?:\s*(?:\d{4}[/.-]\d{1,2}[/.-]\d{1,2}\s*)
 const proposalEditOnlyPattern = /^(?:\s*(?:proposal update|proposal amendment|提案更新)|\s*update\s*[:：-]\s*(?:i|we)\s+(?:have\s+)?changed\s+the\s+timeline\b)/i;
 
 export function isProposalProgressUpdate(text = '') {
+  if (isProposalScopeRevision(text)) return false;
   const normalized = text.replace(/\s+/g, ' ').trim();
   if (nonProgressReplyPattern.test(normalized) || governanceOnlyUpdatePattern.test(normalized) || proposalEditOnlyPattern.test(normalized)) return false;
   // A proposer may publish concrete test results as a reply without a report

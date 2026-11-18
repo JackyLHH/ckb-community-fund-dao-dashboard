@@ -1,3 +1,5 @@
+import { isProposalScopeRevision } from './proposal-revision.js';
+export { isProposalScopeRevision };
 export const DIGEST_LOOKBACK_MS = 24 * 60 * 60 * 1_000;
 
 export type DigestActivityTopic = {
@@ -126,6 +128,14 @@ function normalizedMoney(value?: string) {
 // Keep the requested-budget value identical across the detail page, proposal
 // directory, email digest, and Telegram digest.
 export function extractProposalBudget(text: string) {
+  const core = text.match(new RegExp(String.raw`\bcore\s+budget\s*(?:is|of|:)?\s*(${moneyValue})`, 'i'))?.[1];
+  const optional = text.match(new RegExp(String.raw`\bincluding\s+(?:both|(?:the\s+)?optional\s+packages?)\b[^.!?]{0,110}?(${moneyValue})`, 'i'))?.[1];
+  if (core && optional && /\boptional\b/i.test(text)) {
+    const amount = (value: string) => value.replace(/^USD\s*\$?\s*/i, '$').trim();
+    const confirmation = /\bconfirm(?:ed|ation)?\b[^.!?]{0,100}\bbefore\s+(?:the\s+)?vot(?:ing|e)\b/i.test(text)
+      ? ' (requested estimate; final confirmation before voting)' : ' (requested estimate)';
+    return `Core ${amount(core)} / with optional packages ${amount(optional)}${confirmation}`;
+  }
   const value = `(${moneyValue}|0(?![\\d.,]))`;
   const labels = [
     String.raw`(?:grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
@@ -262,13 +272,6 @@ export function isMeaningfulProgressUpdate(cooked = '') {
     /href=["']https?:\/\//i.test(cooked) || /<(?:ul|ol|img|pre|code)\b/i.test(cooked),
   ].filter(Boolean).length;
   return signals >= 3;
-}
-
-export function isProposalScopeRevision(text: string) {
-  // Evidence of an actual delivered report wins over a passing scope note.
-  const reportHeading = /^(?:[^\n]{0,90}[:：]\s*)?(?:(?:weekly|bi[ -]?weekly|monthly|quarterly|annual|status|progress|completion)\s+(?:report|update)|milestone\s*[.#:]?\s*\d+\s+(?:completion\s+)?report|周报|双周报|月报|季报|年报|里程碑\s*\d+\s*(?:完成)?报告)/im;
-  if (reportHeading.test(text)) return false;
-  return /\b(?:milestone\s*[.#:]?\s*\d+|proposal|scope|acceptance criteria)\s+(?:(?:is|has been|was)\s+)?(?:now\s+)?(?:updated|revised|amended|expanded)\s+to\s+(?:cover|include|address|clarify)\b|\b(?:updated|revised|amended|expanded)\s+(?:(?:the|our)\s+)?(?:proposal|scope|milestone\s*\d+)\s+to\s+(?:cover|include|address|clarify)\b|里程碑\s*\d+\s*(?:现已|已经|已)?\s*(?:更新|修改|调整)|(?:修改|调整|修订)(?:了)?(?:提案|里程碑|验收标准|范围)/i.test(text);
 }
 
 export function progressUpdatePosts(

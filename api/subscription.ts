@@ -1,5 +1,6 @@
 import {
   cleanSummary,
+  getProposalBudget,
   getProposalStatusTags,
   getProposalTitle,
   proposals,
@@ -404,6 +405,11 @@ function localizedOverview(item: DigestTopic, locale: Locale) {
     : item.firstPostExcerpt || (locale === 'en' ? 'Open the source discussion to read the full proposal.' : '请打开原始讨论阅读完整提案。');
 }
 
+function localizedBudget(item: DigestTopic, locale: Locale) {
+  return getProposalBudget({ id: String(item.topic.id), budgetLabel: item.budget }, locale)
+    ?? (locale === 'en' ? 'Not stated' : '未标明');
+}
+
 function localizedStatus(item: DigestTopic, locale: Locale) {
   if (item.lifecycleEvent) {
     const tags = lifecycleStatus(item.lifecycleEvent);
@@ -444,7 +450,7 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
   const proposalCard = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
     const overview = localizedOverview(item, locale);
-    const budget = item.budget ?? (en ? 'Not stated' : '未标明');
+    const budget = localizedBudget(item, locale);
     return `<li style="margin:0 0 14px;padding:19px;border:1px solid #dce3de;border-radius:16px;list-style:none"><div style="margin-bottom:8px;color:#087958;font-size:11px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase">${en ? 'New proposal' : '新提案'}</div><a href="${proposalUrl(item.topic)}" style="color:#0b0f0e;text-decoration:none;font-size:17px;font-weight:bold;line-height:1.4">${esc(title)}</a><p style="margin:10px 0 14px;color:#4d5953;font-size:14px;line-height:1.7">${esc(overview)}</p><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="font-size:12px;color:#65706a"><tr><td style="padding:4px 8px 4px 0"><b style="color:#0b0f0e">${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}</td><td style="padding:4px 0"><b style="color:#0b0f0e">${en ? 'Budget' : '预算'}:</b> ${esc(budget)}</td></tr></table><p style="margin:16px 0 0"><a href="${proposalUrl(item.topic)}" style="display:inline-block;background:#087958;color:white;text-decoration:none;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:bold">${en ? 'View proposal' : '查看提案'}</a> <a href="${topicUrl(item.topic)}" style="margin-left:8px;color:#087958;text-decoration:none;font-size:12px;font-weight:bold">${en ? 'Source discussion →' : '原始讨论 →'}</a></p></li>`;
   };
   const updateCard = (item: DigestTopic) => {
@@ -473,7 +479,7 @@ function digestMessage(locale: Locale, newTopics: DigestTopic[], updatedTopics: 
       const updateCategory = updateLabel(item, locale);
       return `${title}\n${en ? 'Updated by' : '更新者'}: ${item.latestPostAuthor}${postedAt ? ` · ${postedAt}` : ''}\n${updateCategory}\n${en ? 'View this update' : '查看本次更新'}: ${updateUrl(item)}`;
     }
-    return `${title}\n${en ? 'Proposer' : '提案人'}: ${item.proposer}\n${en ? 'Budget' : '预算'}: ${item.budget ?? (en ? 'Not stated' : '未标明')}\n${localizedOverview(item, locale)}\n${proposalUrl(item.topic)}`;
+    return `${title}\n${en ? 'Proposer' : '提案人'}: ${item.proposer}\n${en ? 'Budget' : '预算'}: ${localizedBudget(item, locale)}\n${localizedOverview(item, locale)}\n${proposalUrl(item.topic)}`;
   };
   const textSections = [
     newTopics.length ? `${en ? 'NEW PROPOSALS' : '新提案'}\n\n${newTopics.map((item) => textItem(item, false)).join('\n\n')}` : '',
@@ -502,7 +508,7 @@ function telegramDigestMessages(locale: Locale, newTopics: DigestTopic[], update
   const newProposalBlock = (item: DigestTopic) => {
     const title = localizedTitle(item, locale);
     const overview = clipped(localizedOverview(item, locale), 700);
-    const budget = item.budget ?? (en ? 'Not stated' : '未标明');
+    const budget = localizedBudget(item, locale);
     return `<a href="${esc(proposalUrl(item.topic))}"><b>${esc(title)}</b></a>\n\n- <b>${en ? 'Overview' : '简介'}:</b> ${esc(overview)}\n\n- <b>${en ? 'Proposer' : '提案人'}:</b> ${esc(item.proposer)}\n\n- <b>${en ? 'Budget' : '预算'}:</b> ${esc(budget)}\n\n<a href="${esc(topicUrl(item.topic))}">${en ? 'View source proposal →' : '查看原始提案 →'}</a>`;
   };
   const updateBlock = (item: DigestTopic, index: number) => {

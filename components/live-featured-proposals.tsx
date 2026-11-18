@@ -5,15 +5,18 @@ import { I18nText } from '@/components/i18n-text';
 import { ProposalStatusTags } from '@/components/proposal-status-tags';
 import { StaticLink as Link } from '@/components/static-link';
 import {
+  getProposalBudget,
   getProposalOverview,
   getProposalTitle,
   projectTypeLabels,
 } from '@/lib/proposals';
 import { useLiveDataset } from '@/lib/use-live-data';
+import { useLocale } from '@/lib/use-locale';
 
 const featuredProposalIds = ['9756', '10015', '10583'];
 
 export function LiveFeaturedProposals() {
+  const { locale } = useLocale();
   const { data } = useLiveDataset();
   const proposals = featuredProposalIds
     .map((id) => data.proposals.find((proposal) => proposal.id === id))
@@ -51,7 +54,7 @@ export function LiveFeaturedProposals() {
             <span className="inline-flex max-w-[55%] shrink-0 items-center gap-2">
               <WalletCards className="size-4 shrink-0 text-primary" aria-hidden="true" />
               <span className="sr-only"><I18nText zh="预算：" en="Budget: " /></span>
-              <span className="truncate">{proposal.budgetLabel ?? <I18nText zh="预算待核验" en="Budget to verify" />}</span>
+              <span className="min-w-0 whitespace-normal break-words text-right">{getProposalBudget(proposal, locale === 'en' ? 'en' : 'zh') ?? <I18nText zh="预算待核验" en="Budget to verify" />}</span>
             </span>
           </div>
         </Link>

@@ -5,7 +5,7 @@ import { ArrowRight, CalendarDays, Eye, MessageCircle, ThumbsUp, UserRound } fro
 import { I18nText } from '@/components/i18n-text';
 import { ProposalStatusTags } from '@/components/proposal-status-tags';
 import { rememberDirectoryContext } from '@/lib/directory-utils';
-import { getProposalOverview, formatCompact, formatDate, getProposalTitle, projectTypeLabels, type Proposal } from '@/lib/proposals';
+import { getProposalBudget, getProposalOverview, formatCompact, formatDate, getProposalTitle, projectTypeLabels, type Proposal } from '@/lib/proposals';
 import { useLocale } from '@/lib/use-locale';
 
 function formatCardDate(value: string, locale: 'zh' | 'en') {
@@ -55,7 +55,7 @@ export function ProjectCard({ proposal, compact = false }: { proposal: Proposal;
         <div data-proposal-metadata="compact" className="mt-3 flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 text-xs leading-5 text-muted-foreground">
           {typeField}
           {authorField}
-          <span data-proposal-field="budget" className="inline-flex min-w-0 max-w-full flex-wrap items-baseline gap-x-1.5"><span>{t('申请预算', 'Requested budget')}</span><span className="break-words font-mono font-semibold text-foreground tabular-nums">{proposal.budgetLabel ?? t('待核验', 'To verify')}</span></span>
+          <span data-proposal-field="budget" className="inline-flex min-w-0 max-w-full flex-wrap items-baseline gap-x-1.5"><span>{t('申请预算', 'Requested budget')}</span><span className="break-words font-mono font-semibold text-foreground tabular-nums">{getProposalBudget(proposal, locale === 'en' ? 'en' : 'zh') ?? t('待核验', 'To verify')}</span></span>
           {likesField}
           {updatedField}
         </div>
@@ -66,7 +66,7 @@ export function ProjectCard({ proposal, compact = false }: { proposal: Proposal;
             <p><I18nText zh="申请预算" en="Requested budget" /></p>
             <span data-proposal-field="type" className="min-w-0 text-right font-semibold"><I18nText zh={projectTypeLabels[proposal.projectType] ?? proposal.projectType} en={proposal.projectType} /></span>
           </div>
-          <p className="mt-1 break-words font-mono text-sm font-semibold tabular-nums">{proposal.budgetLabel ?? <I18nText zh="待核验" en="To verify" />}</p>
+          <p className="mt-1 break-words font-mono text-sm font-semibold tabular-nums">{getProposalBudget(proposal, locale === 'en' ? 'en' : 'zh') ?? <I18nText zh="待核验" en="To verify" />}</p>
         </div>
         <div data-proposal-metadata="card" className="mt-3 flex min-w-0 items-center gap-x-2 overflow-x-auto whitespace-nowrap text-xs leading-5 text-muted-foreground">
           <span data-proposal-field="author" title={proposal.author} className="inline-flex min-w-8 flex-1 items-center gap-1.5"><UserRound className="size-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{proposal.author}</span></span>

@@ -6,6 +6,7 @@ export type ProposalOverride = {
   titleEn?: string;
   author?: string;
   budgetLabel?: string;
+  budgetLabelTranslations?: { zh: string; en: string };
   overviewObjective?: { zh: string; en: string };
   milestoneDescriptionZhByTitle?: Record<string, string>;
   milestoneTitleZhByTitle?: Record<string, string>;
@@ -45,6 +46,10 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  '11254': {
+    budgetLabel: "Core $26,500 / with optional packages $35,500 (requested estimate; final confirmation before voting)",
+    budgetLabelTranslations: {"zh": "核心 $26,500；含可选包 $35,500（申请估算，投票前最终确认）", "en": "Core $26,500 / with optional packages $35,500 (requested estimate; final confirmation before voting)"},
+  },
   '11228': {
     milestoneTitleZhByTitle: {"Kickoff (Month 0)": "启动阶段（第 0 个月）"},
     milestoneDescriptionZhByTitle: {"Kickoff (Month 0)": "在已可进行交易的测试网上开始工作（Month 0，第 0 个月）。每笔付款前都需在 Nervos Talk 发布公开进展报告，由提案人逐项标明验收事项已完成或仍待完成。当前里程碑仍有未完成验收事项时，不申请下一笔付款。", "Milestone 4 — Website, guides, and store listings (Month 4)": "twine-web：提供指南与帮助、实时的 kind 31420 交易挂单簿，以及根据 kind 31421 中的容量和健康状态生成的枢纽目录。目前网站仅为下载页面。支持中继故障转移和挂单方中继列表（NIP-65），避免单个中继失效导致挂单簿不可见。由守护进程时钟控制未刷新挂单的到期，并添加 NIP-40 expiration 标签。"},

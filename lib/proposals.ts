@@ -314,6 +314,12 @@ export function getTagName(tag: Proposal['tags'][number]) {
   return typeof tag === 'string' ? tag : tag.name ?? tag.slug ?? '';
 }
 
+// Requested-budget labels may describe options; they are not approval records.
+export function getProposalBudget(proposal: { id: string; budgetLabel?: string | null }, locale: 'zh' | 'en') {
+  const override = proposalOverridesById[proposal.id];
+  return override?.budgetLabelTranslations?.[locale] ?? proposal.budgetLabel ?? override?.budgetLabel ?? null;
+}
+
 export function getProposalTitle(proposal: Proposal, locale: 'zh' | 'en') {
   return cleanProposalTitle(locale === 'en'
     ? proposal.titleEn ?? proposal.titleZh ?? proposal.title
