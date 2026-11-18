@@ -131,7 +131,7 @@ export function extractProposalBudget(text: string) {
   const core = text.match(new RegExp(String.raw`\bcore\s+budget\s*(?:is|of|:)?\s*(${moneyValue})`, 'i'))?.[1];
   const optional = text.match(new RegExp(String.raw`\bincluding\s+(?:both|(?:the\s+)?optional\s+packages?)\b[^.!?]{0,110}?(${moneyValue})`, 'i'))?.[1];
   if (core && optional && /\boptional\b/i.test(text)) {
-    const amount = (value: string) => value.replace(/^USD\s*\$?\s*/i, '$').trim();
+    const amount = (value: string) => value.replace(/^USD\s*\$?\s*/i, '$').trim().replace(/[.,]+$/, '');
     const confirmation = /\bconfirm(?:ed|ation)?\b[^.!?]{0,100}\bbefore\s+(?:the\s+)?vot(?:ing|e)\b/i.test(text)
       ? ' (requested estimate; final confirmation before voting)' : ' (requested estimate)';
     return `Core ${amount(core)} / with optional packages ${amount(optional)}${confirmation}`;
