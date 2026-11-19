@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-19T08:08:38.595Z",
+  "checkedAt": "2026-11-19T17:31:01.387Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -127,6 +127,16 @@
       "totalVotes": 184949817,
       "yesPercent": 100,
       "approved": true
+    },
+    {
+      "id": "vote-ended:11089:81853",
+      "topicId": 11089,
+      "kind": "vote-ended",
+      "occurredAt": "2026-11-19T17:30:54.164Z",
+      "sourceUrl": "https://dao.ckb.community/thread/vot-cellula-on-fiber-a-wallet-a-checkout-and-an-ai-agent-on-a-public-mainnet-lsp-81853",
+      "totalVotes": 113857181,
+      "yesPercent": 100,
+      "approved": true
     }
   ],
   "discussions": {
@@ -146,7 +156,9 @@
         "truthixify": "2026-11-17T20:17:24.000Z",
         "daodu_destiny": "2026-11-18T05:26:11.000Z",
         "tiago_morcego": "2026-11-18T15:50:50.000Z",
-        "coingetterd": "2026-11-18T12:58:38.000Z"
+        "coingetterd": "2026-11-18T12:58:38.000Z",
+        "mannychino": "2026-11-19T12:24:50.000Z",
+        "web3legend": "2026-11-19T15:54:39.000Z"
       },
       "seenBeforeDeadline": [
         "ticoworld",
@@ -162,7 +174,9 @@
         "salmandev",
         "daodu_destiny",
         "coingetterd",
-        "tiago_morcego"
+        "tiago_morcego",
+        "mannychino",
+        "web3legend"
       ]
     },
     "11244": {
@@ -185,16 +199,32 @@
     },
     "11258": {
       "postId": 27563,
-      "timestamps": {},
-      "seenBeforeDeadline": []
+      "timestamps": {
+        "matt_ckb": "2026-11-19T16:47:59.000Z",
+        "ophiuchus": "2026-11-19T14:03:17.000Z"
+      },
+      "seenBeforeDeadline": [
+        "ophiuchus",
+        "matt_ckb"
+      ]
     },
     "11262": {
       "postId": 27574,
       "timestamps": {
-        "jeremic_arose": "2026-11-19T06:15:03.000Z"
+        "jeremic_arose": "2026-11-19T06:15:03.000Z",
+        "dorex45": "2026-11-19T14:37:52.000Z",
+        "broihan": "2026-11-19T11:51:19.000Z",
+        "lestoneth": "2026-11-19T09:06:08.000Z",
+        "devnash": "2026-11-19T08:48:47.000Z",
+        "ophiuchus": "2026-11-19T14:03:56.000Z"
       },
       "seenBeforeDeadline": [
-        "jeremic_arose"
+        "jeremic_arose",
+        "devnash",
+        "lestoneth",
+        "broihan",
+        "ophiuchus",
+        "dorex45"
       ]
     }
   }
