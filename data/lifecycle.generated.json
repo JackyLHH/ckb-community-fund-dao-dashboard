@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-18T18:17:35.043Z",
+  "checkedAt": "2026-11-19T08:08:38.595Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -181,6 +181,20 @@
       },
       "seenBeforeDeadline": [
         "ophiuchus"
+      ]
+    },
+    "11258": {
+      "postId": 27563,
+      "timestamps": {},
+      "seenBeforeDeadline": []
+    },
+    "11262": {
+      "postId": 27574,
+      "timestamps": {
+        "jeremic_arose": "2026-11-19T06:15:03.000Z"
+      },
+      "seenBeforeDeadline": [
+        "jeremic_arose"
       ]
     }
   }
