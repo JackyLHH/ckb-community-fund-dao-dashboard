@@ -28,6 +28,7 @@ import {
 import { cleanProposalTitle as cleanTitle, looksLikeProposal } from './proposal-title.js';
 import { mergeVoteSnapshots, resolveVoteLifecycle } from './metaforo-voting';
 import { executionStatusTags } from './proposal-lifecycle';
+import { structuredMilestoneRow } from './proposal-milestone-table';
 import savedVotes from '../data/votes.generated.json';
 import { PublicSourceError, resolveDetailSource, type ProjectReadResult } from './live-project-result';
 import { isManualProposalUpdate, selectForumProgressUpdates } from './proposal-update-title';
@@ -180,8 +181,9 @@ async function loadAllTopicPosts(id: string, detail: TopicResponse) {
 }
 
 function votingSourceLabel(voting: ProposalVoting) {
-  return /talk\.nervos\.org\/.*\/8973\/70/.test(voting.url)
-    ? 'DAO committee corrected vote result'
+  if (/talk\.nervos\.org\/.*\/8973\/70/.test(voting.url)) return 'DAO committee corrected vote result';
+  return /talk\.nervos\.org\//.test(voting.url)
+    ? 'Nervos Talk vote result verification'
     : 'Metaforo voting page';
 }
 
@@ -259,7 +261,26 @@ function trimMilestoneDescription(input: string, maxLength = 520, sentenceLimit 
   return value.length > maxLength ? `${value.slice(0, maxLength).trim()}…` : value;
 }
 
+function structuredTableRow(element: Element) {
+  if (element.tagName !== 'TR') return null;
+  const table = element.closest('table');
+  if (!table) return null;
+  return structuredMilestoneRow(
+    [...table.querySelectorAll('thead th')].map(node => node.textContent ?? ''),
+    [...element.querySelectorAll(':scope > th, :scope > td')].map(node => node.textContent ?? ''),
+  );
+}
+
+function inReferenceSection(element: Element) {
+  const headings = [...element.ownerDocument.querySelectorAll('h1, h2, h3, h4, h5, h6')];
+  const preceding = headings.filter(heading => Boolean(heading.compareDocumentPosition(element) & 4)).at(-1);
+  return /^(?:supporting links|links|references|参考链接|参考资料)\s*[:：]?$/i.test(preceding?.textContent?.trim() ?? '');
+}
+
 function milestoneMarker(element: Element) {
+  if (inReferenceSection(element)) return null;
+  const structured = structuredTableRow(element);
+  if (structured) return structured;
   const raw = element.tagName === 'TR'
     ? element.querySelector('th, td')?.textContent ?? ''
     : element.textContent ?? '';
@@ -332,6 +353,29 @@ function parseProposalOverview(cooked: string, fallbackSummary: string): Proposa
     budgetConfidence: number;
   }>();
   for (const candidate of candidates) {
+    const structured = structuredTableRow(candidate.element);
+    if (structured) {
+      const table = candidate.element.closest('table')!;
+      const wrapper = table.closest('.md-table') ?? table;
+      const before = wrapper.previousElementSibling;
+      const after = wrapper.nextElementSibling;
+      // Retain explicit payment conditions without converting a shared payment
+      // schedule or hardware cost into a per-stage budget.
+      const terms = structured.key === 'kickoff' ? [before, after]
+        .filter(node => node?.tagName === 'P')
+        .map(node => node!.textContent?.replace(/\s+/g, ' ').trim() ?? '')
+        .filter(text => /payment/i.test(text) && /(?:public report|committee|approval)/i.test(text)) : [];
+      milestonesByKey.set(structured.key, {
+        title: structured.title,
+        description: [structured.description, ...terms].join(' '),
+        budget: extractMilestoneBudget('', [], tableBudgetCell(candidate.element)).value,
+        eta: structured.eta,
+        order: candidate.order,
+        score: structured.description.length,
+        budgetConfidence: tableBudgetCell(candidate.element) ? 4 : 0,
+      });
+      continue;
+    }
     const pieces: string[] = [];
     if (candidate.element.tagName === 'TR') pieces.push(...elementPieces(candidate.element));
     if (candidate.marker.key === 'kickoff') {

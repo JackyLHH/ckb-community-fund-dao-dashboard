@@ -29,6 +29,21 @@ function closedVote(
 // than a stable, unauthenticated JSON endpoint. The snapshot is deliberately
 // small, dated, and linked back to the public page so every override is auditable.
 export const voteEvidenceByProposalId: Record<string, ProposalVoting> = {
+  // User-authorized temporary source: post 19 by zz_tovarishch (2026-11-17).
+  // Keep the original Metaforo snapshot unchanged; do not infer from its tally.
+  '11089': {
+    "url": "https://talk.nervos.org/t/11089/19",
+    "status": "approved",
+    "totalVotes": 113857181,
+    "minimumVotes": 59100000,
+    "yesPercent": 100,
+    "passPercent": 51,
+    "closed": true,
+    "closedAt": "2026-11-16T23:59:59.000Z",
+    "verifiedAt": "2026-11-19T04:40:37Z",
+    "noteZh": "Metaforo 域名故障期间，暂据 Nervos Talk 第 19 楼的投票结束核验公告展示：16 位投票者，赞成 113,857,181 CKB，无反对票，投票通过。公告说明一笔 102,000 CKB 存款的核验差异；即使全部剔除，赞成权重仍为 113,755,181 CKB、赞成率 100%，仍超过 59,100,000 CKB 和 51% 的门槛。此核验时间为公告核对时间，不代表 Metaforo 已恢复采集。",
+    "noteEn": "Temporary source while the Metaforo domain is unavailable: the post-close verification in Nervos Talk post 19 reports 16 voters, 113,857,181 CKB Yes, no No votes, and a Passed outcome. It explains a discrepancy involving a 102,000 CKB deposit; even excluding it entirely, Yes weight is 113,755,181 CKB at 100%, above the 59,100,000 CKB and 51% thresholds. This timestamp records review of the announcement, not a resumed Metaforo collection."
+  },
   '10739': {
     url: 'https://dao.ckb.community/thread/vot-rivet-decentralized-github-backup-timestamping-and-restore-on-ckb-80044',
     status: 'approved',

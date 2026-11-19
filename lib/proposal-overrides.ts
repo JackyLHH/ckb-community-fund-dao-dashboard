@@ -46,6 +46,24 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  // Reviewed against https://talk.nervos.org/t/11258 (2026-11-19).
+  '11258': {
+    "budgetLabel": "$9,500",
+    "milestoneTitleZhByTitle": {
+        "Kickoff (M0) (Week 1)": "启动阶段（M0，第 1 周）",
+        "M1 (Week 3)": "M1（第 3 周）",
+        "M2 (Week 6)": "M2（第 6 周）",
+        "M3 (Week 10)": "M3（第 10 周）",
+        "M4 (Week 14)": "M4（第 14 周）"
+    },
+    "milestoneDescriptionZhByTitle": {
+        "Kickoff (M0) (Week 1)": "工作：订购硬件；公开代码仓库和许可证；搭建固件骨架；实现 PSCT 解析器、sighash、secp256k1 和签名启动。验收：设备签署三个一致性测试向量，主机验证器验证通过，公开 BOM 和框图。付款共五笔、每笔 $1,900，包含获批时的首笔启动款，之后在各里程碑完成后付款。每笔里程碑款均须提交公开报告并经委员会核验。首笔款用于订购硬件；第 1 周启动报告须在 M1 付款前通过审核。",
+        "M1 (Week 3)": "工作：扫描器输入；交易审阅界面；PIN 与加密种子；主机二维码页面。验收：扫描未签名 PSCT，审阅、签名并返回已签名 PSCT，完成一笔测试网转账，并提供视频。",
+        "M2 (Week 6)": "工作：组装三台采用载板的设备，配备外壳和电池，交由测试者测试。验收：每台设备签署一笔测试网转账；寄出两台设备；提供搭建指南草稿。",
+        "M3 (Week 10)": "工作：对抗性测试；DAO 与 xUDT 路径；固件 v0.1.0。验收：在设备上通过 20 项以上对抗性测试；验证签名镜像；提交测试报告。",
+        "M4 (Week 14)": "工作：文档、BOM、原理图、STL、刷写说明和视频；独立搭建。验收：第三方搭建一台设备并签署一笔测试网交易；提交最终报告。"
+    }
+  },
   '11254': {
     budgetLabel: "Core $26,500 / with optional packages $35,500 (requested estimate; final confirmation before voting)",
     budgetLabelTranslations: {"zh": "核心 $26,500；含可选包 $35,500（申请估算，投票前最终确认）", "en": "Core $26,500 / with optional packages $35,500 (requested estimate; final confirmation before voting)"},

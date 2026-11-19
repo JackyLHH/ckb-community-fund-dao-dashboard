@@ -138,13 +138,13 @@ export function extractProposalBudget(text: string) {
   }
   const value = `(${moneyValue}|0(?![\\d.,]))`;
   const labels = [
-    String.raw`(?:grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
+    String.raw`(?:grant requested|grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
     String.raw`(?:this proposal requests|we (?:are requesting|request)|our budget is|apply for|the budget for this project is)\s*(?:a grant of|a total budget of|a total of)?\s*${value}`,
     String.raw`(?:budget breakdown|预算(?:详情|明细)?)\s*.{0,80}?\btotal\s*[:：\-–—]*\s*${value}`,
   ];
   for (const pattern of labels) {
     const match = text.match(new RegExp(pattern, 'i'))?.[1];
-    if (match) return match.replace(/\s+/g, ' ').trim();
+    if (match) return match.replace(/\s+/g, ' ').trim().replace(/[.,]+$/, '');
   }
   return null;
 }
