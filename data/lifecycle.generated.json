@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-20T07:25:53.107Z",
+  "checkedAt": "2026-11-20T16:26:16.595Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -158,7 +158,10 @@
         "tiago_morcego": "2026-11-18T15:50:50.000Z",
         "coingetterd": "2026-11-18T12:58:38.000Z",
         "mannychino": "2026-11-19T12:24:50.000Z",
-        "web3legend": "2026-11-19T15:54:39.000Z"
+        "web3legend": "2026-11-19T15:54:39.000Z",
+        "code3ks": "2026-11-20T13:45:48.000Z",
+        "birdmannn": "2026-11-20T13:42:16.000Z",
+        "broihan": "2026-11-20T09:32:30.000Z"
       },
       "seenBeforeDeadline": [
         "ticoworld",
@@ -176,7 +179,10 @@
         "coingetterd",
         "tiago_morcego",
         "mannychino",
-        "web3legend"
+        "web3legend",
+        "broihan",
+        "birdmannn",
+        "code3ks"
       ]
     },
     "11244": {
@@ -222,7 +228,9 @@
         "devnash": "2026-11-19T08:48:47.000Z",
         "ophiuchus": "2026-11-19T14:03:56.000Z",
         "bratipah": "2026-11-19T19:59:47.000Z",
-        "xbeach": "2026-11-19T19:08:28.000Z"
+        "xbeach": "2026-11-19T19:08:28.000Z",
+        "streets": "2026-11-20T10:42:36.000Z",
+        "wuododhis": "2026-11-20T10:24:32.000Z"
       },
       "seenBeforeDeadline": [
         "jeremic_arose",
@@ -232,7 +240,9 @@
         "ophiuchus",
         "dorex45",
         "xbeach",
-        "bratipah"
+        "bratipah",
+        "wuododhis",
+        "streets"
       ]
     }
   }
