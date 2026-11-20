@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-19T17:31:01.387Z",
+  "checkedAt": "2026-11-20T00:00:12.592Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -201,11 +201,13 @@
       "postId": 27563,
       "timestamps": {
         "matt_ckb": "2026-11-19T16:47:59.000Z",
-        "ophiuchus": "2026-11-19T14:03:17.000Z"
+        "ophiuchus": "2026-11-19T14:03:17.000Z",
+        "yeti": "2026-11-19T20:04:58.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
-        "matt_ckb"
+        "matt_ckb",
+        "yeti"
       ]
     },
     "11262": {
@@ -216,7 +218,9 @@
         "broihan": "2026-11-19T11:51:19.000Z",
         "lestoneth": "2026-11-19T09:06:08.000Z",
         "devnash": "2026-11-19T08:48:47.000Z",
-        "ophiuchus": "2026-11-19T14:03:56.000Z"
+        "ophiuchus": "2026-11-19T14:03:56.000Z",
+        "bratipah": "2026-11-19T19:59:47.000Z",
+        "xbeach": "2026-11-19T19:08:28.000Z"
       },
       "seenBeforeDeadline": [
         "jeremic_arose",
@@ -224,7 +228,9 @@
         "lestoneth",
         "broihan",
         "ophiuchus",
-        "dorex45"
+        "dorex45",
+        "xbeach",
+        "bratipah"
       ]
     }
   }
