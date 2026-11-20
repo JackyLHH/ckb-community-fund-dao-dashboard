@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-20T00:00:12.592Z",
+  "checkedAt": "2026-11-20T07:25:53.107Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -202,12 +202,14 @@
       "timestamps": {
         "matt_ckb": "2026-11-19T16:47:59.000Z",
         "ophiuchus": "2026-11-19T14:03:17.000Z",
-        "yeti": "2026-11-19T20:04:58.000Z"
+        "yeti": "2026-11-19T20:04:58.000Z",
+        "janx": "2026-11-20T00:54:14.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
         "matt_ckb",
-        "yeti"
+        "yeti",
+        "janx"
       ]
     },
     "11262": {
