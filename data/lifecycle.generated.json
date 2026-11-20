@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-20T16:26:16.595Z",
+  "checkedAt": "2026-11-20T22:51:14.761Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -161,7 +161,9 @@
         "web3legend": "2026-11-19T15:54:39.000Z",
         "code3ks": "2026-11-20T13:45:48.000Z",
         "birdmannn": "2026-11-20T13:42:16.000Z",
-        "broihan": "2026-11-20T09:32:30.000Z"
+        "broihan": "2026-11-20T09:32:30.000Z",
+        "charlie_kong_b": "2026-11-20T19:26:06.000Z",
+        "wuododhis": "2026-11-20T17:22:45.000Z"
       },
       "seenBeforeDeadline": [
         "ticoworld",
@@ -182,7 +184,9 @@
         "web3legend",
         "broihan",
         "birdmannn",
-        "code3ks"
+        "code3ks",
+        "wuododhis",
+        "charlie_kong_b"
       ]
     },
     "11244": {
@@ -209,13 +213,19 @@
         "matt_ckb": "2026-11-19T16:47:59.000Z",
         "ophiuchus": "2026-11-19T14:03:17.000Z",
         "yeti": "2026-11-19T20:04:58.000Z",
-        "janx": "2026-11-20T00:54:14.000Z"
+        "janx": "2026-11-20T00:54:14.000Z",
+        "ajay": "2026-11-20T22:11:54.000Z",
+        "jedi_dtechmaker": "2026-11-20T19:58:44.000Z",
+        "fillmyckbag": "2026-11-20T19:23:43.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
         "matt_ckb",
         "yeti",
-        "janx"
+        "janx",
+        "fillmyckbag",
+        "jedi_dtechmaker",
+        "ajay"
       ]
     },
     "11262": {
