@@ -1,3 +1,4 @@
+import { isCompletedTestRun } from './proposal-test-report.js';
 import { isProposalScopeRevision } from './proposal-revision.js';
 export { isProposalScopeRevision };
 export const DIGEST_LOOKBACK_MS = 24 * 60 * 60 * 1_000;
@@ -138,6 +139,7 @@ export function extractProposalBudget(text: string) {
   }
   const value = `(${moneyValue}|0(?![\\d.,]))`;
   const labels = [
+    String.raw`\bask\s*[:：]\s*${value}`,
     String.raw`(?:grant requested|grant amount(?: requested)?|amount requested|requested amount|total funding requested(?:\s*\(in USD\))?|total requested|total budget|budget requested|funding request|申请总额|总申请金额|申请金额|申请资金|总预算|预算申请|捐赠的金额)\s*[:：()\-–—]*\s*${value}`,
     String.raw`(?:this proposal requests|we (?:are requesting|request)|our budget is|apply for|the budget for this project is)\s*(?:a grant of|a total budget of|a total of)?\s*${value}`,
     String.raw`(?:budget breakdown|预算(?:详情|明细)?)\s*.{0,80}?\btotal\s*[:：\-–—]*\s*${value}`,
@@ -202,7 +204,7 @@ export function extractMilestoneBudget(
     : { value: null, confidence: 0 };
 }
 
-const explicitProgressPattern = /(?:\b(?:weekly|bi[\s-]?weekly|monthly|quarterly|annual|yearly|status|progress|project|development|milestone|completion|delivery|final)\s+(?:updates?|reports?)\b|\b(?:week|month|quarter|year|milestone|phase|stage)\s*#?\d+\s*(?:updates?|reports?|completed|complete|delivered)\b|\bq[1-4]\s+(?:updates?|reports?)\b|\b(?:update|report)\s*#\s*\d+\b|周报|双周报|月报|季报|年报|状态更新|(?:项目|工作)?进展(?:更新|报告)|进度(?:更新|报告)|项目更新|里程碑(?:报告|更新|进展)|里程碑\s*[#第]?[一二三四五六七八九十\d]+\s*(?:已完成|完成|已交付)|结项报告|完结报告|完成报告|交付报告)/i;
+const explicitProgressPattern = /(?:\b(?:weekly|bi[\s-]?weekly|monthly|quarterly|annual|yearly|status|progress|project|development|milestone|completion|delivery|final|test|testing)\s+(?:updates?|reports?)\b|\b(?:week|month|quarter|year|milestone|phase|stage)\s*#?\d+\s*(?:updates?|reports?|completed|complete|delivered)\b|\bq[1-4]\s+(?:updates?|reports?)\b|\b(?:update|report)\s*#\s*\d+\b|周报|双周报|月报|季报|年报|状态更新|(?:项目|工作)?进展(?:更新|报告)|进度(?:更新|报告)|项目更新|里程碑(?:报告|更新|进展)|里程碑\s*[#第]?[一二三四五六七八九十\d]+\s*(?:已完成|完成|已交付)|结项报告|完结报告|完成报告|交付报告)/i;
 
 export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {
   const text = stripForumHtml(cooked);
@@ -262,7 +264,7 @@ export function progressUpdateCategoryLabel(category: ProgressUpdateCategory, lo
 export function isMeaningfulProgressUpdate(cooked = '') {
   const text = stripForumHtml(cooked);
   if (isProposalScopeRevision(text)) return false;
-  if (explicitProgressPattern.test(text)) return true;
+  if (explicitProgressPattern.test(text) || isCompletedTestRun(text)) return true;
   if (text.length < 160) return false;
 
   const signals = [

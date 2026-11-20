@@ -8,6 +8,7 @@ export type ProposalOverride = {
   budgetLabel?: string;
   budgetLabelTranslations?: { zh: string; en: string };
   overviewObjective?: { zh: string; en: string };
+  overviewMilestones?: NonNullable<ProposalOverride['overview']>['milestones'];
   milestoneDescriptionZhByTitle?: Record<string, string>;
   milestoneTitleZhByTitle?: Record<string, string>;
   projectType?: string;
@@ -46,6 +47,87 @@ export type ProposalOverride = {
 };
 
 export const proposalOverridesById: Record<string, ProposalOverride> = {
+  // Reviewed plan only; retain the live objective/title and omit per-stage amounts.
+  // Source: https://talk.nervos.org/t/11262, reviewed 2026-11-20.
+  '11262': {
+    "budgetLabel": "$10,925",
+    "milestoneStructureZh": "8 段执行计划（日期暂定；不代表逐段付款）",
+    "milestoneStructureEn": "8 execution stages (tentative dates; not a payment schedule)",
+    "overviewMilestones": [
+      {
+        "title": "Plan, open call and selection (December 2026)",
+        "titleEn": "Plan, open call and selection (December 2026)",
+        "titleZh": "规划、公开招募与遴选（2026 年 12 月）",
+        "description": "Curriculum, instructors, venue and partners are confirmed. The open call (14 to 27 December) takes live products and strong plans, and selected teams are announced on Monday 4 January.  Selection: a live product or a strong execution plan. Progress is posted on Nervos Talk after planning and open call. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Curriculum, instructors, venue and partners are confirmed. The open call (14 to 27 December) takes live products and strong plans, and selected teams are announced on Monday 4 January.  Selection: a live product or a strong execution plan. Progress is posted on Nervos Talk after planning and open call. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "确认课程、讲师、场地与合作伙伴；12 月 14–27 日公开招募，接受已上线产品和有可信执行计划的新想法，2027 年 1 月 4 日公布入选团队。遴选门槛为已有可用产品或有力的执行计划。规划与公开招募完成后，在 Nervos Talk 发布进展。 日期暂定，可能随规划调整。",
+        "budget": null
+      },
+      {
+        "title": "Virtual phase (9 to 26 January)",
+        "titleEn": "Virtual phase (9 to 26 January)",
+        "titleZh": "线上阶段（2027 年 1 月 9–26 日）",
+        "description": "Starts five days after acceptance. Eight sessions, two a day over four days across three weeks: Saturday 9, Tuesday 12, Tuesday 19 and Tuesday 26 January. Up to 30 teams ship to mainnet.  Weekly mentor office hours support teams between sessions. Every virtual session is recorded and added to the Umojaverse YouTube channel. Progress is posted on Nervos Talk when the virtual phase is complete. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Starts five days after acceptance. Eight sessions, two a day over four days across three weeks: Saturday 9, Tuesday 12, Tuesday 19 and Tuesday 26 January. Up to 30 teams ship to mainnet.  Weekly mentor office hours support teams between sessions. Every virtual session is recorded and added to the Umojaverse YouTube channel. Progress is posted on Nervos Talk when the virtual phase is complete. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "录取五天后启动。1 月 9、12、19、26 日共开展八场课程，每天两场、分布于三周，最多 30 支团队向主网上线推进。各场线上课程录制后发布至 Umojaverse 的 YouTube 频道，课间提供每周导师答疑。线上阶段完成后，在 Nervos Talk 发布进展。 日期暂定，可能随规划调整。",
+        "budget": null
+      },
+      {
+        "title": "Mainnet submission (27 to 28 January)",
+        "titleEn": "Mainnet submission (27 to 28 January)",
+        "titleZh": "主网提交（2027 年 1 月 27–28 日）",
+        "description": "Two extra days to deploy to mainnet and submit. Beta testers are not required yet.  To enter the hackerhouse, a team must have deployed its product to CKB mainnet and submitted it by Thursday 28 January. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Two extra days to deploy to mainnet and submit. Beta testers are not required yet.  To enter the hackerhouse, a team must have deployed its product to CKB mainnet and submitted it by Thursday 28 January. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "提供额外两天完成主网部署并提交。参加 Hackerhouse 的产品必须在 1 月 28 日前部署到 CKB 主网并提交；此阶段尚不要求具备 beta 测试用户。 日期暂定，可能随规划调整。",
+        "budget": null
+      },
+      {
+        "title": "Review and acceptance (29 to 31 January)",
+        "titleEn": "Review and acceptance (29 to 31 January)",
+        "titleZh": "审核与录取（2027 年 1 月 29–31 日）",
+        "description": "Two days of review, then hackerhouse teams are announced on Sunday 31 January.  If more than 15 teams qualify, places go by application score and the strength of the live product. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Two days of review, then hackerhouse teams are announced on Sunday 31 January.  If more than 15 teams qualify, places go by application score and the strength of the live product. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "进行两天审核，并于 1 月 31 日公布 Hackerhouse 入选团队。若合格团队超过 15 支，按申请评分和已上线产品质量分配名额；入场前须通过主网部署门槛。 日期暂定，可能随规划调整。",
+        "budget": null
+      },
+      {
+        "title": "Preparation and travel (1 to 5 February)",
+        "titleEn": "Preparation and travel (1 to 5 February)",
+        "titleZh": "筹备与出行（2027 年 2 月 1–5 日）",
+        "description": "Four days to gather beta users and prepare, with travel on Friday 5 February. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Four days to gather beta users and prepare, with travel on Friday 5 February. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "用四天招募 beta 用户并做准备，2 月 5 日出发前往活动地点。 日期暂定，可能随规划调整。",
+        "budget": null
+      },
+      {
+        "title": "Hackerhouse by Lake Victoria (Saturday 6 to Sunday 7 February)",
+        "titleEn": "Hackerhouse by Lake Victoria (Saturday 6 to Sunday 7 February)",
+        "titleZh": "维多利亚湖畔 Hackerhouse（2027 年 2 月 6–7 日）",
+        "description": "Up to 15 teams, with pitches and prizes.  Day 1, Saturday 6 February: building, mentor rounds and an evening checkpoint. Day 2, Sunday 7 February: final polish, demos and pitches, judging, results and prizes. A prize requires on-chain activity from at least 5 distinct beta users who actually use the product, not team members testing themselves, verified with transaction links and tester confirmation. Prizes are paid in full once the hackerhouse results are verified. Hackerhouse results are posted on Nervos Talk; physical sessions are published on YouTube. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Up to 15 teams, with pitches and prizes.  Day 1, Saturday 6 February: building, mentor rounds and an evening checkpoint. Day 2, Sunday 7 February: final polish, demos and pitches, judging, results and prizes. A prize requires on-chain activity from at least 5 distinct beta users who actually use the product, not team members testing themselves, verified with transaction links and tester confirmation. Prizes are paid in full once the hackerhouse results are verified. Hackerhouse results are posted on Nervos Talk; physical sessions are published on YouTube. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "最多 15 支、每支三人的团队参加两天活动。2 月 6 日开展构建、导师巡回辅导与晚间检查；2 月 7 日完成打磨、演示、路演、评审并公布结果。获奖须证明至少 5 位不同 beta 用户的真实链上使用，不能以团队成员自测代替；主办方通过交易链接和测试者确认核验。奖金在活动结果核验后全额支付。在 Nervos Talk 发布活动结果进展；现场课程录制后发布至 YouTube。 日期暂定，可能随规划调整。",
+        "budget": null
+      },
+      {
+        "title": "Follow-up month (8 February to 12 March)",
+        "titleEn": "Follow-up month (8 February to 12 March)",
+        "titleZh": "后续支持（2027 年 2 月 8 日至 3 月 12 日）",
+        "description": "Mentor support, a 30-day live check and a closing showcase.  Weekly clinics and introductions to funders and ecosystem programmes. A 30-day live check on Tuesday 9 March confirms products are still live and in use, followed by a closing X Space on Friday 12 March. Success metric: at least 80% of hackerhouse products still live at the 30-day check. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Mentor support, a 30-day live check and a closing showcase.  Weekly clinics and introductions to funders and ecosystem programmes. A 30-day live check on Tuesday 9 March confirms products are still live and in use, followed by a closing X Space on Friday 12 March. Success metric: at least 80% of hackerhouse products still live at the 30-day check. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "持续提供导师支持、每周产品和技术及用户增长答疑，并对接资助方和生态项目。3 月 9 日进行 30 天在线检查，确认产品仍在线且有人使用；3 月 12 日举办收官 X Space 展示进展。目标是至少 80% 的 Hackerhouse 产品在 30 天检查时仍在线。 日期暂定，可能随规划调整。",
+        "budget": null
+      },
+      {
+        "title": "Final report (by Wednesday 24 March)",
+        "titleEn": "Final report (by Wednesday 24 March)",
+        "titleZh": "最终报告（2027 年 3 月 24 日前）",
+        "description": "Final report by Wednesday 24 March, posted on Nervos Talk. Public deliverables also include builder write-ups, all eight virtual sessions and the hackerhouse sessions on YouTube, and about 15 team videos published on X, YouTube and TikTok. Dates are tentative; January–March dates are in 2027.",
+        "descriptionEn": "Final report by Wednesday 24 March, posted on Nervos Talk. Public deliverables also include builder write-ups, all eight virtual sessions and the hackerhouse sessions on YouTube, and about 15 team videos published on X, YouTube and TikTok. Dates are tentative; January–March dates are in 2027.",
+        "descriptionZh": "3 月 24 日前发布最终报告，并在 Nervos Talk 更新。公开交付还包括参与者文章、全部八场线上课程与现场课程的 YouTube 录像，以及约 15 段团队视频，发布至 X、YouTube 和 TikTok。 日期暂定，可能随规划调整。",
+        "budget": null
+      }
+    ]
+  },
   // Reviewed against https://talk.nervos.org/t/11258 (2026-11-19).
   '11258': {
     "budgetLabel": "$9,500",
@@ -3039,20 +3121,21 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
   },
 };
 
-// Apply a reviewed translation to its named source milestone without replacing
-// the live overview, English text, budgets, timing, or other milestones.
+// Apply an explicit reviewed roadmap, or corrections to named milestones.
+// Preserve the live objective and all unrelated proposal fields.
 export function applyProposalMilestoneCorrections<T extends {
   id: string;
   overview?: { milestones: Array<{ title: string; descriptionZh?: string }> };
 }>(proposal: T): T {
+  const reviewedMilestones = proposalOverridesById[proposal.id]?.overviewMilestones;
   const corrections = proposalOverridesById[proposal.id]?.milestoneDescriptionZhByTitle;
   const titles = proposalOverridesById[proposal.id]?.milestoneTitleZhByTitle;
-  if ((!corrections && !titles) || !proposal.overview) return proposal;
+  if ((!reviewedMilestones && !corrections && !titles) || !proposal.overview) return proposal;
   return {
     ...proposal,
     overview: {
       ...proposal.overview,
-      milestones: proposal.overview.milestones.map((milestone) => {
+      milestones: (reviewedMilestones ?? proposal.overview.milestones).map((milestone) => {
         const descriptionZh = corrections?.[milestone.title];
         const titleZh = titles?.[milestone.title];
         return descriptionZh || titleZh
