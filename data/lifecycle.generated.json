@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-21T12:44:56.171Z",
+  "checkedAt": "2026-11-21T19:51:22.554Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -226,7 +226,10 @@
         "wyltek": "2026-11-21T02:49:50.000Z",
         "ticoworld": "2026-11-21T00:09:38.000Z",
         "fidelcoder": "2026-11-21T05:27:31.000Z",
-        "tea": "2026-11-20T23:36:15.000Z"
+        "tea": "2026-11-20T23:36:15.000Z",
+        "ayoub_lesfer": "2026-11-21T19:20:59.000Z",
+        "neon.bit": "2026-11-21T15:01:55.000Z",
+        "ebubedev": "2026-11-21T14:49:34.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
@@ -239,7 +242,10 @@
         "ticoworld",
         "wyltek",
         "tea",
-        "fidelcoder"
+        "fidelcoder",
+        "ebubedev",
+        "neon.bit",
+        "ayoub_lesfer"
       ]
     },
     "11262": {
@@ -256,7 +262,8 @@
         "streets": "2026-11-20T10:42:36.000Z",
         "wuododhis": "2026-11-20T10:24:32.000Z",
         "kashlynne_mumbe": "2026-11-21T07:51:02.000Z",
-        "ethsly": "2026-11-21T07:50:42.000Z"
+        "ethsly": "2026-11-21T07:50:42.000Z",
+        "ebubedev": "2026-11-21T16:25:01.000Z"
       },
       "seenBeforeDeadline": [
         "jeremic_arose",
@@ -270,7 +277,8 @@
         "wuododhis",
         "streets",
         "ethsly",
-        "kashlynne_mumbe"
+        "kashlynne_mumbe",
+        "ebubedev"
       ]
     }
   }
