@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-20T22:51:14.761Z",
+  "checkedAt": "2026-11-21T04:00:57.056Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -216,7 +216,10 @@
         "janx": "2026-11-20T00:54:14.000Z",
         "ajay": "2026-11-20T22:11:54.000Z",
         "jedi_dtechmaker": "2026-11-20T19:58:44.000Z",
-        "fillmyckbag": "2026-11-20T19:23:43.000Z"
+        "fillmyckbag": "2026-11-20T19:23:43.000Z",
+        "wyltek": "2026-11-21T02:49:50.000Z",
+        "ticoworld": "2026-11-21T00:09:38.000Z",
+        "tung_pham": "2026-11-20T23:36:15.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
@@ -225,7 +228,10 @@
         "janx",
         "fillmyckbag",
         "jedi_dtechmaker",
-        "ajay"
+        "ajay",
+        "tung_pham",
+        "ticoworld",
+        "wyltek"
       ]
     },
     "11262": {
