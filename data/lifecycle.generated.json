@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-21T04:00:57.056Z",
+  "checkedAt": "2026-11-21T12:44:56.171Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -163,7 +163,8 @@
         "birdmannn": "2026-11-20T13:42:16.000Z",
         "broihan": "2026-11-20T09:32:30.000Z",
         "charlie_kong_b": "2026-11-20T19:26:06.000Z",
-        "wuododhis": "2026-11-20T17:22:45.000Z"
+        "wuododhis": "2026-11-20T17:22:45.000Z",
+        "fidelcoder": "2026-11-21T05:24:35.000Z"
       },
       "seenBeforeDeadline": [
         "ticoworld",
@@ -186,7 +187,8 @@
         "birdmannn",
         "code3ks",
         "wuododhis",
-        "charlie_kong_b"
+        "charlie_kong_b",
+        "fidelcoder"
       ]
     },
     "11244": {
@@ -201,10 +203,14 @@
     "11254": {
       "postId": 27533,
       "timestamps": {
-        "ophiuchus": "2026-11-18T15:43:12.000Z"
+        "ophiuchus": "2026-11-18T15:43:12.000Z",
+        "charlie_kong_b": "2026-11-21T09:09:58.000Z",
+        "tiago_morcego": "2026-11-21T05:46:59.000Z"
       },
       "seenBeforeDeadline": [
-        "ophiuchus"
+        "ophiuchus",
+        "tiago_morcego",
+        "charlie_kong_b"
       ]
     },
     "11258": {
@@ -219,7 +225,8 @@
         "fillmyckbag": "2026-11-20T19:23:43.000Z",
         "wyltek": "2026-11-21T02:49:50.000Z",
         "ticoworld": "2026-11-21T00:09:38.000Z",
-        "tung_pham": "2026-11-20T23:36:15.000Z"
+        "fidelcoder": "2026-11-21T05:27:31.000Z",
+        "tea": "2026-11-20T23:36:15.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
@@ -229,9 +236,10 @@
         "fillmyckbag",
         "jedi_dtechmaker",
         "ajay",
-        "tung_pham",
         "ticoworld",
-        "wyltek"
+        "wyltek",
+        "tea",
+        "fidelcoder"
       ]
     },
     "11262": {
@@ -246,7 +254,9 @@
         "bratipah": "2026-11-19T19:59:47.000Z",
         "xbeach": "2026-11-19T19:08:28.000Z",
         "streets": "2026-11-20T10:42:36.000Z",
-        "wuododhis": "2026-11-20T10:24:32.000Z"
+        "wuododhis": "2026-11-20T10:24:32.000Z",
+        "kashlynne_mumbe": "2026-11-21T07:51:02.000Z",
+        "ethsly": "2026-11-21T07:50:42.000Z"
       },
       "seenBeforeDeadline": [
         "jeremic_arose",
@@ -258,7 +268,9 @@
         "xbeach",
         "bratipah",
         "wuododhis",
-        "streets"
+        "streets",
+        "ethsly",
+        "kashlynne_mumbe"
       ]
     }
   }
