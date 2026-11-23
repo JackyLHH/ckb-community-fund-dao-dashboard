@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-23T02:00:54.882Z",
+  "checkedAt": "2026-11-23T21:37:00.436Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -165,7 +165,11 @@
         "charlie_kong_b": "2026-11-20T19:26:06.000Z",
         "wuododhis": "2026-11-20T17:22:45.000Z",
         "fidelcoder": "2026-11-21T05:24:35.000Z",
-        "maduforo_goodluck": "2026-11-21T19:53:52.000Z"
+        "maduforo_goodluck": "2026-11-21T19:53:52.000Z",
+        "hani": "2026-11-23T19:38:10.000Z",
+        "drey": "2026-11-23T11:35:42.000Z",
+        "quinn": "2026-11-23T14:33:02.000Z",
+        "ogechi": "2026-11-23T14:28:10.000Z"
       },
       "seenBeforeDeadline": [
         "ticoworld",
@@ -190,7 +194,13 @@
         "wuododhis",
         "charlie_kong_b",
         "fidelcoder",
-        "maduforo_goodluck"
+        "maduforo_goodluck",
+        "drey",
+        "jeremytechie",
+        "ogechi",
+        "quinn",
+        "world_malkova",
+        "hani"
       ]
     },
     "11244": {
@@ -207,12 +217,14 @@
       "timestamps": {
         "ophiuchus": "2026-11-18T15:43:12.000Z",
         "charlie_kong_b": "2026-11-21T09:09:58.000Z",
-        "tiago_morcego": "2026-11-21T05:46:59.000Z"
+        "tiago_morcego": "2026-11-21T05:46:59.000Z",
+        "longdevbf": "2026-11-23T16:54:12.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
         "tiago_morcego",
-        "charlie_kong_b"
+        "charlie_kong_b",
+        "longdevbf"
       ]
     },
     "11258": {
@@ -232,7 +244,19 @@
         "ayoub_lesfer": "2026-11-21T19:20:59.000Z",
         "neon.bit": "2026-11-21T15:01:55.000Z",
         "ebubedev": "2026-11-21T14:49:34.000Z",
-        "truthixify": "2026-11-22T01:43:26.000Z"
+        "truthixify": "2026-11-22T01:43:26.000Z",
+        "robaireth": "2026-11-23T15:39:46.000Z",
+        "arthurzhang": "2026-11-23T15:38:32.000Z",
+        "kaylah": "2026-11-23T20:08:14.000Z",
+        "eyeam": "2026-11-23T17:11:24.000Z",
+        "psawyerberlin": "2026-11-23T10:05:20.000Z",
+        "code3ks": "2026-11-23T19:19:34.000Z",
+        "longdevbf": "2026-11-23T15:15:29.000Z",
+        "linet_mugwanja": "2026-11-23T15:08:46.000Z",
+        "jeremic_arose": "2026-11-23T13:58:48.000Z",
+        "jnr6": "2026-11-23T10:49:55.000Z",
+        "broihan": "2026-11-23T10:19:39.000Z",
+        "lusocryptolabs": "2026-11-23T10:02:57.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
@@ -249,7 +273,20 @@
         "ebubedev",
         "neon.bit",
         "ayoub_lesfer",
-        "truthixify"
+        "truthixify",
+        "lusocryptolabs",
+        "psawyerberlin",
+        "broihan",
+        "jnr6",
+        "jeremic_arose",
+        "linet_mugwanja",
+        "longdevbf",
+        "arthurzhang",
+        "robaireth",
+        "eyeam",
+        "code3ks",
+        "birdmannn",
+        "kaylah"
       ]
     },
     "11262": {
@@ -269,7 +306,18 @@
         "ethsly": "2026-11-21T07:50:42.000Z",
         "ebubedev": "2026-11-21T16:25:01.000Z",
         "salmandev": "2026-11-22T01:26:16.000Z",
-        "victor_okenwa": "2026-11-22T23:30:14.000Z"
+        "victor_okenwa": "2026-11-22T23:30:14.000Z",
+        "eoncloud": "2026-11-23T16:59:54.000Z",
+        "tolgayazan": "2026-11-23T16:01:26.000Z",
+        "kevtam515": "2026-11-23T13:29:31.000Z",
+        "jedi_dtechmaker": "2026-11-23T19:49:54.000Z",
+        "code3ks": "2026-11-23T19:19:59.000Z",
+        "longdevbf": "2026-11-23T16:53:56.000Z",
+        "ajay": "2026-11-23T13:54:10.000Z",
+        "kimani": "2026-11-23T13:39:22.000Z",
+        "fillmyckbag": "2026-11-23T13:31:41.000Z",
+        "zynor": "2026-11-23T12:36:55.000Z",
+        "mulandi_cecilia": "2026-11-23T11:39:40.000Z"
       },
       "seenBeforeDeadline": [
         "jeremic_arose",
@@ -286,7 +334,18 @@
         "kashlynne_mumbe",
         "ebubedev",
         "salmandev",
-        "victor_okenwa"
+        "victor_okenwa",
+        "mulandi_cecilia",
+        "zynor",
+        "kevtam515",
+        "fillmyckbag",
+        "kimani",
+        "ajay",
+        "tolgayazan",
+        "longdevbf",
+        "eoncloud",
+        "code3ks",
+        "jedi_dtechmaker"
       ]
     }
   }
