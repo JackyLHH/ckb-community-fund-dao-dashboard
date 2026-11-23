@@ -1,0 +1,82 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { build } from 'esbuild';
+import { isMeaningfulProgressUpdate, stripForumHtml, progressUpdatePosts } from '../lib/digest-activity.ts';
+import { isProposalProgressUpdate } from '../lib/proposal-progress.ts';
+import { selectForumProgressUpdates } from '../lib/proposal-update-title.ts';
+import { proposalOverridesById } from '../lib/proposal-overrides.ts';
+import { translateMissingProposalUpdates } from '../lib/proposal-update-translation.ts';
+const fixture = JSON.parse(await readFile(new URL('./fixtures/progress-evidence-nov23.json', import.meta.url), 'utf8'));
+const testReport = JSON.parse(await readFile(new URL('./fixtures/cellula-test-report.json', import.meta.url), 'utf8'));
+const check = (cooked, expected) => {
+ assert.equal(isMeaningfulProgressUpdate(cooked), expected, 'Digest: ' + stripForumHtml(cooked).slice(0,110));
+ assert.equal(isProposalProgressUpdate(stripForumHtml(cooked)), expected, 'Website: ' + stripForumHtml(cooked).slice(0,110));
+};
+for (const post of fixture.twine) check(post.cooked, false);
+for (const post of [...fixture.rivet, fixture.cellula, testReport]) check(post.cooked, true);
+for (const text of [
+ 'We will order servers next week. Milestone 1 will start after deployment. See our GitHub testnet release.',
+ 'Servers will be ordered after approval.',
+ 'We will publish a weekly report after Milestone 3 is completed.',
+ 'Milestone 1 will be completed next month; see the GitHub release plan.',
+ 'If we ran all three recovery tests and all three passed on testnet, would you approve?', 'If servers are ordered, setup starts now.',
+ 'We have not purchased the servers.', 'Have we purchased servers?',
+ 'Setup starts tomorrow.', 'Deployment has not started.',
+ '服务器尚未订购，计划下周付款并开始部署。',
+]) check('<p>'+text+'</p>', false);
+for (const text of [
+ 'Servers ordered on 20 November: two KVM 8 machines, paid for 24 months up front.',
+ 'We have purchased two servers.', 'We paid for hosting.', 'Deployment has started.',
+ '已订购两台服务器，已付款，部署现在开始。',
+]) check('<p>'+text+'</p>', true);
+for (const heading of ['Weekly report', 'Biweekly update', 'Monthly report', 'Test report']) check('<h2>'+heading+'</h2><p>We completed the testnet release and verified the deployment.</p>',true);
+const quoted='<blockquote>'+fixture.cellula.cooked+'</blockquote><p>Is this the plan?</p>';
+assert.equal(isMeaningfulProgressUpdate(quoted),false);
+assert.equal(selectForumProgressUpdates([{...fixture.cellula,cooked:quoted}],'LusoCryptoLabs','11089','dis-cellula').length,0);
+const cellula = selectForumProgressUpdates([fixture.cellula], 'LusoCryptoLabs', '11089', 'dis-cellula');
+assert.equal(cellula.length,1); assert.equal(cellula[0].date,'2026-11-20T01:46:03.522Z'); assert.match(cellula[0].url,/11089\/23$/);
+assert.equal(selectForumProgressUpdates([{...fixture.cellula,username:'someone-else'}],'LusoCryptoLabs','11089','dis-cellula').length,0);
+const reviewed=proposalOverridesById['11089'].updates.find(row=>row.url.endsWith('/23'));
+assert.equal(reviewed.author,'LusoCryptoLabs'); assert.equal(reviewed.date,fixture.cellula.created_at);
+assert.ok(stripForumHtml(fixture.cellula.cooked).includes(reviewed.titleZh)); assert.ok(stripForumHtml(fixture.cellula.cooked).includes(reviewed.titleEn));
+assert.equal(proposalOverridesById['11089'].budgetLabel,'$22,258.48');
+const translated=await translateMissingProposalUpdates({id:'11089',updates:[reviewed]},()=>{throw Error('Source bilingual text must not be machine-translated');});
+assert.equal(translated.updates[0].titleZh,reviewed.titleZh);
+const bundled=await build({entryPoints:[new URL('../api/subscription.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'esm',write:false,footer:{js:'export { buildProgressDigestTopics, digestMessage, telegramDigestMessages };'}});
+const api=await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`);
+const oldFetch=globalThis.fetch;let selectedSource,sends=0;
+globalThis.fetch=async input=>{
+ const url=new URL(input instanceof Request?input.url:String(input));
+ if(url.host==='talk.nervos.org')return Response.json(selectedSource);
+ if(url.pathname==='/api/translation')return Response.json({ok:false});
+ if(url.host==='api.resend.com'||url.host==='api.telegram.org')sends++;
+ throw Error('Unexpected offline request '+url.host+url.pathname);
+};
+async function replay(id,author,source,start,end,expected){
+ const original={topic_id:id,posts_count:1,last_posted_at:start}; const preserved=structuredClone(original);
+ const posts=[{post_number:1,username:author,cooked:'<p>Original proposal</p>',created_at:'2026-11-01T00:00:00Z'},...source.filter(p=>Date.parse(p.created_at)<=Date.parse(end))];
+ selectedSource={highest_post_number:posts.at(-1).post_number,post_stream:{posts}};
+ const topic={id,title:'[DIS] Historical offline replay',slug:'replay',created_at:'2026-11-01T00:00:00Z',last_posted_at:end,posts_count:posts.length};
+ const result=await api.buildProgressDigestTopics(topic,original,Date.parse(start));
+ assert.deepEqual(result.map(item=>item.latestPostNumber),expected);
+ assert.deepEqual(progressUpdatePosts(posts,original,Date.parse(start)).map(p=>p.post_number),expected);
+ assert.deepEqual(original,preserved,'Historical state must not be modified');
+ for(const item of result){
+  assert.equal(item.latestPostCreatedAt,source.find(p=>p.post_number===item.latestPostNumber).created_at);
+  for(const locale of ['zh','en']){
+   const mail=api.digestMessage(locale,[],[item],'https://offline.example/unsubscribe');
+   const tg=api.telegramDigestMessages(locale,[],[item]).join('\n');
+   for(const content of [mail.html,mail.text,tg]) assert.ok(content.includes('/'+item.latestPostNumber));
+  }
+ }
+ return result;
+}
+try{
+ const result=await replay(11089,'LusoCryptoLabs',[fixture.cellula,{...fixture.cellula,post_number:24,username:'other'}],'2026-11-19T08:00:00Z','2026-11-20T08:00:00Z',[23]);
+ assert.equal(result[0].budget,'$22,258.48');
+ await replay(11228,'ebubedev',fixture.twine,'2026-11-19T08:00:00Z','2026-11-20T08:00:00Z',[]);
+ await replay(11228,'ebubedev',fixture.twine,'2026-11-20T08:00:00Z','2026-11-21T08:00:00Z',[]);
+ await replay(10739,'Jedi_dtechmaker',fixture.rivet,'2026-11-21T08:00:00Z','2026-11-22T08:00:00Z',[17]);
+ assert.equal(sends,0);
+}finally{globalThis.fetch=oldFetch;}
+console.log('Validated shared observed-work eligibility, Twine #16/#17 exclusion, author-owned bilingual Cellula #23, RIVET delivery and historical digest replay (offline, zero sends/state writes).');

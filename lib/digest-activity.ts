@@ -1,4 +1,4 @@
-import { isCompletedTestRun } from './proposal-test-report.js';
+import { isProposalProgressUpdate } from './proposal-progress-evidence.js';
 import { isProposalScopeRevision } from './proposal-revision.js';
 export { isProposalScopeRevision };
 export const DIGEST_LOOKBACK_MS = 24 * 60 * 60 * 1_000;
@@ -204,8 +204,6 @@ export function extractMilestoneBudget(
     : { value: null, confidence: 0 };
 }
 
-const explicitProgressPattern = /(?:\b(?:weekly|bi[\s-]?weekly|monthly|quarterly|annual|yearly|status|progress|project|development|milestone|completion|delivery|final|test|testing)\s+(?:updates?|reports?)\b|\b(?:week|month|quarter|year|milestone|phase|stage)\s*#?\d+\s*(?:updates?|reports?|completed|complete|delivered)\b|\bq[1-4]\s+(?:updates?|reports?)\b|\b(?:update|report)\s*#\s*\d+\b|周报|双周报|月报|季报|年报|状态更新|(?:项目|工作)?进展(?:更新|报告)|进度(?:更新|报告)|项目更新|里程碑(?:报告|更新|进展)|里程碑\s*[#第]?[一二三四五六七八九十\d]+\s*(?:已完成|完成|已交付)|结项报告|完结报告|完成报告|交付报告)/i;
-
 export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {
   const text = stripForumHtml(cooked);
   // A mention of a milestone (or a change to its planned scope) is not a
@@ -262,18 +260,10 @@ export function progressUpdateCategoryLabel(category: ProgressUpdateCategory, lo
 }
 
 export function isMeaningfulProgressUpdate(cooked = '') {
-  const text = stripForumHtml(cooked);
-  if (isProposalScopeRevision(text)) return false;
-  if (explicitProgressPattern.test(text) || isCompletedTestRun(text)) return true;
-  if (text.length < 160) return false;
-
-  const signals = [
-    /\b(?:completed|finished|delivered|released|shipped|launched|deployed|implemented|merged|published|now live)\b|(?:已完成|完成了|已交付|已发布|已上线|已部署|已实现|已合并)/i.test(text),
-    /\b(?:github|commit|pull request|release|testnet|mainnet|demo|changelog|transaction|explorer)\b|(?:测试网|主网|演示|代码仓库|版本|交易哈希)/i.test(text),
-    /\b(?:week|month|milestone|phase|stage)\s*#?\d+\b|\bnext steps?\b|(?:第[一二三四五六七八九十\d]+(?:周|月|阶段|里程碑)|下一步)/i.test(text),
-    /href=["']https?:\/\//i.test(cooked) || /<(?:ul|ol|img|pre|code)\b/i.test(cooked),
-  ].filter(Boolean).length;
-  return signals >= 3;
+  // Quoted reports and code examples are not work performed by this post's
+  // author. Feed the same unquoted evidence to website/digest eligibility.
+  const source = cooked.replace(/<(blockquote|pre|script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  return isProposalProgressUpdate(stripForumHtml(source));
 }
 
 export function progressUpdatePosts(
