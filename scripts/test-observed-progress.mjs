@@ -22,6 +22,8 @@ for (const text of [
  'If we ran all three recovery tests and all three passed on testnet, would you approve?', 'If servers are ordered, setup starts now.',
  'We have not purchased the servers.', 'Have we purchased servers?',
  'Setup starts tomorrow.', 'Deployment has not started.',
+ 'When deployment is completed, the weekly report is published.',
+ 'Deployment may have been completed; we still need confirmation.',
  '服务器尚未订购，计划下周付款并开始部署。',
 ]) check('<p>'+text+'</p>', false);
 for (const text of [
