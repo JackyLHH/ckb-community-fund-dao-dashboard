@@ -1,7 +1,9 @@
 name: Sync Metaforo votes
 on:
   schedule:
-    - cron: '17,47 * * * *'
+    # Re-register the half-hour schedule under the active maintainer.
+    # Native schedule delivery is best-effort; monitor actual collector steps.
+    - cron: '23,53 * * * *'
   workflow_dispatch:
 permissions:
   contents: write
