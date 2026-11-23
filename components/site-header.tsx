@@ -7,6 +7,7 @@ import { I18nText } from '@/components/i18n-text';
 import { LanguageSwitch } from '@/components/language-switch';
 import { ThemeSwitch } from '@/components/theme-switch';
 import { useLocale } from '@/lib/use-locale';
+import { CollectionFreshnessNotice } from '@/components/collection-freshness-notice';
 
 const pages = [
   { href: '/', zh: '总览', en: 'Overview' },
@@ -57,5 +58,6 @@ export function SiteHeader() {
         <a href="https://talk.nervos.org/c/daos-funding/ckb-community-fund-dao/65" target="_blank" rel="noreferrer" className="touch-target flex items-center gap-2 rounded-xl px-4 hover:bg-secondary">Nervos Talk <ArrowUpRight className="size-4" aria-hidden="true" /><span className="sr-only">{t('在新标签页打开', 'opens in a new tab')}</span></a>
       </nav>
     </header>
+    <CollectionFreshnessNotice />
   </>;
 }

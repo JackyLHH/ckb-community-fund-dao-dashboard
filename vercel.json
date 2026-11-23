@@ -10,6 +10,9 @@
     },
     "api/translation.ts": {
       "maxDuration": 30
+    },
+    "api/collection-health.ts": {
+      "maxDuration": 20
     }
   },
   "crons": [

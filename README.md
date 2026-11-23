@@ -22,6 +22,22 @@ npm test
 
 The sync script reads the public Nervos Talk Discourse JSON endpoints and combines them with evidence-based overrides from the funded proposal list. Review override notes before publishing a new snapshot. Missing or conflicting values must stay visibly unverified.
 
+### Collection freshness and schedule recovery
+
+The public collection workflow is configured for minute 23 and 53 of each hour. GitHub scheduled delivery is best-effort; a configured cron is not evidence that a run occurred. Successful manual recovery does not establish that scheduled triggering has recovered.
+
+`GET /api/collection-health` reads public Actions run and job metadata without credentials or data writes. It reports separate last-success times for votes, governance events, and treasury, taken from the matching successful collection steps. `checkedAt` is the monitor read time, never a replacement for a collection timestamp or a proposal's historical `verifiedAt`. The API distinguishes `scheduleState` from `sourceStates`, so a fresh manual scan cannot hide a missing native schedule. Missing/invalid/future evidence is unverified. Failed steps retain the previous successful times.
+
+A 90-minute freshness limit allows three planned half-hour windows. The site displays a bilingual warning when any source or native schedule is stale, an attempt failed, or monitoring is unavailable. The API has a five-minute cache and bounded timeouts; the browser reevaluates age on visible-page checks. No-change collection runs still have Actions records and do not need synthetic snapshot commits. Manual reviews and historical results remain unchanged.
+
+Operational checks:
+
+1. Read `/api/collection-health` and its source run links. A monitor outage is not evidence that collection succeeded.
+2. Inspect workflow state, default branch, queued/running jobs, permissions and individual collection step results. Public standard Ubuntu runners do not consume private-repository compute minutes. A missing run has no collector error log and must not be diagnosed as a source DNS failure.
+3. During authorized maintenance, `gh workflow run sync-votes.yml --repo JackyLHH/ckb-community-fund-dao-dashboard --ref main` can recover a scan. Read-only health audits must not dispatch workflows or call `/api/cron/digest`.
+4. To accept native scheduling recovery, require multiple new `event: schedule` runs with successful collector steps. Record actual creation and completion times, even when no data changed. Never close an incident based only on a manual run or a new cron expression.
+5. If native delivery remains unreliable, use a separately authorized external scheduler with a repository-scoped Actions-write credential. The current Vercel Hobby plan cannot provide half-hour Cron jobs. Do not move a broad personal GitHub login token into a cloud scheduler. Keep the existing digest schedule and delivery history intact.
+
 ### Automatic vote results
 
 `.github/workflows/sync-votes.yml` checks the public Metaforo Poll directory approximately every 30 minutes (GitHub may delay scheduled jobs). It matches each vote to its `[DIS]` source link and reads the rendered quorum card in Chromium, since the unauthenticated thread JSON endpoint is unreliable. Active votes remain active even when their provisional tally meets the thresholds; passed/rejected is published only after observing “Voting Closed”, checking both quorum and approval percentage.

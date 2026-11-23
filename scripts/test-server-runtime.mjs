@@ -35,6 +35,10 @@ try {
     }
     const response = await GET(new Request('https://example.test/api/subscription?action=digest'));
     assert.equal(response.status, 401);
+    const { GET: health } = await import('./api/collection-health.js');
+    const report = await (await health()).json();
+    assert.equal(report.available, false);
+    assert.equal(report.state, 'unknown');
   `);
   const result = spawnSync(process.execPath, [join(output, 'smoke.mjs')], { encoding: 'utf8', env: { PATH: process.env.PATH } });
   assert.equal(result.status, 0, `Compiled subscription function failed to start:\n${result.stderr}`);
