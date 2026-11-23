@@ -7,6 +7,17 @@ type TranslationResponse = { ok?: boolean; translation?: string };
 
 const translationsInFlight = new Map<string, Promise<string | null>>();
 
+// Only exact generic headings have a deterministic translation. Reviewed
+// English and longer source titles retain their existing precedence.
+const shortReportTitles = new Map<string, string>([
+  ['日报', 'Daily Report'],
+  ['周报', 'Weekly Report'],
+  ['双周报', 'Biweekly Report'],
+  ['月报', 'Monthly Report'],
+  ['季报', 'Quarterly Report'],
+  ['年报', 'Annual Report'],
+]);
+
 function containsChinese(value: string) {
   return /[\u3400-\u9fff]/u.test(value);
 }
@@ -82,9 +93,14 @@ export async function translateMissingProposalUpdates(
   if (!proposal.updates.length) return proposal;
   const updates = await Promise.all(proposal.updates.map(async (update) => {
     const source = update.title.trim();
-    let titleZh = update.titleZh?.trim() || (containsChinese(source) ? source : '');
-    let titleEn = update.titleEn?.trim() || (!containsChinese(source) ? source : '');
+    let titleZh = update.titleZh?.trim() ? update.titleZh : (containsChinese(source) ? source : '');
+    let titleEn = update.titleEn?.trim() ? update.titleEn : (!containsChinese(source) ? source : '');
     if (titleZh && titleEn) return update;
+
+    // Resolve exact source headings before any automatic cache/provider read.
+    // A complete titleEn above always wins, including reviewed long titles.
+    const fixedEnglish = !titleEn ? shortReportTitles.get(titleZh.trim()) : undefined;
+    if (fixedEnglish) return { ...update, titleZh, titleEn: fixedEnglish };
 
     const target: TargetLocale | null = titleEn && !titleZh ? 'zh' : titleZh && !titleEn ? 'en' : null;
     const sourceText = target === 'zh' ? titleEn : target === 'en' ? titleZh : '';
