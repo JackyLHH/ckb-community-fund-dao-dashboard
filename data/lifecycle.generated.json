@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-24T05:48:41.031Z",
+  "checkedAt": "2026-11-24T16:40:13.277Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -137,6 +137,14 @@
       "totalVotes": 113857181,
       "yesPercent": 100,
       "approved": true
+    },
+    {
+      "id": "discussion-ended:11244",
+      "kind": "discussion-ended",
+      "topicId": 11244,
+      "likes": 1,
+      "occurredAt": "2026-11-24T12:20:03.082Z",
+      "sourceUrl": "https://talk.nervos.org/t/dis-ckb-x-near-intents-building-a-cross-chain-bridge-and-multichain-swap-gateway/11244/1"
     }
   ],
   "discussions": {
@@ -252,63 +260,46 @@
         }
       }
     },
-    "11244": {
-      "postId": 27488,
-      "timestamps": {
-        "fillmyckbag": "2026-11-17T20:40:55.000Z"
-      },
-      "seenBeforeDeadline": [
-        "fillmyckbag"
-      ]
-    },
     "11254": {
       "postId": 27533,
-      "timestamps": {
-        "ophiuchus": "2026-11-18T15:43:12.000Z",
-        "charlie_kong_b": "2026-11-21T09:09:58.000Z",
-        "tiago_morcego": "2026-11-21T05:46:59.000Z",
-        "longdevbf": "2026-11-23T16:54:12.000Z"
-      },
       "seenBeforeDeadline": [
         "ophiuchus",
         "tiago_morcego",
         "charlie_kong_b",
-        "longdevbf"
-      ]
+        "longdevbf",
+        "psawyerberlin",
+        "ebubedev"
+      ],
+      "timestamps": {
+        "ophiuchus": "2026-11-18T15:43:12.000Z",
+        "charlie_kong_b": "2026-11-21T09:09:58.000Z",
+        "tiago_morcego": "2026-11-21T05:46:59.000Z",
+        "longdevbf": "2026-11-23T16:54:12.000Z",
+        "ebubedev": "2026-11-24T13:48:11.000Z",
+        "psawyerberlin": "2026-11-24T11:03:12.000Z"
+      },
+      "orderedUsers": [
+        "ophiuchus",
+        "tiago_morcego",
+        "charlie_kong_b",
+        "longdevbf",
+        "psawyerberlin",
+        "ebubedev"
+      ],
+      "verification": {
+        "status": "open",
+        "checkedAt": "2026-11-24T16:40:05.074Z",
+        "deadline": "2026-11-25T08:14:47.789Z",
+        "currentLikes": 6,
+        "listComplete": true,
+        "confirmedBefore": 6,
+        "confirmedAfter": 0,
+        "unresolvedUsers": [],
+        "issues": {}
+      }
     },
     "11258": {
       "postId": 27563,
-      "timestamps": {
-        "matt_ckb": "2026-11-19T16:47:59.000Z",
-        "ophiuchus": "2026-11-19T14:03:17.000Z",
-        "yeti": "2026-11-19T20:04:58.000Z",
-        "janx": "2026-11-20T00:54:14.000Z",
-        "ajay": "2026-11-20T22:11:54.000Z",
-        "jedi_dtechmaker": "2026-11-20T19:58:44.000Z",
-        "fillmyckbag": "2026-11-20T19:23:43.000Z",
-        "wyltek": "2026-11-21T02:49:50.000Z",
-        "ticoworld": "2026-11-21T00:09:38.000Z",
-        "fidelcoder": "2026-11-21T05:27:31.000Z",
-        "tea": "2026-11-20T23:36:15.000Z",
-        "ayoub_lesfer": "2026-11-21T19:20:59.000Z",
-        "neon.bit": "2026-11-21T15:01:55.000Z",
-        "ebubedev": "2026-11-21T14:49:34.000Z",
-        "truthixify": "2026-11-22T01:43:26.000Z",
-        "robaireth": "2026-11-23T15:39:46.000Z",
-        "arthurzhang": "2026-11-23T15:38:32.000Z",
-        "kaylah": "2026-11-23T20:08:14.000Z",
-        "eyeam": "2026-11-23T17:11:24.000Z",
-        "psawyerberlin": "2026-11-23T10:05:20.000Z",
-        "code3ks": "2026-11-23T19:19:34.000Z",
-        "longdevbf": "2026-11-23T15:15:29.000Z",
-        "linet_mugwanja": "2026-11-23T15:08:46.000Z",
-        "jeremic_arose": "2026-11-23T13:58:48.000Z",
-        "jnr6": "2026-11-23T10:49:55.000Z",
-        "broihan": "2026-11-23T10:19:39.000Z",
-        "lusocryptolabs": "2026-11-23T10:02:57.000Z",
-        "3m1n3nc3": "2026-11-24T01:04:16.000Z",
-        "web3legend": "2026-11-24T02:08:50.000Z"
-      },
       "seenBeforeDeadline": [
         "ophiuchus",
         "matt_ckb",
@@ -340,40 +331,88 @@
         "kaylah",
         "3m1n3nc3",
         "yuqi",
-        "web3legend"
-      ]
+        "web3legend",
+        "salmandev"
+      ],
+      "timestamps": {
+        "matt_ckb": "2026-11-19T16:47:59.000Z",
+        "ophiuchus": "2026-11-19T14:03:17.000Z",
+        "yeti": "2026-11-19T20:04:58.000Z",
+        "janx": "2026-11-20T00:54:14.000Z",
+        "ajay": "2026-11-20T22:11:54.000Z",
+        "jedi_dtechmaker": "2026-11-20T19:58:44.000Z",
+        "fillmyckbag": "2026-11-20T19:23:43.000Z",
+        "wyltek": "2026-11-21T02:49:50.000Z",
+        "ticoworld": "2026-11-21T00:09:38.000Z",
+        "fidelcoder": "2026-11-21T05:27:31.000Z",
+        "tea": "2026-11-20T23:36:15.000Z",
+        "ayoub_lesfer": "2026-11-21T19:20:59.000Z",
+        "neon.bit": "2026-11-21T15:01:55.000Z",
+        "ebubedev": "2026-11-21T14:49:34.000Z",
+        "truthixify": "2026-11-22T01:43:26.000Z",
+        "robaireth": "2026-11-23T15:39:46.000Z",
+        "arthurzhang": "2026-11-23T15:38:32.000Z",
+        "kaylah": "2026-11-23T20:08:14.000Z",
+        "eyeam": "2026-11-23T17:11:24.000Z",
+        "psawyerberlin": "2026-11-23T10:05:20.000Z",
+        "code3ks": "2026-11-23T19:19:34.000Z",
+        "longdevbf": "2026-11-23T15:15:29.000Z",
+        "linet_mugwanja": "2026-11-23T15:08:46.000Z",
+        "jeremic_arose": "2026-11-23T13:58:48.000Z",
+        "jnr6": "2026-11-23T10:49:55.000Z",
+        "broihan": "2026-11-23T10:19:39.000Z",
+        "lusocryptolabs": "2026-11-23T10:02:57.000Z",
+        "3m1n3nc3": "2026-11-24T01:04:16.000Z",
+        "web3legend": "2026-11-24T02:08:50.000Z"
+      },
+      "orderedUsers": [
+        "ophiuchus",
+        "matt_ckb",
+        "yeti",
+        "janx",
+        "fillmyckbag",
+        "jedi_dtechmaker",
+        "ajay",
+        "tea",
+        "ticoworld",
+        "wyltek",
+        "fidelcoder",
+        "ebubedev",
+        "neon.bit",
+        "ayoub_lesfer",
+        "truthixify",
+        "lusocryptolabs",
+        "psawyerberlin",
+        "broihan",
+        "jnr6",
+        "jeremic_arose",
+        "linet_mugwanja",
+        "longdevbf",
+        "arthurzhang",
+        "robaireth",
+        "eyeam",
+        "code3ks",
+        "birdmannn",
+        "kaylah",
+        "3m1n3nc3",
+        "yuqi",
+        "web3legend",
+        "salmandev"
+      ],
+      "verification": {
+        "status": "open",
+        "checkedAt": "2026-11-24T16:40:05.074Z",
+        "deadline": "2026-11-25T19:03:55.522Z",
+        "currentLikes": 32,
+        "listComplete": true,
+        "confirmedBefore": 32,
+        "confirmedAfter": 0,
+        "unresolvedUsers": [],
+        "issues": {}
+      }
     },
     "11262": {
       "postId": 27574,
-      "timestamps": {
-        "jeremic_arose": "2026-11-19T06:15:03.000Z",
-        "dorex45": "2026-11-19T14:37:52.000Z",
-        "broihan": "2026-11-19T11:51:19.000Z",
-        "lestoneth": "2026-11-19T09:06:08.000Z",
-        "devnash": "2026-11-19T08:48:47.000Z",
-        "ophiuchus": "2026-11-19T14:03:56.000Z",
-        "bratipah": "2026-11-19T19:59:47.000Z",
-        "xbeach": "2026-11-19T19:08:28.000Z",
-        "streets": "2026-11-20T10:42:36.000Z",
-        "wuododhis": "2026-11-20T10:24:32.000Z",
-        "kashlynne_mumbe": "2026-11-21T07:51:02.000Z",
-        "ethsly": "2026-11-21T07:50:42.000Z",
-        "ebubedev": "2026-11-21T16:25:01.000Z",
-        "salmandev": "2026-11-22T01:26:16.000Z",
-        "victor_okenwa": "2026-11-22T23:30:14.000Z",
-        "eoncloud": "2026-11-23T16:59:54.000Z",
-        "tolgayazan": "2026-11-23T16:01:26.000Z",
-        "kevtam515": "2026-11-23T13:29:31.000Z",
-        "jedi_dtechmaker": "2026-11-23T19:49:54.000Z",
-        "code3ks": "2026-11-23T19:19:59.000Z",
-        "longdevbf": "2026-11-23T16:53:56.000Z",
-        "ajay": "2026-11-23T13:54:10.000Z",
-        "kimani": "2026-11-23T13:39:22.000Z",
-        "fillmyckbag": "2026-11-23T13:31:41.000Z",
-        "zynor": "2026-11-23T12:36:55.000Z",
-        "mulandi_cecilia": "2026-11-23T11:39:40.000Z",
-        "charlie_kong_b": "2026-11-24T05:17:23.000Z"
-      },
       "seenBeforeDeadline": [
         "jeremic_arose",
         "devnash",
@@ -401,8 +440,85 @@
         "eoncloud",
         "code3ks",
         "jedi_dtechmaker",
-        "charlie_kong_b"
-      ]
+        "charlie_kong_b",
+        "123nervos",
+        "stevekrusher",
+        "web3legend"
+      ],
+      "timestamps": {
+        "jeremic_arose": "2026-11-19T06:15:03.000Z",
+        "dorex45": "2026-11-19T14:37:52.000Z",
+        "broihan": "2026-11-19T11:51:19.000Z",
+        "lestoneth": "2026-11-19T09:06:08.000Z",
+        "devnash": "2026-11-19T08:48:47.000Z",
+        "ophiuchus": "2026-11-19T14:03:56.000Z",
+        "bratipah": "2026-11-19T19:59:47.000Z",
+        "xbeach": "2026-11-19T19:08:28.000Z",
+        "streets": "2026-11-20T10:42:36.000Z",
+        "wuododhis": "2026-11-20T10:24:32.000Z",
+        "kashlynne_mumbe": "2026-11-21T07:51:02.000Z",
+        "ethsly": "2026-11-21T07:50:42.000Z",
+        "ebubedev": "2026-11-21T16:25:01.000Z",
+        "salmandev": "2026-11-22T01:26:16.000Z",
+        "victor_okenwa": "2026-11-22T23:30:14.000Z",
+        "eoncloud": "2026-11-23T16:59:54.000Z",
+        "tolgayazan": "2026-11-23T16:01:26.000Z",
+        "kevtam515": "2026-11-23T13:29:31.000Z",
+        "jedi_dtechmaker": "2026-11-23T19:49:54.000Z",
+        "code3ks": "2026-11-23T19:19:59.000Z",
+        "longdevbf": "2026-11-23T16:53:56.000Z",
+        "ajay": "2026-11-23T13:54:10.000Z",
+        "kimani": "2026-11-23T13:39:22.000Z",
+        "fillmyckbag": "2026-11-23T13:31:41.000Z",
+        "zynor": "2026-11-23T12:36:55.000Z",
+        "mulandi_cecilia": "2026-11-23T11:39:40.000Z",
+        "charlie_kong_b": "2026-11-24T05:17:23.000Z",
+        "web3legend": "2026-11-24T14:07:46.000Z",
+        "123nervos": "2026-11-24T10:04:08.000Z"
+      },
+      "orderedUsers": [
+        "jeremic_arose",
+        "devnash",
+        "lestoneth",
+        "broihan",
+        "ophiuchus",
+        "dorex45",
+        "xbeach",
+        "bratipah",
+        "wuododhis",
+        "streets",
+        "ethsly",
+        "kashlynne_mumbe",
+        "ebubedev",
+        "salmandev",
+        "victor_okenwa",
+        "mulandi_cecilia",
+        "zynor",
+        "kevtam515",
+        "fillmyckbag",
+        "kimani",
+        "ajay",
+        "tolgayazan",
+        "longdevbf",
+        "eoncloud",
+        "code3ks",
+        "jedi_dtechmaker",
+        "charlie_kong_b",
+        "123nervos",
+        "stevekrusher",
+        "web3legend"
+      ],
+      "verification": {
+        "status": "open",
+        "checkedAt": "2026-11-24T16:40:05.074Z",
+        "deadline": "2026-11-26T05:01:33.183Z",
+        "currentLikes": 30,
+        "listComplete": true,
+        "confirmedBefore": 30,
+        "confirmedAfter": 0,
+        "unresolvedUsers": [],
+        "issues": {}
+      }
     }
   }
 }
