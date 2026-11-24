@@ -360,6 +360,11 @@
       "sourceTitle": "RIVET: Decentralized GitHub Backup, Timestamping and Restore on CKB",
       "zh": "RIVET：基于 CKB 的去中心化 GitHub 备份、时间戳与恢复",
       "en": "RIVET: Decentralized GitHub Backup, Timestamping and Restore on CKB"
+    },
+    "11254": {
+      "sourceTitle": "Fiber Claim Cell: Async Receive and On-Chain Claims for Fiber LSPs",
+      "zh": "Fiber Claim Cell：Fiber LSP 的异步接收与链上申领",
+      "en": "Fiber Claim Cell: Async Receive and On-Chain Claims for Fiber LSPs"
     }
   }
 }

@@ -48,6 +48,10 @@ Once final voting approval is confirmed, a proposal displays both `Vote passed` 
 
 Display titles, translated titles, data sync, email, and Telegram all use `lib/proposal-title.js` to remove `[DIS]` and `【DIS】` markers. The digest classifier requires actual report/completion evidence next to a milestone number; proposal-scope revisions and review acknowledgements do not qualify as milestone reports or delivery updates.
 
+### Discussion deadline evidence
+
+Discussion-end events require an exact seven-day count. The collector saves public timestamps, before-deadline observations, ordered liker names, and a verification checkpoint even when a private/unavailable activity record prevents a final count. A pending checkpoint names unresolved users and separates confirmed-before, confirmed-after, and current likes; the current total never substitutes for the deadline count. Incomplete topics do not emit events and keep the governance step failed while other topics continue. The detail page reads `/live/governance/evidence` and displays pending manual-verification items. Its evidence-record time is not a successful full collection time. Repeated attempts with unchanged facts remain in Actions logs without creating timestamp-only snapshot commits.
+
 ## Deployment
 
 The project exports a static build to `dist/client` and includes `vercel.json`. Set `NEXT_PUBLIC_SITE_URL` to the final trusted origin so canonical metadata, Open Graph fields, sitemap, and robots use the correct URL.

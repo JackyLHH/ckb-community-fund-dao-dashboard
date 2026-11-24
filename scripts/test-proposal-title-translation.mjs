@@ -77,3 +77,15 @@ assert.equal(preservedHuman.titleZh, '人工中文标题');
 assert.equal(preservedHuman.titleEn, 'Human English title');
 
 console.log(`Validated ${Object.keys(backfill.translations).length} persisted bilingual titles and automatic title translation fallbacks.`);
+
+const {build}=await import('esbuild');
+const preparedBundle=await build({entryPoints:[new URL('../lib/live-data.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'esm',write:false,footer:{js:'export { prepareLiveProposal };'}});
+const {prepareLiveProposal}=await import(`data:text/javascript;base64,${Buffer.from(preparedBundle.outputFiles[0].text).toString('base64')}`);
+const claimSource='Fiber Claim Cell: Async Receive and On-Chain Claims for Fiber LSPs';
+const claimReview=proposalOverridesById['11254'];
+const oldClaim={...dataset.proposals[0],id:'11254',title:claimSource,titleEn:claimSource,titleZh:'Fiber索赔单元：Fiber LSP的异步接收与链上索赔',budgetLabel:claimReview.budgetLabel};
+const reviewedClaim=prepareLiveProposal(oldClaim);
+assert.equal(reviewedClaim.titleZh,'Fiber Claim Cell：Fiber LSP 的异步接收与链上申领');
+const finalClaim=await translateMissingProposalTitle(reviewedClaim,()=>{throw Error('Manual claim title must outrank every automatic cache');});
+assert.equal(finalClaim.titleZh,claimReview.titleZh);assert.equal(finalClaim.titleEn,claimSource);assert.equal(finalClaim.budgetLabel,oldClaim.budgetLabel);
+console.log('Validated Fiber Claim Cell title over a stale automatic Chinese title while preserving English and conditional budget.');

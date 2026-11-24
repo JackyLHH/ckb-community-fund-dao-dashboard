@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { StaticLink as Link } from '@/components/static-link';
 import { ArrowLeft, ArrowUpRight, CalendarDays, Clock3, ExternalLink, FileText, RefreshCw, UserRound } from 'lucide-react';
 import { LiveSyncBadge } from '@/components/live-sync-badge';
+import { DiscussionVerificationNotice } from '@/components/discussion-verification-notice';
 import { ProposalStatusTags } from '@/components/proposal-status-tags';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
@@ -141,7 +142,7 @@ export function LiveProjectDetail({ id, initialProposal }: { id?: string; initia
           })}</ol></section>}
         </article>
 
-        <section id="governance" className={`${panel} scroll-mt-28`} aria-labelledby="governance-title"><h2 id="governance-title" className="text-xl font-bold">{t('治理路径', 'Governance path')}</h2><ol className="mt-5 grid gap-4 sm:grid-cols-3">{steps.map((step, index) => <li data-governance-step={index + 1} key={step.title} className="rounded-xl border border-border p-4"><h3 className="inline-flex min-w-0 items-center gap-2 font-semibold"><span data-governance-number aria-hidden="true" className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-black text-xs font-bold text-white">{index + 1}</span>{step.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{step.detail}</p></li>)}</ol></section>
+        <section id="governance" className={`${panel} scroll-mt-28`} aria-labelledby="governance-title"><h2 id="governance-title" className="text-xl font-bold">{t('治理路径', 'Governance path')}</h2><DiscussionVerificationNotice id={proposal.id} /><ol className="mt-5 grid gap-4 sm:grid-cols-3">{steps.map((step, index) => <li data-governance-step={index + 1} key={step.title} className="rounded-xl border border-border p-4"><h3 className="inline-flex min-w-0 items-center gap-2 font-semibold"><span data-governance-number aria-hidden="true" className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-black text-xs font-bold text-white">{index + 1}</span>{step.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{step.detail}</p></li>)}</ol></section>
 
         <section id="updates" className={`${panel} scroll-mt-28`} aria-labelledby="updates-title"><h2 id="updates-title" className="text-xl font-bold">{t('进展与更新', 'Progress and updates')}</h2>
           {progressNote && <div className="mt-4 rounded-xl bg-secondary p-4 text-sm leading-7"><p data-progress-note className="min-w-0 whitespace-pre-line break-words" title={plainInlineText(progressNote)}><InlineLinks text={progressNote} /></p></div>}

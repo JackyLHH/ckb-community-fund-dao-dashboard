@@ -147,6 +147,7 @@ export const proposalOverridesById: Record<string, ProposalOverride> = {
     }
   },
   '11254': {
+    titleZh: 'Fiber Claim Cell：Fiber LSP 的异步接收与链上申领',
     budgetLabel: "Core $26,500 / with optional packages $35,500 (requested estimate; final confirmation before voting)",
     budgetLabelTranslations: {"zh": "核心 $26,500；含可选包 $35,500（申请估算，投票前最终确认）", "en": "Core $26,500 / with optional packages $35,500 (requested estimate; final confirmation before voting)"},
   },

@@ -8,7 +8,7 @@ import { proposalOverridesById } from '@/lib/proposal-overrides';
 
 const detailMemory = new Map<string, Proposal>();
 // Discard detail records containing outdated automatic terminology.
-const detailCacheKey = (id: string) => `ckb-proposal-detail:v13:${id}`;
+const detailCacheKey = (id: string) => `ckb-proposal-detail:v14:${id}`;
 
 function readDetailCache(id: string) {
   const currentRecord = dataset.proposals.find((entry) => entry.id === id);

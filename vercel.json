@@ -27,6 +27,10 @@
       "destination": "https://raw.githubusercontent.com/JackyLHH/ckb-community-fund-dao-dashboard/main/data/votes.generated.json"
     },
     {
+      "source": "/live/governance/evidence",
+      "destination": "https://raw.githubusercontent.com/JackyLHH/ckb-community-fund-dao-dashboard/main/data/lifecycle.generated.json"
+    },
+    {
       "source": "/api/subscribe",
       "destination": "/api/subscription?action=subscribe"
     },
@@ -76,6 +80,15 @@
     {
       "source": "/live/metaforo/votes",
       "headers": [{ "key": "Cache-Control", "value": "public, s-maxage=300, stale-while-revalidate=300" }]
+    },
+    {
+      "source": "/live/governance/evidence",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=300, stale-while-revalidate=300"
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
+import { isDeepStrictEqual } from 'node:util';
 import { discussionDeadline, readDiscussionEvidence, voteLifecycleEvents } from '../lib/digest-lifecycle.ts';
 import { looksLikeProposal } from '../lib/proposal-title.js';
 
@@ -53,8 +54,22 @@ try {
     if (existing.has(eventId)) continue;
     try {
       const evidence = await readDiscussionEvidence(topic, snapshot.discussions[id], get, now);
-      snapshot.discussions[id] = { postId: evidence.postId, timestamps: evidence.timestamps, seenBeforeDeadline: evidence.seenBeforeDeadline };
-      if (evidence.likes === null) continue;
+      const { likes: _likes, ...checkpoint } = evidence;
+      const previous = snapshot.discussions[id];
+      const facts = value => ({ ...value, verification: { ...value.verification, checkedAt: '' } });
+      // Repeat attempts with identical evidence remain visible in Actions;
+      // they do not need a synthetic checkpoint commit/deployment.
+      if (previous?.verification && isDeepStrictEqual(facts(previous), facts(checkpoint))) {
+        checkpoint.verification.checkedAt = previous.verification.checkedAt;
+      }
+      snapshot.discussions[id] = checkpoint;
+      if (evidence.likes === null) {
+        if (evidence.verification.status === 'pending' || evidence.verification.sourceError) {
+          failures += 1;
+          console.error(`Proposal ${id}: discussion deadline verification pending; users=${evidence.verification.unresolvedUsers.join(',') || 'source/list unavailable'}; before=${evidence.verification.confirmedBefore ?? '?'}; after=${evidence.verification.confirmedAfter ?? '?'}; ${evidence.verification.sourceError ?? 'public timestamps incomplete'}`);
+        }
+        continue;
+      }
       const likes = evidence.likes;
       append({ id: eventId, kind: 'discussion-ended', topicId: topic.id, likes,
         occurredAt: new Date(discussionDeadline(topic.created_at)).toISOString(),

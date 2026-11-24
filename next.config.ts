@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         destination: 'https://raw.githubusercontent.com/JackyLHH/ckb-community-fund-dao-dashboard/main/data/votes.generated.json',
       },
       {
+        source: '/live/governance/evidence',
+        destination: 'https://raw.githubusercontent.com/JackyLHH/ckb-community-fund-dao-dashboard/main/data/lifecycle.generated.json',
+      },
+      {
         source: '/live/nervos/category',
         destination: 'https://talk.nervos.org/c/daos-funding/ckb-community-fund-dao/65.json',
       },

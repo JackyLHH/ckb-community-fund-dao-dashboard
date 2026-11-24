@@ -800,6 +800,7 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
 
 function prepareLiveProposal(proposal: Proposal): Proposal {
   const override = proposalOverridesById[proposal.id];
+  if (override?.titleZh || override?.titleEn) proposal = { ...proposal, ...(override.titleZh ? { titleZh: override.titleZh } : {}), ...(override.titleEn ? { titleEn: override.titleEn } : {}) };
   return applyPersistedMilestoneTranslations(
     applyPersistedTitleTranslation(applyProposalObjectiveOverride(applyProposalMilestoneCorrections(proposal)), !override?.titleZh && !override?.titleEn),
     !override?.overview,

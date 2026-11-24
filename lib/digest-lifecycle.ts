@@ -16,7 +16,7 @@ export type LifecycleSnapshot = {
   enabledAt: string | null;
   checkedAt: string | null;
   events: LifecycleEvent[];
-  discussions: Record<string, { postId: number; timestamps: Record<string, string>; seenBeforeDeadline?: string[] }>;
+  discussions: Record<string, DiscussionEvidenceCheckpoint>;
 };
 
 export function discussionDeadline(createdAt: string) {
@@ -27,13 +27,13 @@ export function discussionDeadline(createdAt: string) {
 // reactions endpoint includes timestamps but truncates long lists. A missing
 // timestamp can only be inferred when a known later like precedes the cutoff,
 // or a known earlier like follows it. Never substitute today's total likes.
-export function discussionLikeCount(
+function discussionLikeClasses(
   orderedUsers: string[],
   timestamps: Record<string, string>,
   createdAt: string,
   expectedCount: number,
   seenBeforeDeadline: string[] = [],
-): number | null {
+): Array<'before' | 'after' | 'unknown'> | null {
   const users = orderedUsers.map((user) => user.toLowerCase());
   if (!Number.isSafeInteger(expectedCount) || expectedCount < 0
     || new Set(users).size !== expectedCount || users.length !== expectedCount) return null;
@@ -50,21 +50,45 @@ export function discussionLikeCount(
     if (time < last) ordered = false;
     last = time;
   }
-  let count = 0;
+  const classes: Array<'before' | 'after' | 'unknown'> = [];
   for (let index = 0; index < times.length; index += 1) {
     const time = times[index];
-    if (Number.isFinite(time)) { if (time < deadline) count += 1; continue; }
+    if (Number.isFinite(time)) { classes.push(time < deadline ? 'before' : 'after'); continue; }
     // An observation while the window was open proves this like already existed,
     // without needing access to that voter's potentially private profile.
-    if (observedInTime.has(users[index])) { count += 1; continue; }
+    if (observedInTime.has(users[index])) { classes.push('before'); continue; }
     const later = times.slice(index + 1).find(Number.isFinite);
     const earlier = times.slice(0, index).findLast(Number.isFinite);
-    if (ordered && later !== undefined && later < deadline) count += 1;
-    else if (ordered && earlier !== undefined && earlier >= deadline) continue;
-    else return null;
+    if (ordered && later !== undefined && later < deadline) classes.push('before');
+    else if (ordered && earlier !== undefined && earlier >= deadline) classes.push('after');
+    else classes.push('unknown');
   }
-  return count;
+  return classes;
 }
+
+export function discussionLikeCount(orderedUsers: string[], timestamps: Record<string, string>, createdAt: string, expectedCount: number, seenBeforeDeadline: string[] = []): number | null {
+  const classes = discussionLikeClasses(orderedUsers, timestamps, createdAt, expectedCount, seenBeforeDeadline);
+  return !classes || classes.includes('unknown') ? null : classes.filter(value => value === 'before').length;
+}
+export type DiscussionVerification = {
+  status: 'open' | 'verified' | 'pending';
+  checkedAt: string;
+  deadline: string;
+  currentLikes: number;
+  listComplete: boolean;
+  confirmedBefore: number | null;
+  confirmedAfter: number | null;
+  unresolvedUsers: string[];
+  issues: Record<string, 'activity-unavailable' | 'no-public-timestamp'>;
+  sourceError?: string;
+};
+export type DiscussionEvidenceCheckpoint = {
+  postId: number;
+  timestamps: Record<string, string>;
+  seenBeforeDeadline?: string[];
+  orderedUsers?: string[];
+  verification?: DiscussionVerification;
+};
 
 type ForumEvidence = {
   post_stream?: { posts?: Array<{ id: number; post_number: number;
@@ -77,7 +101,7 @@ type ForumEvidence = {
 
 export async function readDiscussionEvidence(
   topic: { id: number; created_at: string },
-  saved: LifecycleSnapshot['discussions'][string] | undefined,
+  saved: DiscussionEvidenceCheckpoint | undefined,
   get: (path: string) => Promise<ForumEvidence>,
   now = Date.now(),
 ) {
@@ -90,51 +114,75 @@ export async function readDiscussionEvidence(
   const timestamps: Record<string, string> = saved?.postId === post.id ? { ...saved.timestamps } : {};
   const seen = new Set(saved?.postId === post.id ? saved.seenBeforeDeadline || [] : []);
   const users: string[] = [];
-  if (count) {
-    const reactions = await get(`/discourse-reactions/posts/${post.id}/reactions-users.json`);
-    const heart = reactions.reaction_users?.find((reaction) => reaction.id === 'heart');
-    if (!heart || heart.count !== count) throw new Error('Like count changed during read; retry later');
-    for (const user of heart.users || []) {
-      const time = Date.parse(user.created_at);
-      if (Number.isFinite(time)) timestamps[user.username.toLowerCase()] = new Date(time).toISOString();
-    }
-    for (let page = 0; page < 25; page += 1) {
-      const data = await get(`/post_action_users.json?id=${post.id}&post_action_type_id=2&limit=200&page=${page}`);
-      const batch = data.post_action_users;
-      if (!Array.isArray(batch)) throw new Error('Incomplete first-post likes');
-      users.push(...batch.map((user) => user.username.toLowerCase()));
-      if (batch.length < 200) break;
-    }
-    if (users.length !== count || new Set(users).size !== count) throw new Error('Incomplete/changed like list');
-  }
-  if (now < discussionDeadline(topic.created_at)) users.forEach((user) => seen.add(user));
-  let likes = now < discussionDeadline(topic.created_at) ? null : discussionLikeCount(users, timestamps, topic.created_at, count, [...seen]);
-  if (likes === null && now >= discussionDeadline(topic.created_at)) {
-    // A truncated list must be reconstructed, never replaced with today's total.
-    // Private or truncated activity histories are a visible error, not evidence.
-    for (const user of users.filter((username) => !timestamps[username] && !seen.has(username)).reverse()) {
-      try {
-        for (let offset = 0; offset < 2_000; offset += 100) {
-          const data = await get(`/user_actions.json?username=${encodeURIComponent(user)}&filter=1&limit=100&offset=${offset}`);
-          const actions = data.user_actions;
-          if (!Array.isArray(actions)) throw new Error('Incomplete like activity history');
-          const action = actions.find((item) => item.post_id === post.id && item.post_number === 1 && item.topic_id === topic.id);
-          if (action && Number.isFinite(Date.parse(action.created_at))) { timestamps[user] = action.created_at; break; }
-          if (actions.length < 100 || Date.parse(actions.at(-1)?.created_at || '') < Date.parse(topic.created_at)) break;
-        }
-      } catch {
-        // Another public timestamp can still bracket a private user's action.
-        // Fail closed below if the remaining evidence cannot establish a count.
+  const issues: DiscussionVerification['issues'] = {};
+  let listComplete = false;
+  const finish = (likes: number | null, sourceError?: string) => {
+    const classes = listComplete ? discussionLikeClasses(users, timestamps, topic.created_at, count, [...seen]) : null;
+    const verification: DiscussionVerification = {
+      status: now < discussionDeadline(topic.created_at) ? 'open' : likes === null ? 'pending' : 'verified',
+      checkedAt: new Date(now).toISOString(), deadline: new Date(discussionDeadline(topic.created_at)).toISOString(),
+      currentLikes: count, listComplete,
+      confirmedBefore: classes ? classes.filter(value => value === 'before').length : null,
+      confirmedAfter: classes ? classes.filter(value => value === 'after').length : null,
+      unresolvedUsers: classes ? users.filter((_user,index) => classes[index] === 'unknown') : [],
+      issues,
+      ...(sourceError ? { sourceError } : {}),
+    };
+    return { likes, postId: post.id, seenBeforeDeadline: [...seen], timestamps, orderedUsers: listComplete ? [...users] : saved?.orderedUsers, verification };
+  };
+  try {
+    if (count) {
+      const reactions = await get(`/discourse-reactions/posts/${post.id}/reactions-users.json`);
+      const heart = reactions.reaction_users?.find((reaction) => reaction.id === 'heart');
+      if (!heart || heart.count !== count) throw new Error('Like count changed during read; retry later');
+      for (const user of heart.users || []) {
+        const time = Date.parse(user.created_at);
+        if (Number.isFinite(time)) timestamps[user.username.toLowerCase()] = new Date(time).toISOString();
       }
-      likes = discussionLikeCount(users, timestamps, topic.created_at, count, [...seen]);
-      if (likes !== null) break;
+      for (let page = 0; page < 25; page += 1) {
+        const data = await get(`/post_action_users.json?id=${post.id}&post_action_type_id=2&limit=200&page=${page}`);
+        const batch = data.post_action_users;
+        if (!Array.isArray(batch)) throw new Error('Incomplete first-post likes');
+        users.push(...batch.map((user) => user.username.toLowerCase()));
+        if (batch.length < 200) break;
+      }
+      if (users.length !== count || new Set(users).size !== count) throw new Error('Incomplete/changed like list');
     }
-    if (likes === null) throw new Error('Unable to verify likes within the 7-day window');
+    listComplete = true;
+    if (now < discussionDeadline(topic.created_at)) users.forEach((user) => seen.add(user));
+    let likes = now < discussionDeadline(topic.created_at) ? null : discussionLikeCount(users, timestamps, topic.created_at, count, [...seen]);
+    if (likes === null && now >= discussionDeadline(topic.created_at)) {
+      // A truncated list must be reconstructed, never replaced with today's total.
+      // Private or truncated activity histories are a visible error, not evidence.
+      for (const user of users.filter((username) => !timestamps[username] && !seen.has(username)).reverse()) {
+        try {
+          for (let offset = 0; offset < 2_000; offset += 100) {
+            const data = await get(`/user_actions.json?username=${encodeURIComponent(user)}&filter=1&limit=100&offset=${offset}`);
+            const actions = data.user_actions;
+            if (!Array.isArray(actions)) throw new Error('Incomplete like activity history');
+            const action = actions.find((item) => item.post_id === post.id && item.post_number === 1 && item.topic_id === topic.id);
+            if (action && Number.isFinite(Date.parse(action.created_at))) { timestamps[user] = action.created_at; break; }
+            if (actions.length < 100 || Date.parse(actions.at(-1)?.created_at || '') < Date.parse(topic.created_at)) break;
+          }
+          if (!timestamps[user]) issues[user] = 'no-public-timestamp';
+        } catch {
+          issues[user] = 'activity-unavailable';
+          // Another public timestamp can still bracket a private user's action.
+          // Fail closed below if the remaining evidence cannot establish a count.
+        }
+        likes = discussionLikeCount(users, timestamps, topic.created_at, count, [...seen]);
+        if (likes !== null) break;
+      }
+      // Preserve every verified timestamp even when one private user's action
+      // prevents a final count. The caller records a failed/incomplete scan.
+      if (likes === null) return finish(null);
+    }
+    return finish(likes);
+  } catch (error) {
+    // Count/list races and transient upstream failures must not discard newly
+    // observed public timestamps, nor produce a discussion-ended event.
+    return finish(null, error instanceof Error ? error.message : 'Public evidence unavailable');
   }
-  const current = new Set(users);
-  return { likes, postId: post.id,
-    seenBeforeDeadline: [...seen].filter((user) => current.has(user)),
-    timestamps: Object.fromEntries(Object.entries(timestamps).filter(([user]) => current.has(user))) };
 }
 
 export function lifecycleLabel(event: LifecycleEvent, locale: 'zh' | 'en') {
