@@ -20,6 +20,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      # Identifies Jobs API conclusions with no continue-on-error rewriting.
+      - name: Collection outcome semantics v2
+        run: ':'
       - name: Install isolated browser runtime
         id: browser
         run: |
@@ -29,17 +32,14 @@ jobs:
         run: node --experimental-strip-types scripts/test-metaforo-voting.mjs
       - name: Read public vote cards
         id: collect
-        continue-on-error: true
         run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/vote-sync/node_modules/playwright/index.mjs" node --experimental-strip-types scripts/sync-votes.mjs
       - name: Observe discussion and voting events
         id: lifecycle
         if: always()
-        continue-on-error: true
         run: node --experimental-strip-types scripts/sync-lifecycle.mjs
       - name: Verify all historical treasury balances and expenditures
         id: treasury
         if: always()
-        continue-on-error: true
         run: node --experimental-strip-types scripts/sync-treasury-spending.mjs
       - name: Save observed results
         if: always()

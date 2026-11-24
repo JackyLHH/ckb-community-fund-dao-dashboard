@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CircleAlert } from 'lucide-react';
 import { useLocale } from '@/lib/use-locale';
-import { collectionHealthState, emptyCollectionHealth, COLLECTION_WORKFLOW_URL, type CollectionHealth } from '@/lib/collection-health';
+import { collectionHealthState, collectionObservationTime, emptyCollectionHealth, COLLECTION_WORKFLOW_URL, type CollectionHealth } from '@/lib/collection-health';
 
 export function CollectionFreshnessNotice() {
   const { locale, t } = useLocale();
@@ -40,7 +40,7 @@ export function CollectionFreshnessNotice() {
       <div className="min-w-0 text-sm leading-6">
         <p className="font-semibold">{freshness.state === 'stale' ? t('自动采集存在延迟，请核对以下时间。', 'Automatic collection is delayed; check the times below.') : t('自动采集时间暂无法完整核验。', 'Collection freshness cannot currently be fully verified.')}</p>
         {freshness.schedule !== 'fresh' && <p>{t('最近定时运行：', 'Last scheduled run: ')}{format(report.schedule.lastRunAt)}</p>}
-        <p className="break-words">{t('最近成功采集：', 'Last successful collection: ')}{t('投票 ', 'Votes ')}{format(report.sources.votes.lastSuccessAt)}{t('；治理 ', '; Governance ')}{format(report.sources.governance.lastSuccessAt)}{t('；国库 ', '; Treasury ')}{format(report.sources.treasury.lastSuccessAt)}</p>
+        <p className="break-words">{t('最近成功采集：', 'Last successful collection: ')}{t('投票 ', 'Votes ')}{format(collectionObservationTime(report.sources.votes))}{t('；治理 ', '; Governance ')}{format(collectionObservationTime(report.sources.governance))}{t('；国库 ', '; Treasury ')}{format(collectionObservationTime(report.sources.treasury))}</p>
         <p>{t('页面保留最后可用记录，可能尚未包含后续变化。', 'The last available records are retained and may not include later changes.')} <a href={report.schedule.runUrl ?? COLLECTION_WORKFLOW_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">{t('查看采集记录', 'View collection records')}</a></p>
       </div>
     </div>
