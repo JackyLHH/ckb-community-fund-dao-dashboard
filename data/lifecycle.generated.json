@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-23T21:37:00.436Z",
+  "checkedAt": "2026-11-24T05:48:41.031Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -256,7 +256,9 @@
         "jeremic_arose": "2026-11-23T13:58:48.000Z",
         "jnr6": "2026-11-23T10:49:55.000Z",
         "broihan": "2026-11-23T10:19:39.000Z",
-        "lusocryptolabs": "2026-11-23T10:02:57.000Z"
+        "lusocryptolabs": "2026-11-23T10:02:57.000Z",
+        "3m1n3nc3": "2026-11-24T01:04:16.000Z",
+        "web3legend": "2026-11-24T02:08:50.000Z"
       },
       "seenBeforeDeadline": [
         "ophiuchus",
@@ -286,7 +288,10 @@
         "eyeam",
         "code3ks",
         "birdmannn",
-        "kaylah"
+        "kaylah",
+        "3m1n3nc3",
+        "yuqi",
+        "web3legend"
       ]
     },
     "11262": {
@@ -317,7 +322,8 @@
         "kimani": "2026-11-23T13:39:22.000Z",
         "fillmyckbag": "2026-11-23T13:31:41.000Z",
         "zynor": "2026-11-23T12:36:55.000Z",
-        "mulandi_cecilia": "2026-11-23T11:39:40.000Z"
+        "mulandi_cecilia": "2026-11-23T11:39:40.000Z",
+        "charlie_kong_b": "2026-11-24T05:17:23.000Z"
       },
       "seenBeforeDeadline": [
         "jeremic_arose",
@@ -345,7 +351,8 @@
         "longdevbf",
         "eoncloud",
         "code3ks",
-        "jedi_dtechmaker"
+        "jedi_dtechmaker",
+        "charlie_kong_b"
       ]
     }
   }
