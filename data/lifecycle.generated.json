@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-24T16:40:13.277Z",
+  "checkedAt": "2026-11-25T01:13:11.198Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -268,7 +268,8 @@
         "charlie_kong_b",
         "longdevbf",
         "psawyerberlin",
-        "ebubedev"
+        "ebubedev",
+        "matt_ckb"
       ],
       "timestamps": {
         "ophiuchus": "2026-11-18T15:43:12.000Z",
@@ -276,7 +277,8 @@
         "tiago_morcego": "2026-11-21T05:46:59.000Z",
         "longdevbf": "2026-11-23T16:54:12.000Z",
         "ebubedev": "2026-11-24T13:48:11.000Z",
-        "psawyerberlin": "2026-11-24T11:03:12.000Z"
+        "psawyerberlin": "2026-11-24T11:03:12.000Z",
+        "matt_ckb": "2026-11-24T22:47:58.000Z"
       },
       "orderedUsers": [
         "ophiuchus",
@@ -284,15 +286,16 @@
         "charlie_kong_b",
         "longdevbf",
         "psawyerberlin",
-        "ebubedev"
+        "ebubedev",
+        "matt_ckb"
       ],
       "verification": {
         "status": "open",
-        "checkedAt": "2026-11-24T16:40:05.074Z",
+        "checkedAt": "2026-11-25T01:13:05.420Z",
         "deadline": "2026-11-25T08:14:47.789Z",
-        "currentLikes": 6,
+        "currentLikes": 7,
         "listComplete": true,
-        "confirmedBefore": 6,
+        "confirmedBefore": 7,
         "confirmedAfter": 0,
         "unresolvedUsers": [],
         "issues": {}
