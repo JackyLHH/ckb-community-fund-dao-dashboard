@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-25T01:13:11.198Z",
+  "checkedAt": "2026-11-25T09:59:45.830Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -145,6 +145,14 @@
       "likes": 1,
       "occurredAt": "2026-11-24T12:20:03.082Z",
       "sourceUrl": "https://talk.nervos.org/t/dis-ckb-x-near-intents-building-a-cross-chain-bridge-and-multichain-swap-gateway/11244/1"
+    },
+    {
+      "id": "discussion-ended:11254",
+      "kind": "discussion-ended",
+      "topicId": 11254,
+      "likes": 7,
+      "occurredAt": "2026-11-25T08:14:47.789Z",
+      "sourceUrl": "https://talk.nervos.org/t/dis-fiber-claim-cell-async-receive-and-on-chain-claims-for-fiber-lsps/11254/1"
     }
   ],
   "discussions": {
@@ -260,47 +268,6 @@
         }
       }
     },
-    "11254": {
-      "postId": 27533,
-      "seenBeforeDeadline": [
-        "ophiuchus",
-        "tiago_morcego",
-        "charlie_kong_b",
-        "longdevbf",
-        "psawyerberlin",
-        "ebubedev",
-        "matt_ckb"
-      ],
-      "timestamps": {
-        "ophiuchus": "2026-11-18T15:43:12.000Z",
-        "charlie_kong_b": "2026-11-21T09:09:58.000Z",
-        "tiago_morcego": "2026-11-21T05:46:59.000Z",
-        "longdevbf": "2026-11-23T16:54:12.000Z",
-        "ebubedev": "2026-11-24T13:48:11.000Z",
-        "psawyerberlin": "2026-11-24T11:03:12.000Z",
-        "matt_ckb": "2026-11-24T22:47:58.000Z"
-      },
-      "orderedUsers": [
-        "ophiuchus",
-        "tiago_morcego",
-        "charlie_kong_b",
-        "longdevbf",
-        "psawyerberlin",
-        "ebubedev",
-        "matt_ckb"
-      ],
-      "verification": {
-        "status": "open",
-        "checkedAt": "2026-11-25T01:13:05.420Z",
-        "deadline": "2026-11-25T08:14:47.789Z",
-        "currentLikes": 7,
-        "listComplete": true,
-        "confirmedBefore": 7,
-        "confirmedAfter": 0,
-        "unresolvedUsers": [],
-        "issues": {}
-      }
-    },
     "11258": {
       "postId": 27563,
       "seenBeforeDeadline": [
@@ -335,7 +302,8 @@
         "3m1n3nc3",
         "yuqi",
         "web3legend",
-        "salmandev"
+        "salmandev",
+        "charlie_kong_b"
       ],
       "timestamps": {
         "matt_ckb": "2026-11-19T16:47:59.000Z",
@@ -366,7 +334,8 @@
         "broihan": "2026-11-23T10:19:39.000Z",
         "lusocryptolabs": "2026-11-23T10:02:57.000Z",
         "3m1n3nc3": "2026-11-24T01:04:16.000Z",
-        "web3legend": "2026-11-24T02:08:50.000Z"
+        "web3legend": "2026-11-24T02:08:50.000Z",
+        "charlie_kong_b": "2026-11-25T06:38:27.000Z"
       },
       "orderedUsers": [
         "ophiuchus",
@@ -400,15 +369,16 @@
         "3m1n3nc3",
         "yuqi",
         "web3legend",
-        "salmandev"
+        "salmandev",
+        "charlie_kong_b"
       ],
       "verification": {
         "status": "open",
-        "checkedAt": "2026-11-24T16:40:05.074Z",
+        "checkedAt": "2026-11-25T09:59:40.911Z",
         "deadline": "2026-11-25T19:03:55.522Z",
-        "currentLikes": 32,
+        "currentLikes": 33,
         "listComplete": true,
-        "confirmedBefore": 32,
+        "confirmedBefore": 33,
         "confirmedAfter": 0,
         "unresolvedUsers": [],
         "issues": {}
