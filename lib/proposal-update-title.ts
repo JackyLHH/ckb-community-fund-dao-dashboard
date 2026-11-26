@@ -1,5 +1,5 @@
 import { proposalOverridesById } from './proposal-overrides.ts';
-import { isProposalProgressUpdate } from './proposal-progress.ts';
+import { isProposalProgressUpdate, currentProposalProgressText } from './proposal-progress-evidence.js';
 
 type LeadingBlock = {
   text: string;
@@ -130,10 +130,11 @@ function firstHtmlBlock(cooked: string): LeadingBlock {
   return { text: normalizeText(text), leadingBold: normalizeText(leadingBold), heading };
 }
 
-function readableText(cooked: string) {
+function readableText(cooked: string, preserveLines = false) {
   // Preserve word boundaries between blocks but never include HTML markup or
   // quoted/code content in the fallback excerpt.
-  return normalizeText(htmlParts(cooked).map((part) => part.text ?? (part.tag && (headingTag.test(part.tag) || blockTags.has(part.tag) || part.tag === 'br') ? ' ' : '')).join(''));
+  const text = htmlParts(cooked).map((part) => part.text ?? (part.tag && (headingTag.test(part.tag) || blockTags.has(part.tag) || part.tag === 'br') ? '\n' : '')).join('');
+  return preserveLines ? text.split(/\n+/).map(normalizeText).filter(Boolean).join('\n') : normalizeText(text);
 }
 
 function isSectionLabel(title: string) {
@@ -198,11 +199,14 @@ type ForumUpdatePost = { post_number: number; username: string; cooked?: string;
 export function selectForumProgressUpdates(posts: ForumUpdatePost[], proposer: string, id: string, slug: string) {
   return posts
     .filter((post) => post.post_number > 1 && post.username.trim().toLocaleLowerCase() === proposer.trim().toLocaleLowerCase())
-    .map((post) => ({ post, text: readableText(post.cooked ?? '') }))
+    .map((post) => {
+      const source = readableText(post.cooked ?? '', true);
+      return { post, source, text: currentProposalProgressText(source) };
+    })
     .filter(({ text }) => isProposalProgressUpdate(text))
     .sort((a, b) => a.post.post_number - b.post.post_number)
-    .map(({ post, text }) => ({
-      title: extractProgressUpdateTitle(post.cooked ?? '', text),
+    .map(({ post, text, source }) => ({
+      title: extractProgressUpdateTitle(text !== source ? text : post.cooked ?? '', text),
       date: post.created_at,
       url: `https://talk.nervos.org/t/${slug}/${id}/${post.post_number}`,
       author: post.username,

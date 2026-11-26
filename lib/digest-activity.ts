@@ -1,4 +1,4 @@
-import { isProposalProgressUpdate } from './proposal-progress-evidence.js';
+import { currentProposalProgressText, isProposalProgressUpdate } from './proposal-progress-evidence.js';
 import { isProposalScopeRevision } from './proposal-revision.js';
 export { isProposalScopeRevision };
 export const DIGEST_LOOKBACK_MS = 24 * 60 * 60 * 1_000;
@@ -205,7 +205,7 @@ export function extractMilestoneBudget(
 }
 
 export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {
-  const text = stripForumHtml(cooked);
+  const text = currentProposalProgressText(stripForumHtml(cooked));
   // A mention of a milestone (or a change to its planned scope) is not a
   // report. Require an adjacent report/completion statement and keep the
   // completion check local to that statement, not the rest of the post.
@@ -288,5 +288,10 @@ export function progressUpdatePosts(
         && createdAt > afterMs
         && isMeaningfulProgressUpdate(post.cooked);
     })
-    .sort((left, right) => left.post_number - right.post_number);
+    .sort((left, right) => left.post_number - right.post_number)
+    .map(post => {
+      const text = stripForumHtml(post.cooked);
+      const relevant = currentProposalProgressText(text);
+      return relevant === text ? post : { ...post, cooked: `<p>${relevant.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>` };
+    });
 }

@@ -7,6 +7,7 @@ import { selectForumProgressUpdates } from '../lib/proposal-update-title.ts';
 import { proposalOverridesById } from '../lib/proposal-overrides.ts';
 import { translateMissingProposalUpdates } from '../lib/proposal-update-translation.ts';
 const fixture = JSON.parse(await readFile(new URL('./fixtures/progress-evidence-nov23.json', import.meta.url), 'utf8'));
+const nov26 = JSON.parse(await readFile(new URL('./fixtures/progress-evidence-nov26.json', import.meta.url), 'utf8'));
 const testReport = JSON.parse(await readFile(new URL('./fixtures/cellula-test-report.json', import.meta.url), 'utf8'));
 const check = (cooked, expected) => {
  assert.equal(isMeaningfulProgressUpdate(cooked), expected, 'Digest: ' + stripForumHtml(cooked).slice(0,110));
@@ -32,6 +33,22 @@ for (const text of [
  '已订购两台服务器，已付款，部署现在开始。',
 ]) check('<p>'+text+'</p>', true);
 for (const heading of ['Weekly report', 'Biweekly update', 'Monthly report', 'Test report']) check('<h2>'+heading+'</h2><p>We completed the testnet release and verified the deployment.</p>',true);
+check(nov26.twine26.cooked, false);
+check(nov26.vellum28.cooked, true);
+assert.equal(selectForumProgressUpdates([nov26.twine26], 'ebubedev', '11228', 'twine').length, 0);
+assert.match(selectForumProgressUpdates([nov26.vellum28], 'truthixify', '10613', 'vellum')[0].url, /10613\/28$/);
+const retrospective = '<p>My previous Community Fund grant was Fiber Studio. We shipped the release and published the completion report.</p>';
+for (const tail of ['', '<p>For this proposal, we will complete Milestone 1 next week.</p>', '<p>For this proposal, we have not completed Milestone 1.</p>']) check(retrospective + tail, false);
+const mixed = retrospective + '<p>For this proposal, we completed Milestone 1 and deployed the testnet trade flow.</p>';
+check(mixed, true);
+const mixedPost = { ...nov26.twine26, cooked: mixed };
+const mixedSelected = selectForumProgressUpdates([mixedPost], 'ebubedev', '11228', 'twine')[0];
+assert.ok(!mixedSelected.title.includes('Fiber Studio'));
+assert.ok(mixedSelected.title.includes('Milestone 1'));
+const mixedDigest = progressUpdatePosts([{post_number:1,username:'ebubedev'},mixedPost], {last_posted_at:'2026-11-25T08:00:00Z'}, Date.parse('2026-11-25T08:00:00Z'));
+assert.equal(mixedDigest.length, 1);
+assert.ok(!mixedDigest[0].cooked.includes('Fiber Studio'));
+assert.equal(mixedPost.cooked, mixed, 'Do not mutate historical source posts');
 const quoted='<blockquote>'+fixture.cellula.cooked+'</blockquote><p>Is this the plan?</p>';
 assert.equal(isMeaningfulProgressUpdate(quoted),false);
 assert.equal(selectForumProgressUpdates([{...fixture.cellula,cooked:quoted}],'LusoCryptoLabs','11089','dis-cellula').length,0);
@@ -79,6 +96,10 @@ try{
  await replay(11228,'ebubedev',fixture.twine,'2026-11-19T08:00:00Z','2026-11-20T08:00:00Z',[]);
  await replay(11228,'ebubedev',fixture.twine,'2026-11-20T08:00:00Z','2026-11-21T08:00:00Z',[]);
  await replay(10739,'Jedi_dtechmaker',fixture.rivet,'2026-11-21T08:00:00Z','2026-11-22T08:00:00Z',[17]);
+ await replay(11228,'ebubedev',[nov26.twine26],'2026-11-25T08:00:00Z','2026-11-26T08:00:00Z',[]);
+ await replay(10613,'truthixify',[nov26.vellum28],'2026-11-25T08:00:00Z','2026-11-26T08:00:00Z',[28]);
+ const mixedReplay=await replay(11228,'ebubedev',[mixedPost],'2026-11-25T08:00:00Z','2026-11-26T08:00:00Z',[26]);
+ assert.ok(!mixedReplay[0].latestPostExcerpt.includes('Fiber Studio'));
  assert.equal(sends,0);
 }finally{globalThis.fetch=oldFetch;}
 console.log('Validated shared observed-work eligibility, Twine #16/#17 exclusion, author-owned bilingual Cellula #23, RIVET delivery and historical digest replay (offline, zero sends/state writes).');

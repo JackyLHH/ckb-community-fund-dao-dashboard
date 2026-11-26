@@ -1,3 +1,4 @@
+import discussionEvidence from '../data/lifecycle.generated.json' with { type: 'json' };
 import rawDataset from '../data/proposals.generated.json' with { type: 'json' };
 import { cleanProposalTitle } from './proposal-title.js';
 import { executionStatusTags } from './proposal-lifecycle.js';
@@ -212,8 +213,8 @@ export const statusMeta: Record<
 
 export const statusDescriptions: Record<ProposalStatusTag, { zh: string; en: string }> = {
   discussion: {
-    zh: '提案仍在 7 天讨论期内，且尚未进入投票。',
-    en: 'The proposal is still within its seven-day discussion window and has not entered voting.',
+    zh: '提案尚未进入投票；讨论期限及截止赞数核验情况请查看治理路径。',
+    en: 'The proposal has not entered voting. See its governance path for the discussion deadline and verification status.',
   },
   voting: {
     zh: 'Metaforo 投票仍在进行，关闭前结果仍可能变化。',
@@ -259,6 +260,18 @@ function baseProposalStatusTags(proposal: Proposal, now: Date): ProposalStatusTa
   return ['discussion'];
 }
 
+export function getDiscussionStageDetail(proposal: Pick<Proposal, 'createdAt'> & { id?: string }, locale: 'zh' | 'en', discussionPending: boolean, now = new Date()) {
+  const deadline = Date.parse(proposal.createdAt) + 7 * 24 * 60 * 60 * 1000;
+  if (Number.isFinite(deadline) && now.getTime() < deadline && discussionPending) return locale === 'en'
+    ? 'Within the seven-day discussion stage' : '处于七天讨论阶段';
+  if (discussionPending && discussionEvidence.events.some(event => event.kind === 'discussion-ended' && String(event.topicId) === proposal.id)) return locale === 'en'
+    ? 'Discussion period ended; deadline likes verified. Subsequent stages require public governance evidence.'
+    : '讨论期已结束，截止赞数已核验；后续阶段以公开治理记录为准。';
+  if (discussionPending) return locale === 'en'
+    ? 'Discussion period ended; deadline likes await verification.' : '讨论期已结束，截止赞数待核验。';
+  return locale === 'en' ? 'Discussion stage ended' : '讨论阶段已结束';
+}
+
 export function getStatusExplanation(proposal: Proposal, locale: 'zh' | 'en') {
   const customExplanation = locale === 'en'
     ? proposal.statusExplanationEn ?? proposal.statusExplanationZh
@@ -283,9 +296,7 @@ export function getStatusExplanation(proposal: Proposal, locale: 'zh' | 'en') {
   if (tags.includes('ended')) return locale === 'en'
     ? 'The first post did not reach 30 likes within seven days, or public evidence shows the proposal was otherwise closed.'
     : '提案首帖未在 7 天内达到 30 个赞，或公开证据表明提案已经结束。';
-  return locale === 'en'
-    ? 'The proposal is within its seven-day discussion window and has not yet entered voting.'
-    : '提案仍在 7 天讨论期内，尚未进入投票。';
+  return getDiscussionStageDetail(proposal, locale, true);
 }
 
 export const projectTypeLabels: Record<string, string> = {

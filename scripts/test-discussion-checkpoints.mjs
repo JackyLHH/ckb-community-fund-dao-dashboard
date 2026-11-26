@@ -57,3 +57,25 @@ try{
  assert.equal(repeat.status,1);assert.equal(await readFile(join(temporary,'data/lifecycle.generated.json'),'utf8'),firstBytes,'Unchanged evidence does not fabricate new checkpoint time or commits');
 }finally{await rm(temporary,{recursive:true,force:true});}
 console.log('Validated real Twine 29-before/1-after/1-unknown checkpoint, complete-evidence replay, source races and actual collector partial persistence/failure with other topics continuing (offline).');
+
+// Public copy must use the seven-day cutoff, never today's total likes or
+// a leftover discussion tag. Existing verified counts/events stay untouched.
+{
+const { build } = await import('esbuild');
+const output = await build({entryPoints:[new URL('../lib/proposals.ts', import.meta.url).pathname],bundle:true,platform:'node',format:'esm',write:false});
+const proposals = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}`);
+const pending = {createdAt:'2026-11-17T04:51:04.145Z',status:'discussion',statusTags:['discussion'],discussion:{likes:32}};
+const before = new Date('2026-11-24T04:51:04.144Z');
+const at = new Date('2026-11-24T04:51:04.145Z');
+assert.match(proposals.getDiscussionStageDetail(pending,'en',true,before),/Within the seven-day/);
+assert.equal(proposals.getDiscussionStageDetail(pending,'zh',true,at),'讨论期已结束，截止赞数待核验。');
+assert.match(proposals.getDiscussionStageDetail(pending,'en',true,at),/ended; deadline likes await verification/);
+assert.equal(proposals.getDiscussionStageDetail(pending,'en',false,at),'Discussion stage ended');
+assert.match(proposals.getStatusExplanation(pending,'zh'),/截止赞数待核验/);
+assert.match(proposals.getStatusExplanation(pending,'en'),/deadline likes await verification/);
+const ledger = JSON.parse(await readFile(new URL('../data/lifecycle.generated.json', import.meta.url), 'utf8'));
+const verified = ledger.events.find(event => event.kind === 'discussion-ended');
+assert.match(proposals.getDiscussionStageDetail({...pending,id:String(verified.topicId)},'en',true,at),/deadline likes verified/);
+assert.equal(pending.discussion.likes,32);
+assert.deepEqual(pending.statusTags,['discussion']);
+}

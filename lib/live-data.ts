@@ -1,5 +1,6 @@
 import {
   dataset as fallbackDataset,
+  getDiscussionStageDetail,
   isProposalProgressUpdate,
   normalizeProjectType,
   type Proposal,
@@ -239,14 +240,14 @@ function primaryStatus(tags: ProposalStatusTag[]) {
   return tags.at(-1) ?? 'discussion';
 }
 
-function statusReasonZh(tags: ProposalStatusTag[]) {
+function statusReasonZh(tags: ProposalStatusTag[], proposal: Pick<Proposal, 'createdAt'> & { id?: string }) {
   if (tags.includes('completed')) return '公开交付报告或里程碑证据表明提案承诺的工作已经全部完成。';
   if (tags.includes('vote-failed')) return 'Metaforo 结果显示提案未达到通过比例或法定票数要求，投票未通过。';
   if (tags.includes('executing')) return '提案已通过投票，目前仍处于执行阶段，尚无完成或终止记录。';
   if (tags.includes('voting')) return '投票正在进行，最终结果尚未确定。';
   if (tags.includes('vote-passed')) return 'Metaforo 结果显示提案投票通过。';
   if (tags.includes('ended')) return '提案首帖未在 7 天内达到 30 个赞，或公开证据表明项目已终止、退款或结束。';
-  return '提案仍在 7 天讨论期内，尚未进入投票。';
+  return getDiscussionStageDetail(proposal, 'zh', true);
 }
 
 function trimMilestoneDescription(input: string, maxLength = 520, sentenceLimit = 4) {
@@ -546,7 +547,7 @@ function mapCategoryTopic(
       && (isManualProposalUpdate(id, update) || update.source === 'forum' || isProposalProgressUpdate(update.title))),
     status: primaryStatus(statusTags),
     statusTags,
-    statusReason: statusReasonZh(statusTags),
+    statusReason: statusReasonZh(statusTags, { id, createdAt: topic.created_at }),
     statusExplanationZh: proposalOverride?.statusExplanationZh ?? fallback?.statusExplanationZh,
     statusExplanationEn: proposalOverride?.statusExplanationEn ?? fallback?.statusExplanationEn,
     progressNoteZh: proposalOverride?.progressNoteZh ?? fallback?.progressNoteZh,
@@ -713,7 +714,7 @@ export function loadLiveDataset() {
         voting,
         status: primaryStatus(statusTags),
         statusTags,
-        statusReason: statusReasonZh(statusTags),
+        statusReason: statusReasonZh(statusTags, proposal),
         sources: [
           ...proposal.sources.filter((source) => !/metaforo|corrected vote/i.test(source.label)),
           ...(voting ? [{ label: votingSourceLabel(voting), url: voting.url }] : []),
@@ -779,7 +780,7 @@ export async function loadLiveProjectWithState(id: string, options: { forceRefre
       updates,
       status: primaryStatus(statusTags),
       statusTags,
-      statusReason: statusReasonZh(statusTags),
+      statusReason: statusReasonZh(statusTags, base),
       lastVerifiedAt: new Date().toISOString(),
       sources: [
         { label: 'Nervos Talk proposal', url: base.originalUrl },

@@ -10,7 +10,7 @@ import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { detailStageStates, localizedSourceLabel, sortDetailUpdates } from '@/lib/proposal-detail-ux';
 import { isManualProposalUpdate } from '@/lib/proposal-update-title';
-import { getProposalBudget, getProposalOverview, formatCompact, formatDate, getProposalStatusTags, getProposalTitle, projectTypeLabels, type Proposal } from '@/lib/proposals';
+import { getDiscussionStageDetail, getProposalBudget, getProposalOverview, formatCompact, formatDate, getProposalStatusTags, getProposalTitle, projectTypeLabels, type Proposal } from '@/lib/proposals';
 import { useLiveProject } from '@/lib/use-live-data';
 import { useLocale } from '@/lib/use-locale';
 
@@ -116,7 +116,7 @@ export function LiveProjectDetail({ id, initialProposal }: { id?: string; initia
   const updates = sortDetailUpdates(proposal.updates);
   const localizedDate = (date: string) => formatDate(date, locale === 'en' ? 'en-US' : 'zh-CN');
   const steps = [
-    { title: t('讨论', 'Discussion'), detail: statusTags.includes('discussion') ? t('处于七天讨论阶段', 'Within the seven-day discussion stage') : t('讨论阶段已结束', 'Discussion stage ended') },
+    { title: t('讨论', 'Discussion'), detail: getDiscussionStageDetail(proposal, locale, statusTags.includes('discussion')) },
     { title: t('投票', 'Voting'), detail: proposal.voting?.status === 'active' ? t('投票进行中，当前结果仍会变化', 'Voting is open; the tally can still change') : statusTags.includes('vote-passed') ? t('投票通过', 'Vote passed') : statusTags.includes('vote-failed') ? t('投票未通过', 'Vote not passed') : proposal.voting ? t('已发现链接，投票状态待核验', 'Link found; voting status unverified') : t('尚未发现投票页', 'No voting page found') },
     { title: t('执行', 'Execution'), detail: completed ? t('已完成', 'Completed') : stageStates[2] === 'current' ? t('正在进行中', 'In progress') : stageStates[2] === 'ended' ? t('已结束', 'Ended') : t('尚未开始', 'Not started') },
   ];
