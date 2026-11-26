@@ -1,7 +1,7 @@
 {
   "version": 1,
   "enabledAt": "2026-10-19T03:11:05.039Z",
-  "checkedAt": "2026-11-26T12:56:49.072Z",
+  "checkedAt": "2026-11-26T22:29:20.188Z",
   "events": [
     {
       "id": "discussion-ended:10937",
@@ -234,7 +234,8 @@
         "quinn": "2026-11-23T14:33:02.000Z",
         "ogechi": "2026-11-23T14:28:10.000Z",
         "fx_dior": "2026-11-24T06:04:05.000Z",
-        "phroi": "2026-11-25T20:53:50.546Z"
+        "phroi": "2026-11-25T20:53:50.546Z",
+        "mulandi_cecilia": "2026-11-26T13:45:09.945Z"
       },
       "orderedUsers": [
         "ticoworld",
@@ -268,16 +269,17 @@
         "hani",
         "qwin_daline",
         "fx_dior",
-        "phroi"
+        "phroi",
+        "mulandi_cecilia"
       ],
       "verification": {
         "status": "pending",
-        "checkedAt": "2026-11-26T02:57:39.724Z",
+        "checkedAt": "2026-11-26T22:29:16.125Z",
         "deadline": "2026-11-24T04:51:04.145Z",
-        "currentLikes": 32,
+        "currentLikes": 33,
         "listComplete": true,
         "confirmedBefore": 29,
-        "confirmedAfter": 2,
+        "confirmedAfter": 3,
         "unresolvedUsers": [
           "qwin_daline"
         ],
