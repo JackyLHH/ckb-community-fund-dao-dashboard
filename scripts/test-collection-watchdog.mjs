@@ -12,7 +12,7 @@ function mock({age=10,fail=null,strict=true,busy=false,metadataError=false,dispa
  const request=async(input,options={})=>{
   const url=String(input);calls.push({url,options});
   if(url.startsWith(REPOSITORY)){
-   assert.equal(options.redirect,'error');assert.equal(options.headers.Authorization,'Bearer '+env.GITHUB_TOKEN);
+   assert.equal(options.redirect,'manual');assert.equal(options.headers.Authorization,'Bearer '+env.GITHUB_TOKEN);
    if(url.endsWith('/dispatches')){
     assert.equal(options.method,'POST');assert.deepEqual(JSON.parse(options.body),{ref:'main',inputs:{dispatch_source:'cloudflare-watchdog',watchdog_request_id:JSON.parse(options.body).inputs.watchdog_request_id}});
     if(dispatchError)throw Error('Ambiguous network result '+env.GITHUB_TOKEN);
@@ -38,7 +38,7 @@ state=await tick(env,storage,now+15*MINUTE,m.request);assert.equal(m.dispatches(
 m=mock({age:100,busy:true});storage=memory();state=await tick(env,storage,now,m.request);assert.equal(state.decision,'workflow-busy');assert.equal(m.dispatches().length,0);assert.equal(m.alerts().length,1);
 await tick(env,storage,now+15*MINUTE,m.request);assert.equal(m.alerts().length,1,'Alert deduplication survives repeated checks');
 m=mock({age:46,dispatchError:true});storage=memory();state=await tick(env,storage,now,m.request);assert.equal(state.decision,'dispatch-unconfirmed');assert.equal(state.lastDispatchAt,undefined);await tick(env,storage,now+15*MINUTE,m.request);assert.equal(m.dispatches().length,1,'Ambiguous dispatch does not create a retry storm');assert.ok(!JSON.stringify(publicStatus(state)).includes(env.GITHUB_TOKEN));
-m=mock({metadataError:true});storage=memory();state=await tick(env,storage,now,m.request);assert.equal(state.error,'metadata-unavailable');assert.equal(m.dispatches().length,0);assert.equal(m.alerts().length,0);await tick(env,storage,now+91*MINUTE,m.request);assert.equal(m.alerts().length,1,'A sustained metadata outage also alerts');
+m=mock({metadataError:true});storage=memory();state=await tick(env,storage,now,m.request);assert.equal(state.error,'github-503');assert.equal(m.dispatches().length,0);assert.equal(m.alerts().length,0);await tick(env,storage,now+91*MINUTE,m.request);assert.equal(m.alerts().length,1,'A sustained metadata outage also alerts');
 m=mock({age:100,telegramError:true});storage=memory();state=await tick(env,storage,now,m.request);assert.equal(state.lastAlertAt,undefined);assert.equal(state.alertError,'delivery-unconfirmed');m=mock({age:100});state=await tick(env,storage,now+15*MINUTE,m.request);assert.equal(m.alerts().length,1);assert.equal(state.alertError,null,'Only confirmed delivery clears alert errors');
 m=mock({age:10});state=await tick(env,storage,now+16*MINUTE,m.request);assert.equal(m.alerts().length,1,'Recovery is sent once after a confirmed incident');assert.equal(state.incidentSince,null);await tick(env,storage,now+17*MINUTE,m.request);assert.equal(m.alerts().length,1);
 m=mock({age:100});state=await tick({...env,ACTIVE:'false'},memory(),now,m.request);assert.equal(state.decision,'paused');assert.equal(m.dispatches().length,0);assert.equal(m.alerts().length,0);
@@ -60,3 +60,30 @@ assert.equal((await (await stopped.fetch(new Request('https://internal/status'))
 const notStarted = new CollectionWatchdog({storage:memory()},env);
 const initial = await (await notStarted.fetch(new Request('https://internal/status'))).json();
 assert.equal(initial.enabled,true);assert.equal(initial.lastCheckAt,null,'Enabled configuration never fabricates execution');
+// Exercise the deployed HTTP handler with isolated caches. Backup failures,
+// paused configuration and future heartbeats cannot hide native/source staleness.
+const { build } = await import('esbuild');
+const apiBundle=await build({entryPoints:[new URL('../api/collection-health.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'esm',write:false});
+const savedStatusUrl=process.env.COLLECTION_WATCHDOG_STATUS_URL;
+const savedFetch=globalThis.fetch;
+let caseId=0;
+async function httpCase({heartbeatOffset=0,enabled=true,unavailable=false,sourceFailure=false}={}){
+ const moment=Date.now();
+ process.env.COLLECTION_WATCHDOG_STATUS_URL='https://fixture.workers.dev/status';
+ globalThis.fetch=async input=>{
+  const url=new URL(String(input));
+  if(url.hostname==='fixture.workers.dev')return unavailable?new Response('{}',{status:503}):Response.json({version:1,provider:'cloudflare-watchdog',enabled,lastCheckAt:new Date(moment+heartbeatOffset*MINUTE).toISOString(),error:null});
+  assert.equal(url.origin,'https://api.github.com');
+  const old={...run,id:76,event:'schedule',created_at:new Date(moment-180*MINUTE).toISOString()};
+  if(url.pathname.endsWith('/runs'))return Response.json({workflow_runs:[{...run,created_at:new Date(moment-5*MINUTE).toISOString(),conclusion:sourceFailure?'failure':'success'},old]});
+  const legacy=url.pathname.includes('/76/');
+  return Response.json({jobs:[{conclusion:sourceFailure&&!legacy?'failure':'success',steps:[{name:'Collection outcome semantics v2',conclusion:'success'},...names.map(name=>({name,conclusion:sourceFailure&&!legacy&&name===names[1]?'failure':'success',completed_at:new Date(moment-(legacy?180:4)*MINUTE).toISOString()}))]}]});
+ };
+ const mod=await import(`data:text/javascript;base64,${Buffer.from(apiBundle.outputFiles[0].text).toString('base64')}#case-${caseId++}`);
+ return (await mod.GET()).json();
+}
+try{
+ let result=await httpCase();assert.equal(result.state,'fresh');assert.equal(result.scheduleState,'stale');assert.equal(result.effectiveSchedule,'cloudflare-watchdog');
+ for(const options of [{unavailable:true},{enabled:false},{heartbeatOffset:60},{sourceFailure:true}]){result=await httpCase(options);assert.equal(result.state,'stale',JSON.stringify(options));}
+}finally{globalThis.fetch=savedFetch;if(savedStatusUrl===undefined)delete process.env.COLLECTION_WATCHDOG_STATUS_URL;else process.env.COLLECTION_WATCHDOG_STATUS_URL=savedStatusUrl;}
+console.log('Production health HTTP integration: live backup vs native gap, paused/unavailable/future heartbeat, and real failed source all retain truthful status (offline).');

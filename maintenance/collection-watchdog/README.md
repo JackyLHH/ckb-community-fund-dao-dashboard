@@ -50,3 +50,5 @@ python3 maintenance/collection-watchdog/bind-telegram-macos.py
 前者用系统隐藏输入框将 GitHub 专用令牌直接通过 stdin 送入 Cloudflare。后者验证专用 Telegram Bot，打开带随机一次性参数的私人 Start 链接，只接受该参数对应的 private chat，直接保存两个 Telegram Secrets。两者都不发送测试消息；取消或验证失败不会输出密钥。Telegram 校验使用启用证书检查的系统 curl，并禁用个人 curl 配置；Token URL 只经 stdin 传入，不在进程参数中。
 
 当前生产只读状态地址为 https://ckb-dao-collection-watchdog.jackylhh.workers.dev/status 。首次 Cron 传播最多可能需要 15 分钟；应等待真实窗口，不为验收人工触发。
+
+运行时回归使用 `node scripts/test-watchdog-workerd.mjs`，在 workerd 内运行真实 Durable Object，但禁用外网并替换 GitHub 响应。Cloudflare 不支持 `redirect: error`；边缘请求必须使用 `manual` 并检查非 2xx 响应，拒绝重定向。状态接口在已有错误时最多每 5 分钟进行一次只读连接诊断，诊断时间单独返回，不改计划检查或采集成功时间。

@@ -24,6 +24,13 @@ export function dispatchDecision(health, busy, state, now) {
   if (state.lastAttemptAt && now - state.lastAttemptAt < 30 * MINUTE) return 'cooldown';
   return 'dispatch';
 }
+function metadataFailure(error) {
+  const code = typeof error?.message === 'string' ? error.message : '';
+  if (/^github-\d{3}$/.test(code) || ['credential-format', 'incomplete-runs', 'incomplete-jobs'].includes(code)) return code;
+  if (['TimeoutError', 'AbortError'].includes(error?.name)) return 'github-timeout';
+  if (error?.name === 'TypeError') return 'github-transport-error';
+  return 'metadata-unavailable';
+}
 function configured(env) {
   return /^github_pat_[A-Za-z0-9_]+$/.test(env.GITHUB_TOKEN || '')
     && /^[0-9]+:[A-Za-z0-9_-]+$/.test(env.TELEGRAM_BOT_TOKEN || '')
@@ -37,7 +44,7 @@ async function github(path, env, request, method = 'GET', body) {
     headers.Authorization = `Bearer ${env.GITHUB_TOKEN}`;
   }
   if (body) headers['Content-Type'] = 'application/json';
-  const result = await request(REPOSITORY + path, { method, headers, body: body ? JSON.stringify(body) : undefined, redirect: 'error', signal: AbortSignal.timeout(8_000) });
+  const result = await request(REPOSITORY + path, { method, headers, body: body ? JSON.stringify(body) : undefined, redirect: 'manual', signal: AbortSignal.timeout(8_000) });
   if (!result.ok) throw new Error(`github-${result.status}`);
   return method === 'GET' ? result.json() : result;
 }
@@ -53,7 +60,7 @@ export async function observe(env, previous, now, request = fetch) {
   }));
   const health = observedCollectionHealth(runs, observations.flatMap(result => result.status === 'fulfilled' ? [result.value] : []), now, previous);
   if (observations.some(result => result.status === 'rejected') || !completed.length) health.available = false;
-  return { health, busy: runs.some(run => ACTIVE_STATUSES.has(run.status)) };
+  return { health, busy: runs.some(run => ACTIVE_STATUSES.has(run.status)), error: observations.some(result => result.status === 'rejected') ? metadataFailure(observations.find(result => result.status === 'rejected').reason) : !completed.length ? 'incomplete-runs' : null };
 }
 function alertText(health, sources, kind) {
   const names = { votes: '投票', governance: '治理', treasury: '国库' };
@@ -65,7 +72,7 @@ function alertText(health, sources, kind) {
 async function sendAlert(env, health, sources, kind, request) {
   if (!configured(env)) return false;
   const result = await request(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-    method: 'POST', redirect: 'error', signal: AbortSignal.timeout(8_000), headers: { 'Content-Type': 'application/json' },
+    method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(8_000), headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: alertText(health, sources, kind), disable_web_page_preview: true }),
   });
   if (!result.ok) return false;
@@ -75,6 +82,7 @@ async function sendAlert(env, health, sources, kind, request) {
 // All side effects are injected for offline replay. Secrets are never stored
 // in Durable Object state, returned by /status, or included in error logs.
 export async function tick(env, storage, now = Date.now(), request = fetch) {
+  env = { ACTIVE: env.ACTIVE, GITHUB_TOKEN: (env.GITHUB_TOKEN || '').trim(), TELEGRAM_BOT_TOKEN: (env.TELEGRAM_BOT_TOKEN || '').trim(), TELEGRAM_CHAT_ID: (env.TELEGRAM_CHAT_ID || '').trim() };
   const state = await storage.get('state') || { startedAt: now };
   if (state.leaseUntil > now) return state;
   state.leaseUntil = now + 3 * MINUTE;
@@ -83,7 +91,7 @@ export async function tick(env, storage, now = Date.now(), request = fetch) {
   try {
     const observed = await observe(env, state.health, now, request);
     state.health = observed.health;
-    state.error = observed.health.available ? null : 'metadata-unavailable';
+    state.error = observed.error;
     state.decision = state.enabled ? dispatchDecision(state.health, observed.busy, state, now) : 'paused';
     if (state.enabled && !configured(env)) {
       state.decision = 'configuration-incomplete'; state.error = 'configuration-incomplete';
@@ -104,9 +112,9 @@ export async function tick(env, storage, now = Date.now(), request = fetch) {
         } catch { state.error = 'dispatch-unconfirmed'; state.decision = 'dispatch-unconfirmed'; }
       }
     }
-  } catch {
+  } catch (error) {
     state.health = { ...(state.health || emptyCollectionHealth(now)), available: false };
-    state.error = 'metadata-unavailable'; state.decision = 'metadata-unavailable';
+    state.error = metadataFailure(error); state.decision = 'metadata-unavailable';
   }
   state.failureSince = state.health.available ? null : state.failureSince || now;
   const overdue = staleSources(state.health, 90, now, state.startedAt);
@@ -138,6 +146,8 @@ export function publicStatus(state, enabled = state?.enabled === true) {
   return { version: 1, provider: 'cloudflare-watchdog', enabled,
     lastCheckAt: state?.lastCheckAt ? new Date(state.lastCheckAt).toISOString() : null,
     lastDispatchAt: state?.lastDispatchAt ? new Date(state.lastDispatchAt).toISOString() : null,
+    lastDiagnosticAt: state?.diagnosticAt ? new Date(state.diagnosticAt).toISOString() : null,
+    diagnosticError: state?.diagnosticError || null,
     lastRequestId: state?.requestId || null,
     decision: state?.decision || 'not-started', error: state?.error || null,
     alertError: state?.alertError || null,
@@ -149,8 +159,28 @@ export class CollectionWatchdog {
   constructor(ctx, env) { this.ctx = ctx; this.env = env; this.pending = null; }
   async fetch(request) {
     const url = new URL(request.url);
-    if (request.method === 'GET' && url.pathname === '/status') return json(publicStatus(await this.ctx.storage.get('state'), this.env.ACTIVE === 'true'));
+    if (request.method === 'GET' && url.pathname === '/status') {
+      let state = await this.ctx.storage.get('state');
+      // Error-only read probe, bounded to once per five minutes. It cannot
+      // dispatch, send alerts or advance scheduled/source success times.
+      if (state?.error && !this.pending && (state.diagnosticPolicy !== 'manual-redirect-v2' || !state.diagnosticAt || Date.now() - state.diagnosticAt >= 5 * MINUTE)) {
+        this.diagnosticPending ||= (async () => {
+          let code;
+          try {
+            const result = await observe({ GITHUB_TOKEN: (this.env.GITHUB_TOKEN || '').trim() }, undefined, Date.now());
+            code = result.error;
+          } catch (error) { code = metadataFailure(error); }
+          const latest = await this.ctx.storage.get('state');
+          latest.diagnosticAt = Date.now(); latest.diagnosticError = code; latest.diagnosticPolicy = 'manual-redirect-v2';
+          await this.ctx.storage.put('state', latest);
+        })().finally(() => { this.diagnosticPending = null; });
+        await this.diagnosticPending;
+        state = await this.ctx.storage.get('state');
+      }
+      return json(publicStatus(state, this.env.ACTIVE === 'true'));
+    }
     if (request.method !== 'POST' || url.pathname !== '/tick') return new Response('Not found', { status: 404 });
+    if (this.diagnosticPending) await this.diagnosticPending;
     // Coalesce concurrent scheduled invocations inside the single named object.
     this.pending ||= tick(this.env, this.ctx.storage).finally(() => { this.pending = null; });
     return json(publicStatus(await this.pending, this.env.ACTIVE === 'true'));
