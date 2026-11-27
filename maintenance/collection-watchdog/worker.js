@@ -64,9 +64,10 @@ export async function observe(env, previous, now, request = fetch) {
 }
 function alertText(health, sources, kind) {
   const names = { votes: '投票', governance: '治理', treasury: '国库' };
+  const verifiedTime = value => value && Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date(value)) : '尚无可靠成功记录';
   const heading = kind === 'recovery' ? '✅ DAO 采集已恢复' : '⚠️ DAO 采集超过 90 分钟未确认成功';
-  return [heading, ...(kind === 'recovery' ? SOURCES : sources).map(source => `${names[source]}：${collectionObservationTime(health.sources[source]) || '尚无可靠成功记录'}`),
-    '以上为实际采集步骤成功时间（UTC），不是触发或检查时间。',
+  return [heading, ...(kind === 'recovery' ? SOURCES : sources).map(source => `${names[source]}：${verifiedTime(collectionObservationTime(health.sources[source]))}`),
+    '以上为实际采集步骤成功时间（北京时间 UTC+8），不是触发或检查时间。',
     'https://github.com/JackyLHH/ckb-community-fund-dao-dashboard/actions/workflows/sync-votes.yml'].join('\n');
 }
 async function sendAlert(env, health, sources, kind, request) {
