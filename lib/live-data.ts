@@ -1,3 +1,4 @@
+import { reviewedProposalWithdrawal } from './proposal-withdrawals.js';
 import {
   dataset as fallbackDataset,
   getDiscussionStageDetail,
@@ -215,6 +216,7 @@ function baseStatusTagsFor(
   voting: ProposalVoting | null,
   now = new Date(),
 ): ProposalStatusTag[] {
+  if (reviewedProposalWithdrawal(id, now.getTime())) return ['ended'];
   if (voting?.status === 'active') return ['voting'];
   if (voting?.status === 'rejected') return ['vote-failed', 'ended'];
   const overriddenTags = proposalOverridesById[id]?.statusTags;
@@ -241,6 +243,8 @@ function primaryStatus(tags: ProposalStatusTag[]) {
 }
 
 function statusReasonZh(tags: ProposalStatusTag[], proposal: Pick<Proposal, 'createdAt'> & { id?: string }) {
+  const withdrawal = reviewedProposalWithdrawal(proposal.id);
+  if (withdrawal) return withdrawal.noteZh;
   if (tags.includes('completed')) return '公开交付报告或里程碑证据表明提案承诺的工作已经全部完成。';
   if (tags.includes('vote-failed')) return 'Metaforo 结果显示提案未达到通过比例或法定票数要求，投票未通过。';
   if (tags.includes('executing')) return '提案已通过投票，目前仍处于执行阶段，尚无完成或终止记录。';
@@ -800,6 +804,10 @@ export async function loadLiveProject(id: string): Promise<Proposal | null> {
 }
 
 function prepareLiveProposal(proposal: Proposal): Proposal {
+  const withdrawal = reviewedProposalWithdrawal(proposal.id);
+  if (withdrawal) proposal = { ...proposal, status: 'ended', statusTags: ['ended'],
+    statusExplanationZh: withdrawal.noteZh, statusExplanationEn: withdrawal.noteEn,
+    sources: [...proposal.sources.filter(source => source.url !== withdrawal.sourceUrl), { label: 'Proposer withdrawal statement', url: withdrawal.sourceUrl }] };
   const override = proposalOverridesById[proposal.id];
   if (override?.titleZh || override?.titleEn) proposal = { ...proposal, ...(override.titleZh ? { titleZh: override.titleZh } : {}), ...(override.titleEn ? { titleEn: override.titleEn } : {}) };
   return applyPersistedMilestoneTranslations(

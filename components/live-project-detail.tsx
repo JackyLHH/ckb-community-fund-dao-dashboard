@@ -12,6 +12,7 @@ import { detailStageStates, localizedSourceLabel, sortDetailUpdates } from '@/li
 import { isManualProposalUpdate } from '@/lib/proposal-update-title';
 import { getDiscussionStageDetail, getProposalBudget, getProposalOverview, formatCompact, formatDate, getProposalStatusTags, getProposalTitle, projectTypeLabels, type Proposal } from '@/lib/proposals';
 import { useLiveProject } from '@/lib/use-live-data';
+import { reviewedProposalWithdrawal } from '../lib/proposal-withdrawals.js';
 import { useLocale } from '@/lib/use-locale';
 
 const panel = 'rounded-2xl border border-border bg-card p-5 sm:p-7';
@@ -115,10 +116,11 @@ export function LiveProjectDetail({ id, initialProposal }: { id?: string; initia
   const progressNote = locale === 'en' ? proposal.progressNoteEn ?? proposal.progressNoteZh : proposal.progressNoteZh ?? proposal.progressNoteEn;
   const updates = sortDetailUpdates(proposal.updates);
   const localizedDate = (date: string) => formatDate(date, locale === 'en' ? 'en-US' : 'zh-CN');
+  const withdrawn = reviewedProposalWithdrawal(proposal.id);
   const steps = [
     { title: t('讨论', 'Discussion'), detail: getDiscussionStageDetail(proposal, locale, statusTags.includes('discussion')) },
-    { title: t('投票', 'Voting'), detail: proposal.voting?.status === 'active' ? t('投票进行中，当前结果仍会变化', 'Voting is open; the tally can still change') : statusTags.includes('vote-passed') ? t('投票通过', 'Vote passed') : statusTags.includes('vote-failed') ? t('投票未通过', 'Vote not passed') : proposal.voting ? t('已发现链接，投票状态待核验', 'Link found; voting status unverified') : t('尚未发现投票页', 'No voting page found') },
-    { title: t('执行', 'Execution'), detail: completed ? t('已完成', 'Completed') : stageStates[2] === 'current' ? t('正在进行中', 'In progress') : stageStates[2] === 'ended' ? t('已结束', 'Ended') : t('尚未开始', 'Not started') },
+    { title: t('投票', 'Voting'), detail: withdrawn ? t('本次申请已撤回，未进入投票', 'This application was withdrawn before voting') : proposal.voting?.status === 'active' ? t('投票进行中，当前结果仍会变化', 'Voting is open; the tally can still change') : statusTags.includes('vote-passed') ? t('投票通过', 'Vote passed') : statusTags.includes('vote-failed') ? t('投票未通过', 'Vote not passed') : proposal.voting ? t('已发现链接，投票状态待核验', 'Link found; voting status unverified') : t('尚未发现投票页', 'No voting page found') },
+    { title: t('执行', 'Execution'), detail: withdrawn ? t('本次申请不再推进；开发将继续', 'This application is closed; development continues') : completed ? t('已完成', 'Completed') : stageStates[2] === 'current' ? t('正在进行中', 'In progress') : stageStates[2] === 'ended' ? t('已结束', 'Ended') : t('尚未开始', 'Not started') },
   ];
 
   return <div className="min-h-screen bg-background text-foreground"><SiteHeader /><main id="main-content" tabIndex={-1}>

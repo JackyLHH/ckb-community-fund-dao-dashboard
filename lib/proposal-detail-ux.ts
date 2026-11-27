@@ -74,6 +74,7 @@ export function updateMonthKey(date?: string) {
 }
 
 export function localizedSourceLabel(label: string, url: string, locale: 'zh' | 'en') {
+  if (label === 'Proposer withdrawal statement') return locale === 'en' ? label : '提案人撤回声明';
   if (locale === 'en') {
     if (/原始提案|原帖/.test(label)) return 'Original Nervos Talk proposal';
     if (/资助/.test(label)) return 'Funded proposals list';

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { reviewedProposalWithdrawal } from '../lib/proposal-withdrawals.js';
 import { useLocale } from '@/lib/use-locale';
 import type { DiscussionVerification, LifecycleSnapshot } from '@/lib/digest-lifecycle';
 
@@ -8,6 +9,7 @@ export function DiscussionVerificationNotice({ id }: { id: string }) {
   const { locale, t } = useLocale();
   const [result, setResult] = useState<{ id: string; verification: DiscussionVerification | null } | null>(null);
   useEffect(() => {
+    if (reviewedProposalWithdrawal(id)) return;
     let active = true;
     let controller: AbortController | null = null;
     const refresh = async () => {
@@ -29,6 +31,12 @@ export function DiscussionVerificationNotice({ id }: { id: string }) {
     window.addEventListener('focus', refresh);
     return () => { active = false; controller?.abort(); window.clearInterval(interval); window.removeEventListener('focus', refresh); };
   }, [id]);
+  const withdrawal = reviewedProposalWithdrawal(id);
+  if (withdrawal) return <aside data-proposal-withdrawal className="mt-5 rounded-xl border border-border bg-muted/60 p-4 text-sm leading-6" aria-labelledby={`withdrawal-${id}`}>
+    <h3 id={`withdrawal-${id}`} className="font-semibold">{t('本次提案已撤回', 'This proposal was withdrawn')}</h3>
+    <p className="mt-2">{locale === 'en' ? withdrawal.noteEn : withdrawal.noteZh}</p>
+    <a href={withdrawal.sourceUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block font-semibold underline underline-offset-2">{t('查看提案人撤回声明（第 34 楼）', 'Read the proposer’s withdrawal statement (post 34)')}</a>
+  </aside>;
   const verification = result?.id === id ? result.verification : null;
   if (!verification) return null;
   const date = (value: string) => new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(value)) + ' UTC+8';

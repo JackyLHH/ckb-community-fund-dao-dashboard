@@ -1,3 +1,4 @@
+import { reviewedProposalWithdrawal } from './proposal-withdrawals.js';
 import discussionEvidence from '../data/lifecycle.generated.json' with { type: 'json' };
 import rawDataset from '../data/proposals.generated.json' with { type: 'json' };
 import { cleanProposalTitle } from './proposal-title.js';
@@ -148,9 +149,13 @@ export const dataset: ProposalDataset = {
   proposals: sourceDataset.proposals.map((proposal) => {
     const override = proposalOverridesById[proposal.id as keyof typeof proposalOverridesById];
     const merged = (override ? { ...proposal, ...override } : proposal) as Proposal;
+    const withdrawal = reviewedProposalWithdrawal(merged.id);
     const normalized = {
       ...merged,
       projectType: normalizeProjectType(merged.projectType),
+      sources: withdrawal
+        ? [...merged.sources.filter(source => source.url !== withdrawal.sourceUrl), { label: 'Proposer withdrawal statement', url: withdrawal.sourceUrl }]
+        : merged.sources,
       tags: [],
       updates: override?.updates
         ? merged.updates.map((update) => ({ ...update, source: 'manual' as const }))
@@ -247,6 +252,7 @@ export function getProposalStatusTags(proposal: Proposal, now = new Date()): Pro
 }
 
 function baseProposalStatusTags(proposal: Proposal, now: Date): ProposalStatusTag[] {
+  if (reviewedProposalWithdrawal(proposal.id, now.getTime())) return ['ended'];
   if (proposal.voting?.status === 'active') return ['voting'];
   if (proposal.voting?.status === 'unknown' && proposal.statusTags?.length === 0) return [];
   if (proposal.statusTags?.length) return proposal.statusTags;
@@ -261,6 +267,8 @@ function baseProposalStatusTags(proposal: Proposal, now: Date): ProposalStatusTa
 }
 
 export function getDiscussionStageDetail(proposal: Pick<Proposal, 'createdAt'> & { id?: string }, locale: 'zh' | 'en', discussionPending: boolean, now = new Date()) {
+  if (reviewedProposalWithdrawal(proposal.id, now.getTime())) return locale === 'en'
+    ? 'This application was withdrawn; development continues.' : '本次申请已撤回，开发将继续。';
   const deadline = Date.parse(proposal.createdAt) + 7 * 24 * 60 * 60 * 1000;
   if (Number.isFinite(deadline) && now.getTime() < deadline && discussionPending) return locale === 'en'
     ? 'Within the seven-day discussion stage' : '处于七天讨论阶段';
@@ -273,6 +281,8 @@ export function getDiscussionStageDetail(proposal: Pick<Proposal, 'createdAt'> &
 }
 
 export function getStatusExplanation(proposal: Proposal, locale: 'zh' | 'en') {
+  const withdrawal = reviewedProposalWithdrawal(proposal.id);
+  if (withdrawal) return locale === 'en' ? withdrawal.noteEn : withdrawal.noteZh;
   const customExplanation = locale === 'en'
     ? proposal.statusExplanationEn ?? proposal.statusExplanationZh
     : proposal.statusExplanationZh ?? proposal.statusExplanationEn;

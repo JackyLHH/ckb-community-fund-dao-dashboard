@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { build } from 'esbuild';
+import { proposalOverridesById } from '../lib/proposal-overrides.ts';
+import { proposalWithdrawalsById, reviewedProposalWithdrawal } from '../lib/proposal-withdrawals.js';
+import { isMeaningfulProgressUpdate } from '../lib/digest-activity.ts';
+const fixture = JSON.parse(await readFile(new URL('./fixtures/twine-withdrawal.json',import.meta.url),'utf8'));
+const evidence=proposalWithdrawalsById['11228'];
+assert.equal(evidence.author,fixture.username);assert.equal(evidence.withdrawnAt,fixture.created_at);
+assert.match(fixture.cooked,/I have decided to withdraw the proposal and keep working on it/);
+assert.equal(reviewedProposalWithdrawal('11228',Date.parse(evidence.withdrawnAt)-1),null);
+assert.equal(reviewedProposalWithdrawal('11228',Date.parse(evidence.withdrawnAt)),evidence);
+assert.equal(isMeaningfulProgressUpdate(fixture.cooked),false,'Withdrawal is not a delivery report');
+assert.deepEqual(proposalOverridesById['11228'].statusTags,['ended']);
+const output=await build({entryPoints:[new URL('../lib/live-data.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'esm',write:false,footer:{js:'export { prepareLiveProposal, baseStatusTagsFor };'}});
+const live=await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}`);
+const bundled=await build({entryPoints:[new URL('../lib/proposals.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'esm',write:false});
+const helpers=await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`);
+const old={...helpers.dataset.proposals[0],id:'11228',author:'ebubedev',createdAt:'2026-11-17T04:51:04.145Z',budgetLabel:'$12,000',voting:null,overview:{objective:'Reviewed objective',milestones:[{title:'M1',description:'Existing delivery'}]}};
+const cached={...old,status:'discussion',statusTags:['discussion'],statusExplanationZh:'旧的讨论期文案',statusExplanationEn:'Old pending copy'};
+const proposal=live.prepareLiveProposal(cached);
+assert.deepEqual(helpers.getProposalStatusTags(proposal),['ended']);
+assert.deepEqual(live.baseStatusTagsFor('11228',cached,null),['ended']);
+assert.deepEqual(live.baseStatusTagsFor('11228',cached,{status:'active'}),['ended'],'A stale vote cannot reactivate a reviewed withdrawal');
+for(const locale of ['zh','en']){
+ assert.equal(helpers.getStatusExplanation(proposal,locale),locale==='zh'?evidence.noteZh:evidence.noteEn);
+ assert.match(helpers.getDiscussionStageDetail(proposal,locale,true),locale==='zh'?/已撤回/:/withdrawn/);
+}
+assert.ok(proposal.sources.some(s=>s.url===evidence.sourceUrl));
+assert.equal(proposal.overview.objectiveEn,proposalOverridesById['11228'].overviewObjective.en);
+assert.deepEqual(proposal.overview.milestones.map(({title,description})=>({title,description})),old.overview.milestones);
+assert.equal(proposal.budgetLabel,old.budgetLabel);
+assert.deepEqual(proposal.discussion,old.discussion);
+assert.equal(cached.status,'discussion','Do not mutate old cached records');
+assert.deepEqual(helpers.getProposalStatusTags({...old,id:'11089',status:'executing',statusTags:['vote-passed','executing']}),['vote-passed','executing']);
+console.log('Validated proposer-owned withdrawal source, ended filtering, bilingual status, stale-cache precedence and unchanged budgets/milestones/history; no sends.');

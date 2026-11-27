@@ -1,3 +1,4 @@
+import { reviewedProposalWithdrawal } from '../lib/proposal-withdrawals.js';
 import { readFile, writeFile } from 'node:fs/promises';
 import { isDeepStrictEqual } from 'node:util';
 import { discussionDeadline, readDiscussionEvidence, voteLifecycleEvents } from '../lib/digest-lifecycle.ts';
@@ -52,6 +53,14 @@ try {
     const id = String(topic.id);
     const eventId = `discussion-ended:${id}`;
     if (existing.has(eventId)) continue;
+    const withdrawal = reviewedProposalWithdrawal(id, now);
+    if (withdrawal) {
+      // The reviewed withdrawal ends this application independently of the
+      // historical cutoff. Retain that unresolved checkpoint byte-for-byte;
+      // do not manufacture a discussion-ended count or a vote outcome.
+      console.log(`Proposal ${id}: withdrawn by ${withdrawal.author}; historical discussion evidence retained without resolving likes; source=${withdrawal.sourceUrl}`);
+      continue;
+    }
     try {
       const evidence = await readDiscussionEvidence(topic, snapshot.discussions[id], get, now);
       const { likes: _likes, ...checkpoint } = evidence;

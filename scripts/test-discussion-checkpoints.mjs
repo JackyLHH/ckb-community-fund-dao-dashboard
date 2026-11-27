@@ -41,6 +41,8 @@ const temporary=await mkdtemp(join(tmpdir(),'dao-discussion-checkpoint-'));
 try{
  for(const dir of ['scripts','lib','data'])await mkdir(join(temporary,dir));
  await writeFile(join(temporary,'package.json'),'{"type":"module"}');
+ // Before a reviewed withdrawal, missing historical evidence still fails.
+ await writeFile(join(temporary,'lib/proposal-withdrawals.js'),'export const reviewedProposalWithdrawal = () => null;');
  for(const [from,to] of [['scripts/sync-lifecycle.mjs','scripts/sync-lifecycle.mjs'],['lib/digest-lifecycle.ts','lib/digest-lifecycle.ts'],['lib/proposal-title.js','lib/proposal-title.js']])await copyFile(new URL('../'+from,import.meta.url),join(temporary,to));
  const start={version:1,enabledAt:'2026-10-19T00:00:00Z',checkedAt:null,events:[],discussions:{'11228':f.saved}};
  await writeFile(join(temporary,'data/lifecycle.generated.json'),JSON.stringify(start));await writeFile(join(temporary,'data/votes.generated.json'),'{"votes":{}}');
@@ -55,6 +57,13 @@ try{
  const firstBytes=await readFile(join(temporary,'data/lifecycle.generated.json'),'utf8');
  const repeat=spawnSync(process.execPath,['--experimental-strip-types','--import',join(temporary,'mock.mjs'),join(temporary,'scripts/sync-lifecycle.mjs')],{encoding:'utf8'});
  assert.equal(repeat.status,1);assert.equal(await readFile(join(temporary,'data/lifecycle.generated.json'),'utf8'),firstBytes,'Unchanged evidence does not fabricate new checkpoint time or commits');
+ // Once withdrawal is independently evidenced, keep the unresolved historical
+ // record without using it to decide advancement of the closed application.
+ await copyFile(new URL('../lib/proposal-withdrawals.js',import.meta.url),join(temporary,'lib/proposal-withdrawals.js'));
+ const withdrawn=spawnSync(process.execPath,['--experimental-strip-types','--import',join(temporary,'mock.mjs'),join(temporary,'scripts/sync-lifecycle.mjs')],{encoding:'utf8'});
+ assert.equal(withdrawn.status,0,withdrawn.stderr);assert.match(withdrawn.stdout,/withdrawn by ebubedev/);
+ assert.equal(await readFile(join(temporary,'data/lifecycle.generated.json'),'utf8'),firstBytes,'Withdrawal does not rewrite historical evidence or manufacture a count/event/success timestamp');
+
 }finally{await rm(temporary,{recursive:true,force:true});}
 console.log('Validated real Twine 29-before/1-after/1-unknown checkpoint, complete-evidence replay, source races and actual collector partial persistence/failure with other topics continuing (offline).');
 
