@@ -1,0 +1,33 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "ckb-dao-collection-watchdog",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-27",
+  "workers_dev": true,
+  "vars": {
+    "ACTIVE": "false"
+  },
+  "triggers": {
+    "crons": []
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "WATCHDOG",
+        "class_name": "CollectionWatchdog"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "CollectionWatchdog"
+      ]
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "account_id": "305665822c7561ac72db5a677d1c7df1"
+}

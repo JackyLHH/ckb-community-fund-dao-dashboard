@@ -39,7 +39,8 @@ export function CollectionFreshnessNotice() {
       <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
       <div className="min-w-0 text-sm leading-6">
         <p className="font-semibold">{freshness.state === 'stale' ? t('自动采集存在延迟，请核对以下时间。', 'Automatic collection is delayed; check the times below.') : t('自动采集时间暂无法完整核验。', 'Collection freshness cannot currently be fully verified.')}</p>
-        {freshness.schedule !== 'fresh' && <p>{t('最近定时运行：', 'Last scheduled run: ')}{format(report.schedule.lastRunAt)}</p>}
+        {freshness.schedule !== 'fresh' && <p>{t('最近 GitHub 原生定时运行：', 'Last native GitHub scheduled run: ')}{format(report.schedule.lastRunAt)}</p>}
+        {report.backup?.enabled && <p>{t('Cloudflare 备用调度最近检查：', 'Cloudflare backup last checked: ')}{format(report.backup.lastCheckAt)}</p>}
         <p className="break-words">{t('最近成功采集：', 'Last successful collection: ')}{t('投票 ', 'Votes ')}{format(collectionObservationTime(report.sources.votes))}{t('；治理 ', '; Governance ')}{format(collectionObservationTime(report.sources.governance))}{t('；国库 ', '; Treasury ')}{format(collectionObservationTime(report.sources.treasury))}</p>
         <p>{t('页面保留最后可用记录，可能尚未包含后续变化。', 'The last available records are retained and may not include later changes.')} <a href={report.schedule.runUrl ?? COLLECTION_WORKFLOW_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">{t('查看采集记录', 'View collection records')}</a></p>
       </div>

@@ -13,7 +13,9 @@ export type CollectionObservation = { lastSuccessAt: string | null; runUrl: stri
 export function collectionObservationTime(observation: CollectionObservation) {
   return observation.evidence === 'strict-v2' || observation.evidence === 'legacy-aggregate' ? observation.lastSuccessAt : null;
 }
+export type CollectionBackup = { provider: 'cloudflare-watchdog'; enabled: boolean; lastCheckAt: string | null; statusUrl: string; error: string | null };
 export type CollectionHealth = {
+  backup?: CollectionBackup;
   version: 1;
   checkedAt: string;
   available: boolean;
@@ -43,8 +45,11 @@ export function collectionHealthState(health: CollectionHealth, now = Date.now()
   };
   const sources = Object.fromEntries(Object.entries(health.sources).map(([key, source]) => [key, age(collectionObservationTime(source))])) as Record<CollectionSource, 'fresh' | 'stale' | 'unknown'>;
   const schedule = age(health.schedule.lastRunAt);
-  const states = [...Object.values(sources), schedule];
-  return { state: states.includes('stale') ? 'stale' : !health.available || (health.latestRun?.status === 'completed' && health.latestRun.conclusion !== 'success') || states.includes('unknown') ? 'unknown' : 'fresh', sources, schedule } as const;
+  const backupCheck = validTime(health.backup?.lastCheckAt, now);
+  const backupFresh = health.backup?.enabled === true && !health.backup.error && backupCheck !== null && now - backupCheck <= 30 * 60 * 1000;
+  const effectiveSchedule = backupFresh ? 'cloudflare-watchdog' : 'github-native';
+  const states = [...Object.values(sources), ...(backupFresh ? [] : [schedule])];
+  return { state: states.includes('stale') ? 'stale' : !health.available || (health.latestRun?.status === 'completed' && health.latestRun.conclusion !== 'success') || states.includes('unknown') ? 'unknown' : 'fresh', sources, schedule, effectiveSchedule } as const;
 }
 export function observedCollectionHealth(runs: WorkflowRun[], jobs: Array<{ run: WorkflowRun; jobs: WorkflowJob[] }>, now = Date.now(), previous?: CollectionHealth): CollectionHealth {
   const report = emptyCollectionHealth(now);

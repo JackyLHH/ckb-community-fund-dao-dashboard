@@ -1,4 +1,4 @@
-import { collectionHealthState, emptyCollectionHealth, observedCollectionHealth, type CollectionHealth, type WorkflowRun, type WorkflowJob } from '../lib/collection-health.js';
+import { collectionHealthState, emptyCollectionHealth, observedCollectionHealth, type CollectionHealth, type CollectionBackup, type WorkflowRun, type WorkflowJob } from '../lib/collection-health.js';
 
 const repository = 'https://api.github.com/repos/JackyLHH/ckb-community-fund-dao-dashboard';
 const ttl = 5 * 60 * 1000;
@@ -12,7 +12,23 @@ async function publicJson(path: string) {
   if (!response.ok) throw new Error('Public Actions metadata unavailable');
   return response.json();
 }
+async function backupStatus(): Promise<CollectionBackup | undefined> {
+  const configured = process.env.COLLECTION_WATCHDOG_STATUS_URL;
+  if (!configured) return undefined;
+  const url = new URL(configured);
+  if (url.protocol !== 'https:' || !url.hostname.endsWith('.workers.dev') || url.pathname !== '/status' || url.username || url.password || url.search || url.hash) throw new Error('Invalid watchdog status URL');
+  try {
+    const response = await fetch(url, { redirect: 'error', signal: AbortSignal.timeout(3_000), headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error('Unavailable');
+    const body = await response.json();
+    if (body.version !== 1 || body.provider !== 'cloudflare-watchdog' || typeof body.enabled !== 'boolean') throw new Error('Invalid status');
+    return { provider: 'cloudflare-watchdog', enabled: body.enabled, statusUrl: url.href, lastCheckAt: typeof body.lastCheckAt === 'string' ? body.lastCheckAt : null, error: body.error ? 'unavailable' : null };
+  } catch {
+    return { provider: 'cloudflare-watchdog', enabled: cached?.report.backup?.enabled ?? false, statusUrl: url.href, lastCheckAt: cached?.report.backup?.lastCheckAt ?? null, error: 'unavailable' };
+  }
+}
 async function readHealth(): Promise<CollectionHealth> {
+  const backup = backupStatus().catch(() => undefined);
   const result = await publicJson('/actions/workflows/sync-votes.yml/runs?branch=main&per_page=10');
   if (!Array.isArray(result.workflow_runs) || result.workflow_runs.length === 0) throw new Error('Incomplete run metadata');
   const runs = result.workflow_runs as WorkflowRun[];
@@ -26,11 +42,13 @@ async function readHealth(): Promise<CollectionHealth> {
   }));
   const report = observedCollectionHealth(runs, settled.flatMap(result => result.status === 'fulfilled' ? [result.value] : []), Date.now(), cached?.report);
   if (settled.some(result => result.status === 'rejected')) { report.available = false; report.error = 'unavailable'; }
+  const observedBackup = await backup;
+  if (observedBackup) report.backup = observedBackup;
   return report;
 }
 function response(report: CollectionHealth) {
   const freshness = collectionHealthState(report);
-  return Response.json({ ...report, state: freshness.state, sourceStates: freshness.sources, scheduleState: freshness.schedule }, { headers: { 'Cache-Control': report.available ? 'public, max-age=30, s-maxage=300' : 'no-store' } });
+  return Response.json({ ...report, state: freshness.state, sourceStates: freshness.sources, scheduleState: freshness.schedule, effectiveSchedule: freshness.effectiveSchedule }, { headers: { 'Cache-Control': report.available ? 'public, max-age=30, s-maxage=300' : 'no-store' } });
 }
 export async function GET() {
   const now = Date.now();
