@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { build } from 'esbuild';
-import { isMeaningfulProgressUpdate, stripForumHtml, progressUpdatePosts } from '../lib/digest-activity.ts';
+import { classifyProgressUpdate, isMeaningfulProgressUpdate, stripForumHtml, progressUpdatePosts } from '../lib/digest-activity.ts';
 import { isProposalProgressUpdate } from '../lib/proposal-progress.ts';
 import { selectForumProgressUpdates } from '../lib/proposal-update-title.ts';
 import { proposalOverridesById } from '../lib/proposal-overrides.ts';
 import { translateMissingProposalUpdates } from '../lib/proposal-update-translation.ts';
 const fixture = JSON.parse(await readFile(new URL('./fixtures/progress-evidence-nov23.json', import.meta.url), 'utf8'));
 const nov26 = JSON.parse(await readFile(new URL('./fixtures/progress-evidence-nov26.json', import.meta.url), 'utf8'));
+const grantAnswers = JSON.parse(await readFile(new URL('./fixtures/productathon-grant-answers.json', import.meta.url), 'utf8'));
 const testReport = JSON.parse(await readFile(new URL('./fixtures/cellula-test-report.json', import.meta.url), 'utf8'));
 const check = (cooked, expected) => {
  assert.equal(isMeaningfulProgressUpdate(cooked), expected, 'Digest: ' + stripForumHtml(cooked).slice(0,110));
@@ -49,6 +50,25 @@ const mixedDigest = progressUpdatePosts([{post_number:1,username:'ebubedev'},mix
 assert.equal(mixedDigest.length, 1);
 assert.ok(!mixedDigest[0].cooked.includes('Fiber Studio'));
 assert.equal(mixedPost.cooked, mixed, 'Do not mutate historical source posts');
+check(grantAnswers.cooked, false);
+assert.notEqual(classifyProgressUpdate(grantAnswers.cooked).kind,'completion');
+assert.equal(selectForumProgressUpdates([grantAnswers],'Fidelcoder','11262','productathon').length,0);
+for(const text of [
+ 'The final report for an older Arbitrum grant is posted under my name.',
+ 'Here is the Arbitrum final report.',
+ 'Draft final report',
+]) { check('<p>'+text+'</p>',false); assert.notEqual(classifyProgressUpdate('<p>'+text+'</p>').kind,'completion'); }
+for(const title of ['Final report','CKB tool — Completion Report','结项报告']) {
+ const cooked='<h2>'+title+'</h2><p>All deliverables for this proposal are complete.</p>';
+ check(cooked,true);assert.equal(classifyProgressUpdate(cooked).kind,'completion');
+}
+const scopedAnswer=grantAnswers.cooked+'<p>For this proposal, we deployed the event registration page and tested the checkout. See an earlier Arbitrum final report for background.</p>';
+check(scopedAnswer,true);
+assert.notEqual(classifyProgressUpdate(scopedAnswer).kind,'completion');
+const scopedUpdate=selectForumProgressUpdates([{...grantAnswers,cooked:scopedAnswer}],'Fidelcoder','11262','productathon')[0];
+assert.ok(scopedUpdate.title.includes('deployed'));assert.ok(!scopedUpdate.title.includes('Arbitrum'));
+const weeklyWithReference='<h2>Weekly report</h2><p>We deployed the registration page.</p><p>See the old Arbitrum final report for background.</p>';
+check(weeklyWithReference,true);assert.equal(classifyProgressUpdate(weeklyWithReference).kind,'weekly');
 const quoted='<blockquote>'+fixture.cellula.cooked+'</blockquote><p>Is this the plan?</p>';
 assert.equal(isMeaningfulProgressUpdate(quoted),false);
 assert.equal(selectForumProgressUpdates([{...fixture.cellula,cooked:quoted}],'LusoCryptoLabs','11089','dis-cellula').length,0);
@@ -100,6 +120,7 @@ try{
  await replay(10613,'truthixify',[nov26.vellum28],'2026-11-25T08:00:00Z','2026-11-26T08:00:00Z',[28]);
  const mixedReplay=await replay(11228,'ebubedev',[mixedPost],'2026-11-25T08:00:00Z','2026-11-26T08:00:00Z',[26]);
  assert.ok(!mixedReplay[0].latestPostExcerpt.includes('Fiber Studio'));
+ await replay(11262,'Fidelcoder',[grantAnswers],'2026-11-26T08:00:00Z','2026-11-27T08:00:00Z',[]);
  assert.equal(sends,0);
 }finally{globalThis.fetch=oldFetch;}
 console.log('Validated shared observed-work eligibility, Twine #16/#17 exclusion, author-owned bilingual Cellula #23, RIVET delivery and historical digest replay (offline, zero sends/state writes).');

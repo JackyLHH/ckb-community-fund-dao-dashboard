@@ -1,4 +1,4 @@
-import { currentProposalProgressText, isProposalProgressUpdate } from './proposal-progress-evidence.js';
+import { currentProposalProgressText, hasCurrentCompletionReport, isProposalProgressUpdate } from './proposal-progress-evidence.js';
 import { isProposalScopeRevision } from './proposal-revision.js';
 export { isProposalScopeRevision };
 export const DIGEST_LOOKBACK_MS = 24 * 60 * 60 * 1_000;
@@ -205,7 +205,8 @@ export function extractMilestoneBudget(
 }
 
 export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {
-  const text = currentProposalProgressText(stripForumHtml(cooked));
+  const source = cooked.replace(/<(blockquote|pre|script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  const text = currentProposalProgressText(stripForumHtml(source));
   // A mention of a milestone (or a change to its planned scope) is not a
   // report. Require an adjacent report/completion statement and keep the
   // completion check local to that statement, not the rest of the post.
@@ -229,7 +230,7 @@ export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {
   if (/\bmonthly\b|\bmonth\s*#?\d+\s*(?:updates?|reports?)\b|月报/i.test(text)) return { kind: 'monthly' };
   if (/\bquarterly\b|\bq[1-4]\s+(?:updates?|reports?)\b|季报/i.test(text)) return { kind: 'quarterly' };
   if (/\b(?:annual|yearly)\b|年报/i.test(text)) return { kind: 'annual' };
-  if (/\b(?:completion|final)\s+report\b|\bproject\s+completion\b|(?:结项报告|完结报告|完成报告)/i.test(text)) return { kind: 'completion' };
+  if (hasCurrentCompletionReport(text)) return { kind: 'completion' };
   if (/\bstatus\s+(?:updates?|reports?)\b|状态更新/i.test(text)) return { kind: 'status' };
   if (/\bdelivery\s+(?:updates?|reports?)\b|交付报告/i.test(text)) return { kind: 'delivery' };
   if (/\b(?:progress|project|development)\s+(?:updates?|reports?)\b|(?:项目|工作)?进展(?:更新|报告)|进度(?:更新|报告)|项目更新/i.test(text)) return { kind: 'progress' };
