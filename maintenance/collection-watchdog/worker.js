@@ -134,8 +134,8 @@ export async function tick(env, storage, now = Date.now(), request = fetch) {
   await storage.put('state', state);
   return state;
 }
-export function publicStatus(state) {
-  return { version: 1, provider: 'cloudflare-watchdog', enabled: state?.enabled === true,
+export function publicStatus(state, enabled = state?.enabled === true) {
+  return { version: 1, provider: 'cloudflare-watchdog', enabled,
     lastCheckAt: state?.lastCheckAt ? new Date(state.lastCheckAt).toISOString() : null,
     lastDispatchAt: state?.lastDispatchAt ? new Date(state.lastDispatchAt).toISOString() : null,
     lastRequestId: state?.requestId || null,
@@ -149,11 +149,11 @@ export class CollectionWatchdog {
   constructor(ctx, env) { this.ctx = ctx; this.env = env; this.pending = null; }
   async fetch(request) {
     const url = new URL(request.url);
-    if (request.method === 'GET' && url.pathname === '/status') return json(publicStatus(await this.ctx.storage.get('state')));
+    if (request.method === 'GET' && url.pathname === '/status') return json(publicStatus(await this.ctx.storage.get('state'), this.env.ACTIVE === 'true'));
     if (request.method !== 'POST' || url.pathname !== '/tick') return new Response('Not found', { status: 404 });
     // Coalesce concurrent scheduled invocations inside the single named object.
     this.pending ||= tick(this.env, this.ctx.storage).finally(() => { this.pending = null; });
-    return json(publicStatus(await this.pending));
+    return json(publicStatus(await this.pending, this.env.ACTIVE === 'true'));
   }
 }
 export default {

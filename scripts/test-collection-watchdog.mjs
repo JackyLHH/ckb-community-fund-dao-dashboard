@@ -54,3 +54,9 @@ const forbidden=await worker.fetch(new Request('https://watchdog.test/tick',{met
 m=mock({age:46});storage=memory();let release;const gate=new Promise(resolve=>{release=resolve});let calls=0;const oldFetch=globalThis.fetch;globalThis.fetch=async(...args)=>{calls++;if(calls===1)await gate;return m.request(...args)};
 try {const object=new CollectionWatchdog({storage},env);const a=object.fetch(new Request('https://internal/tick',{method:'POST'}));const b=object.fetch(new Request('https://internal/tick',{method:'POST'}));release();await Promise.all([a,b]);assert.equal(m.dispatches().length,1);}finally{globalThis.fetch=oldFetch;}
 console.log('Watchdog: real-step evidence, partial failures, 45m failover, busy/cooldown, ambiguous dispatch, 90m private alerts/recovery, delivery failures, persisted dedupe, closed public routes and honest native/backup health pass (offline; zero real sends).');
+
+const stopped = new CollectionWatchdog({storage:memory({enabled:true,lastCheckAt:now})},{...env,ACTIVE:'false'});
+assert.equal((await (await stopped.fetch(new Request('https://internal/status'))).json()).enabled,false,'Pausing configuration immediately overrides persisted enabled state');
+const notStarted = new CollectionWatchdog({storage:memory()},env);
+const initial = await (await notStarted.fetch(new Request('https://internal/status'))).json();
+assert.equal(initial.enabled,true);assert.equal(initial.lastCheckAt,null,'Enabled configuration never fabricates execution');

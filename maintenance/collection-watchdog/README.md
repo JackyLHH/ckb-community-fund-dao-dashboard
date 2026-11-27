@@ -37,3 +37,16 @@
 ## 暂停 / 回退
 
 重新部署 `wrangler.jsonc` 即关闭 Cron 并设置 ACTIVE=false，保留证据与告警历史。网站删除 COLLECTION_WATCHDOG_STATUS_URL 后仍按原生调度监测。撤销 GitHub 专用 PAT、移除 Telegram secrets 可完全关闭对外权限，不改业务数据或订阅。
+
+## macOS 安全配置助手
+
+本项目的桌面维护环境可使用以下两个助手，无须在终端参数、聊天或文件中写入密钥：
+
+```sh
+python3 maintenance/collection-watchdog/configure-github-macos.py
+python3 maintenance/collection-watchdog/bind-telegram-macos.py
+```
+
+前者用系统隐藏输入框将 GitHub 专用令牌直接通过 stdin 送入 Cloudflare。后者验证专用 Telegram Bot，打开带随机一次性参数的私人 Start 链接，只接受该参数对应的 private chat，直接保存两个 Telegram Secrets。两者都不发送测试消息；取消或验证失败不会输出密钥。Telegram 校验使用启用证书检查的系统 curl，并禁用个人 curl 配置；Token URL 只经 stdin 传入，不在进程参数中。
+
+当前生产只读状态地址为 https://ckb-dao-collection-watchdog.jackylhh.workers.dev/status 。首次 Cron 传播最多可能需要 15 分钟；应等待真实窗口，不为验收人工触发。
