@@ -52,3 +52,5 @@ python3 maintenance/collection-watchdog/bind-telegram-macos.py
 当前生产只读状态地址为 https://ckb-dao-collection-watchdog.jackylhh.workers.dev/status 。首次 Cron 传播最多可能需要 15 分钟；应等待真实窗口，不为验收人工触发。
 
 运行时回归使用 `node scripts/test-watchdog-workerd.mjs`，在 workerd 内运行真实 Durable Object，但禁用外网并替换 GitHub 响应。Cloudflare 不支持 `redirect: error`；边缘请求必须使用 `manual` 并检查非 2xx 响应，拒绝重定向。状态接口在已有错误时最多每 5 分钟进行一次只读连接诊断，诊断时间单独返回，不改计划检查或采集成功时间。
+
+计划处理器直接等待检查结果；读取、补触发或私人告警失败时，保留失败状态并抛出固定异常，不把应用失败吞成正常返回。此错误路径有独立离线回归。

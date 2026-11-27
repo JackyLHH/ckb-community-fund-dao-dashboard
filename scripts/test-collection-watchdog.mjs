@@ -87,3 +87,9 @@ try{
  for(const options of [{unavailable:true},{enabled:false},{heartbeatOffset:60},{sourceFailure:true}]){result=await httpCase(options);assert.equal(result.state,'stale',JSON.stringify(options));}
 }finally{globalThis.fetch=savedFetch;if(savedStatusUrl===undefined)delete process.env.COLLECTION_WATCHDOG_STATUS_URL;else process.env.COLLECTION_WATCHDOG_STATUS_URL=savedStatusUrl;}
 console.log('Production health HTTP integration: live backup vs native gap, paused/unavailable/future heartbeat, and real failed source all retain truthful status (offline).');
+
+// The platform must see a failed invocation as well as the truthful JSON state.
+const priorLog=console.log;console.log=()=>{};
+try{
+ await assert.rejects(worker.scheduled({}, {WATCHDOG:{idFromName:value=>value,get:()=>({fetch:async()=>Response.json({error:'metadata-unavailable'})})}}),/watchdog-check-or-alert-failed/);
+}finally{console.log=priorLog;}

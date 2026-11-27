@@ -188,12 +188,13 @@ export class CollectionWatchdog {
   }
 }
 export default {
-  async scheduled(_event, env, ctx) {
+  async scheduled(_event, env) {
     const object = env.WATCHDOG.get(env.WATCHDOG.idFromName('ckb-dao-collection'));
-    ctx.waitUntil(object.fetch('https://internal/tick', { method: 'POST' }).then(async response => {
-      if (!response.ok) throw new Error('watchdog-tick-failed');
-      console.log(JSON.stringify({ event: 'collection-watchdog', ...await response.json() }));
-    }));
+    const response = await object.fetch('https://internal/tick', { method: 'POST' });
+    if (!response.ok) throw new Error('watchdog-tick-failed');
+    const status = await response.json();
+    console.log(JSON.stringify({ event: 'collection-watchdog', ...status }));
+    if (status.error || status.alertError) throw new Error('watchdog-check-or-alert-failed');
   },
   async fetch(request, env) {
     const url = new URL(request.url);
