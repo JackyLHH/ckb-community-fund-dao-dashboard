@@ -1,10 +1,10 @@
 {
   "version": 1,
   "address": "ckb1qyqnrg4jfx82g29l44q6d93jnrm5ytcp0d8sjfev2q",
-  "generatedAt": "2026-11-20T16:26:18.662Z",
+  "generatedAt": "2026-11-28T04:48:51.547Z",
   "complete": true,
   "sourceUrl": "https://mainnet-api.explorer.nervos.org/api/v1/address_transactions/ckb1qyqnrg4jfx82g29l44q6d93jnrm5ytcp0d8sjfev2q",
-  "transactionsScanned": 66,
+  "transactionsScanned": 67,
   "entries": [
     {
       "txHash": "0xd0d1203c89d6eb95923d56daa2095c722e48fa99efcb9c849603731520549583",
@@ -761,6 +761,20 @@
           "amountCkb": "1666667"
         }
       ]
+    },
+    {
+      "txHash": "0xbcbaea6f38c130fcb6ac8f6356a1eeb76913a10946478ecda36a2127bc010c45",
+      "timestamp": "2026-11-28T04:44:11.410Z",
+      "amountShannons": "146103900000000",
+      "amountCkb": "1461039",
+      "feeShannons": "1290",
+      "recipients": [
+        {
+          "address": "ckb1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsq2fsjgr5kmk45na89d6956qpngkv05kzrqjr6ffs",
+          "amountShannons": "146103900000000",
+          "amountCkb": "1461039"
+        }
+      ]
     }
   ],
   "balances": [
@@ -1093,6 +1107,11 @@
       "txHash": "0x64b4ddd95cad37fea62f7cd23d70ffda007fba8ae06a54d3df5a3babc0050ce7",
       "timestamp": "2026-11-20T12:52:55.200Z",
       "balanceShannons": "13921420241710538"
+    },
+    {
+      "txHash": "0xbcbaea6f38c130fcb6ac8f6356a1eeb76913a10946478ecda36a2127bc010c45",
+      "timestamp": "2026-11-28T04:44:11.410Z",
+      "balanceShannons": "13775316341709248"
     }
   ]
 }
