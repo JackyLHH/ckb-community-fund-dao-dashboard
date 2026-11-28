@@ -9,6 +9,7 @@ import { translateMissingProposalUpdates } from '../lib/proposal-update-translat
 const fixture = JSON.parse(await readFile(new URL('./fixtures/progress-evidence-nov23.json', import.meta.url), 'utf8'));
 const nov26 = JSON.parse(await readFile(new URL('./fixtures/progress-evidence-nov26.json', import.meta.url), 'utf8'));
 const grantAnswers = JSON.parse(await readFile(new URL('./fixtures/productathon-grant-answers.json', import.meta.url), 'utf8'));
+const fibernuts = JSON.parse(await readFile(new URL('./fixtures/fibernuts-m1-report.json', import.meta.url), 'utf8'));
 const testReport = JSON.parse(await readFile(new URL('./fixtures/cellula-test-report.json', import.meta.url), 'utf8'));
 const check = (cooked, expected) => {
  assert.equal(isMeaningfulProgressUpdate(cooked), expected, 'Digest: ' + stripForumHtml(cooked).slice(0,110));
@@ -69,6 +70,15 @@ const scopedUpdate=selectForumProgressUpdates([{...grantAnswers,cooked:scopedAns
 assert.ok(scopedUpdate.title.includes('deployed'));assert.ok(!scopedUpdate.title.includes('Arbitrum'));
 const weeklyWithReference='<h2>Weekly report</h2><p>We deployed the registration page.</p><p>See the old Arbitrum final report for background.</p>';
 check(weeklyWithReference,true);assert.equal(classifyProgressUpdate(weeklyWithReference).kind,'weekly');
+check(fibernuts.cooked, true);
+const m1 = { kind: 'milestone', milestone: '1', completion: false };
+assert.deepEqual(classifyProgressUpdate(fibernuts.cooked), m1);
+assert.match(selectForumProgressUpdates([fibernuts], 'Code3ks', '11051', 'fibernuts')[0].url, /11051\/15$/);
+for (const heading of ['M1 delivery report', 'M2 delivery report plan', 'Is the M1 report ready?']) {
+ const planned = '<h2>'+heading+'</h2><p>Expected result: all tests should pass after release.</p>';
+ check(planned, false);
+ assert.notEqual(classifyProgressUpdate(planned).kind, 'milestone');
+}
 const quoted='<blockquote>'+fixture.cellula.cooked+'</blockquote><p>Is this the plan?</p>';
 assert.equal(isMeaningfulProgressUpdate(quoted),false);
 assert.equal(selectForumProgressUpdates([{...fixture.cellula,cooked:quoted}],'LusoCryptoLabs','11089','dis-cellula').length,0);
@@ -121,6 +131,8 @@ try{
  const mixedReplay=await replay(11228,'ebubedev',[mixedPost],'2026-11-25T08:00:00Z','2026-11-26T08:00:00Z',[26]);
  assert.ok(!mixedReplay[0].latestPostExcerpt.includes('Fiber Studio'));
  await replay(11262,'Fidelcoder',[grantAnswers],'2026-11-26T08:00:00Z','2026-11-27T08:00:00Z',[]);
+ const fiberReplay=await replay(11051,'Code3ks',[fibernuts],'2026-11-27T08:00:00Z','2026-11-28T08:00:00Z',[15]);
+ assert.deepEqual(fiberReplay[0].updateCategory,m1);
  assert.equal(sends,0);
 }finally{globalThis.fetch=oldFetch;}
 console.log('Validated shared observed-work eligibility, Twine #16/#17 exclusion, author-owned bilingual Cellula #23, RIVET delivery and historical digest replay (offline, zero sends/state writes).');

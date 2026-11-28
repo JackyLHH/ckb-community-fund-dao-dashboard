@@ -1,4 +1,4 @@
-import { currentProposalProgressText, hasCurrentCompletionReport, isProposalProgressUpdate } from './proposal-progress-evidence.js';
+import { abbreviatedMilestoneReport, currentProposalProgressText, hasCurrentCompletionReport, isProposalProgressUpdate } from './proposal-progress-evidence.js';
 import { isProposalScopeRevision } from './proposal-revision.js';
 export { isProposalScopeRevision };
 export const DIGEST_LOOKBACK_MS = 24 * 60 * 60 * 1_000;
@@ -211,6 +211,10 @@ export function classifyProgressUpdate(cooked = ''): ProgressUpdateCategory {
   // report. Require an adjacent report/completion statement and keep the
   // completion check local to that statement, not the rest of the post.
   if (isProposalScopeRevision(text)) return { kind: 'revision' };
+  const abbreviated = abbreviatedMilestoneReport(text);
+  if (abbreviated) return abbreviated.hasEvidence && isProposalProgressUpdate(text)
+    ? { kind: 'milestone', milestone: abbreviated.milestone, completion: false }
+    : { kind: 'general' };
   if (/^(?:[^\n]{0,80}[:：]\s*)?(?:bi[\s-]?weekly(?:\s+(?:update|report))?\b|双周报)/i.test(text)) return { kind: 'biweekly' };
   if (/^(?:[^\n]{0,80}[:：]\s*)?(?:weekly(?:\s+(?:update|report))?|周报)/i.test(text)) return { kind: 'weekly' };
   const milestone = text.split('\n')
